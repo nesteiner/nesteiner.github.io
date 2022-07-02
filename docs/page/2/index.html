@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+	<meta name="generator" content="Hugo 0.101.0" />
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>My New Hugo Site</title><meta name="Description" content="This is my cool site"><meta property="og:title" content="My New Hugo Site" />
+<meta property="og:description" content="This is my cool site" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="http://example.org/" /><meta property="og:site_name" content="My cool site" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="My New Hugo Site"/>
+<meta name="twitter:description" content="This is my cool site"/>
+<meta name="application-name" content="My cool site">
+<meta name="apple-mobile-web-app-title" content="My cool site"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://example.org/" /><link rel="alternate" href="/index.xml" type="application/rss+xml" title="My New Hugo Site">
+    <link rel="feed" href="/index.xml" type="application/rss+xml" title="My New Hugo Site"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "WebSite",
+        "url": "http:\/\/example.org\/","inLanguage": "zh-CN","description": "This is my cool site","name": "My New Hugo Site"
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="My New Hugo Site">My cool site</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="My New Hugo Site">My cool site</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><main class="main">
+                <div class="container"><div class="page home" data-home="posts"><div class="home-profile"><div class="home-subtitle"><div id="id-1" class="typeit"></div></div><div class="links"></div></div>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/posts/2022/07/fragment/">Android Fragment 简单使用</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Author</a></span>&nbsp;<span class="post-publish">published on <time datetime="2022-07-02">2022-07-02</time></span>&nbsp;<span class="post-category">included in <a href="/categories/android/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Android</a></span></div><div class="content">Fragment 这篇笔记大部分参考自 这篇教程 什么是 Fragment Fragment 是 Activity 界面中的一部分，可理解为模块化的 Activity Fragment 不能独立存在，必须嵌入到 Activity 中 Fragment 具有自己的生命周期，接收它自己的事件，并可以在 Activity 运行时被添加或删除 Fragment 的生命周期直接受所在的Activity的影响。如：当 Activity 暂停时，它拥有的所有 Fragment 们都暂停 Fragment 有什么用 支持动态，灵活的界面设计 如何使用 Fragment 相关回调 onAttach 方法 Fragment和Activity建立关联的时候调用（获得activity的传递的值） onCreateView 方法 为Fragment创建视图（加载布局）时调用（给当前的fragment绘制UI布局，可以使用线程更新UI） onActivityCreated 方法 当Activity中的onCreate方法执行完后调用（表示activity执行oncreate方法完成了的时候会调用此方法） onDestroyView 方法 Fragment中的布局被移除时调用（表示fragment销毁相关联的UI布局） onDetach 方法 Fragment和Activity解除关联的时候调用（脱离activity） 静态添加 Fragment 首先需要创建一个 fragment 类，并为其创建布局文件 example_fragment.xml ，再将其配置到 activity_main.xml 中 example_fragment.xml 布局文件 &lt;LinearLayout xmlns:android=&#34;http://schemas.android.com/apk/res/android&#34; xmlns:tools=&#34;http://schemas.android.com/tools&#34; android:layout_width=&#34;match_parent&#34; android:layout_height=&#34;match_parent&#34; android:orientation=&#34;vertical&#34; &gt; &lt;TextView android:text=&#34;@string/example_fragment&#34; android:layout_width=&#34;wrap_content&#34; android:layout_height=&#34;wrap_content&#34;/&gt; &lt;/LinearLayout&gt; FragmentLayoutTest.java 类文件 public class FragmentLayoutTest extends Fragment { @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) { return inflater.</div><div class="post-footer">
+        <a href="/posts/2022/07/fragment/">Read More</a><div class="post-tags">
+                <i class="fas fa-tags fa-fw" aria-hidden="true"></i>&nbsp;<a href="/tags/fragment/">Fragment</a></div></div>
+</article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/posts/2022/07/recycler-view/">RecyclerView 简单使用</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Author</a></span>&nbsp;<span class="post-publish">published on <time datetime="2022-07-02">2022-07-02</time></span>&nbsp;<span class="post-category">included in <a href="/categories/android/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Android</a></span></div><div class="content">RecyclerView 这个 View 的使用当初我用的不是很明白，现在有点懂了，我们自顶向下设计 View 代码总览 在 MainActivity 中， @Override protected void onCreate(Bundle savedInstanceState) { super.onCreate(savedInstanceState); setContentView(R.layout.activity_main); RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview); List&lt;Integer&gt; data = Stream.iterate(1, n -&gt; n + 1).limit(100).collect(Collectors.toList()); CustomAdapter adapter = new CustomAdapter(data); RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 4); recyclerView.setAdapter(adapter); recyclerView.setLayoutManager(layoutManager); } 我们 定义了一个 RecyclerView 定义了一个 CustomAdapter 为 CustomAdapter 提供了数据 为 RecyclerView 设置 adapter 为 RecyclerView 设置 layoutmanager 注意，这里我们没用到 ViewHolder 这个东西，这个东西由 Adapter 操纵，相当于 RecyclerView Adapter ViewHolder ViewHolder ViewHolder ViewHolder 有关Adapter 定义 Adapter 需要继承 RecyclerView.</div><div class="post-footer">
+        <a href="/posts/2022/07/recycler-view/">Read More</a><div class="post-tags">
+                <i class="fas fa-tags fa-fw" aria-hidden="true"></i>&nbsp;<a href="/tags/recyclerview/">RecyclerView</a></div></div>
+</article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/posts/2022/07/mljflux/">MLJFlux 简单使用</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Author</a></span>&nbsp;<span class="post-publish">published on <time datetime="2022-07-02">2022-07-02</time></span>&nbsp;<span class="post-category">included in <a href="/categories/julia/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Julia</a></span></div><div class="content">介绍 MLJFlux 就是 MLJ 框架对 Flux 的封装，由于我学不会 Flux ，所以我就退而求其次，学别人装好的工具 同学们可以参照这个 PlayGround 来学习 MLJFlux 其中 features 表示特征 hidden layers 表示隐藏层 learning rate 设置学习率 activation 设置每个神经元的激活函数 regularzation 设置正则化方法 regularzation rate 设置正则化惩罚力度 但在 MLJ 和 MLJFlux 中，你是找不到任何有关学习率的参数设置的，因为已经有方法可以不设置学习率了，具体参考这篇文章 在 MLJFlux 中，有以下几种模型 model type prediction type scitype(x) &lt;: _ scitype(y) &lt;: _ NeuralNetworkRegressor Deterministic Tale{Continuous} with n_in columns AbstractVectir{&lt;:Continuous} n_out = 1 MultitargetNeuralNetworkRegressor Deterministic Table{Continuous} with n_in columns &lt;: Table(Continuous) with n_out columns NeuralNetworkClassifier Probabilistic &lt;:Table(Continuous) with n_in columns AbstractVector{&lt;:Finite} with n_out classes ImageClassifier Probabilistic AbstractVector(&lt;:Image{W,H}) with n_in = (W, H) AbstractVector{&lt;:Finite} with n_out classes 他们的参数有 builder : Default = MLJFlux.</div><div class="post-footer">
+        <a href="/posts/2022/07/mljflux/">Read More</a><div class="post-tags">
+                <i class="fas fa-tags fa-fw" aria-hidden="true"></i>&nbsp;<a href="/tags/mljflux/">MLJFlux</a>,&nbsp;<a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">神经网络</a></div></div>
+</article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/posts/2022/07/julia-regressor/">有监督回归</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Author</a></span>&nbsp;<span class="post-publish">published on <time datetime="2022-07-02">2022-07-02</time></span>&nbsp;<span class="post-category">included in <a href="/categories/julia/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Julia</a></span></div><div class="content">算法介绍 这里简要介绍下各算法和他们之间的关系，详细理解请百度一下 基本算法 最小二乘法是众多机器学习算法中极为重要的一种基础算法 单纯的最小二乘法对于包含噪声的学习过程经常有过拟合的弱点，这往往是由于学习模型对于训练样本而言过于复杂 l2 约束 由此，引入带有约束条件的最小二乘法 &mdash;- Ridge 回归 带有约束条件的最小二乘法和交叉验证法的组合，在实际应用中是非常有效的回归方法 然而，当参数特别多的时候，求解各参数以及学习得到的函数的输出值的过程，都需要耗费大量的时间 l1 约束 由此，引入可以吧大部分参数都置为0的稀疏学习算法 因为大部分参数都变成了0，所以就可以快速地求解各参数以及学习得到的函数的输出值 l1 + l2 约束 虽然 l1 约束的最小二乘学习法是非常有用的学习方法，但是在实际应用中，经常会遇到些许限制 在 Lasso 回归求解路径中，对于 N×P 的设计矩阵来说，最多只能选出 min(N,p) 个变量 当 p&gt;N 的时候，最多只能选出N个预测变量．因此，对于 p∼N 的情况，Lasso方法不能够很好的选出真实的模型． 如果预测变量具有群组效应，则用Lasso回 归时，只能选出其中的一个预测变量 对于通常的 N&gt;P 的情形，如果预测变量中 存在很强的共线性，Lasso的预测表现受控于岭回归 基于以上几点Lasso回归的局限性，Zou和 Hastie在2005年提出了弹性网回归方法，回归系 数表达式为 \(\hat \beta^{ridge} =\mathop{\arg\min}_{\beta} \{\sum \limits _{i=1}^{N}(y_i-\beta_0-\sum\limits_{j=1}^px_{ij}\beta_j)^2+\lambda\sum \limits_{j=1}^{p}|\beta_{j}|+\lambda\sum \limits_{j=1}^{p}\beta_{j}^2\}\) MLJLinearModels 使用 Ridge \(J = \frac{1}{n}\sum_{i = 1}^n (f( x_i) - y_i)^2 + \lambda \|w\|_2^2\tag{1}\) RidgeRegressor RidgeRegression() RidgeRegression(λ; lambda, fit_intercept, penalize_intercept, scale_penalty_with_samples) Lasso \(J = \frac{1}{n}\sum_{i = 1}^n (f( x_i) - y_i)^2 + \lambda \|w\|_1\tag{2}\) LassoRegressor LassoRegression() LassoRegression(λ; lambda, fit_intercept, penalize_intercept, scale_penalty_with_samples) Elastic-Net \(\smash{\min_{w}}\sum_{i=1}^m(y_i-\sum_{j=1}^dx_{ij}w_j)^2 + \lambda\sum_{j=1}^d|w_j|+\lambda \sum_{j=1}^dw_j^2 \tag{3}\) ElasticNetRegression ElasticNetRegression() ElasticNetRegression(λ) ElasticNetRegression(λ, γ; lambda, gamma, fit_intercept, penalize_intercept, scale_penalty_with_samples) 说明 其实可以不用管 fit_intercept penalize_intercept 我也不知道这两个是干什么的，就先别管他们了 总之，只用设置 lambda 就行了 实例 波士顿房价预测 数据准备 竞赛数据来自 https://www.</div><div class="post-footer">
+        <a href="/posts/2022/07/julia-regressor/">Read More</a><div class="post-tags">
+                <i class="fas fa-tags fa-fw" aria-hidden="true"></i>&nbsp;<a href="/tags/%E6%9C%89%E7%9B%91%E7%9D%A3%E5%9B%9E%E5%BD%92/">有监督回归</a></div></div>
+</article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/posts/2022/07/julia-calculus/">Julia 微积分简要介绍</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Author</a></span>&nbsp;<span class="post-publish">published on <time datetime="2022-07-02">2022-07-02</time></span>&nbsp;<span class="post-category">included in <a href="/categories/julia/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Julia</a></span></div><div class="content">介绍 JuliaMath 下有一个微积分包，闲得没事看看文档，给大家简要整理了一下 derivative 求导 second_derivative 求二阶导 然而关于积分，文档里说 The Calculus package no longer provides routines for univariate numerical integration. Use QuadGK.jl instead. 他说单变量的积分在这个包中不再支持，可以去使用 QuadGK.jl 包中 我又尝试了下 Calculus 包中的 integrate 函数 f((x, y)) = sin(x) + cos(y) 我发现，这个错误中的 quadgk 和 QuadGk 中的 quadgk 不是同一个函数，他指的是 Calculus.quadgk 这个函数不存在 另外我去谷歌了一下，发现 Quadgk 不支持多重积分，所以我推荐使用同在 JuliaMath 仓库下的 Cubature.jl 包 既可以做单变量积分，又可以做多变量积分 使用 导数 using Calculus derivative derivative(sin, 0) == cos(0) derivative(sin, 1) == cos(1) derivative(sin, float(pi)) = cos(float(pi)) 多元导数 using Calculus derivative julia&gt; derivative(f, [1, 1]) 2-element Vector{Float64}: 0.</div><div class="post-footer">
+        <a href="/posts/2022/07/julia-calculus/">Read More</a><div class="post-tags">
+                <i class="fas fa-tags fa-fw" aria-hidden="true"></i>&nbsp;<a href="/tags/%E5%BE%AE%E7%A7%AF%E5%88%86/">微积分</a></div></div>
+</article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/posts/2022/07/scrapy-spider/">Scrapy 爬虫的简单使用</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Author</a></span>&nbsp;<span class="post-publish">published on <time datetime="2022-07-02">2022-07-02</time></span>&nbsp;<span class="post-category">included in <a href="/categories/python/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Python</a></span></div><div class="content">简单的爬虫流程 一般的，程序向网站请求网页 程序 =========&gt; 网站 而后，网站返回网页与程序 程序 &lt;========= 网站 接着程序负责解析得到的 HTML 数据即可 Scrapy 如何扩展这一流程 程序请求网页时， scrapy 添加了中间件在双方之间 程序 =====&gt; 中间件 ======&gt; 网站 网站返回数据时，也需要通过中间件 程序 &lt;===== 中间件 &lt;====== 网站 程序解析完数据后，不会马上处理数据，而是把一个网页的数据打包成一个 Item 数据，传递给 pipeline 处理 pipeline &lt;==== item &lt;==== 程序 Scrapy 简单示例 这里以爬取美图录的图片为例(注意，我不打算用默认的 start_urls 数据) 首先我们到一个模特的主页上，比如 接下来我们要从这个 指定模特页面 上的每一个专辑上爬取图片 准备项目 安装 scrapy sudo pip3 install scrapy 创建新项目 scrapy startproject meitulu 基础设定 在 meitulu/spiders/ 下我们新建一个爬虫文件 evelyn.py class Spider(scrapy.Spider): name = &#39;evelyn&#39; 其中的 name 属性是为了调用的时候能找到爬虫位置，比如调用这个爬虫的时候，我们指定 name scrapy crawl evelyn 添加命令行参数 def __init__(self, albumUrl=None, *args, **kwargs): if albumUrl == None: raise Exception(&#39;usage: -a albumUrl=.</div><div class="post-footer">
+        <a href="/posts/2022/07/scrapy-spider/">Read More</a><div class="post-tags">
+                <i class="fas fa-tags fa-fw" aria-hidden="true"></i>&nbsp;<a href="/tags/scrapy/">Scrapy</a>,&nbsp;<a href="/tags/%E7%88%AC%E8%99%AB/">爬虫</a>,&nbsp;<a href="/tags/scrapy/">Scrapy</a></div></div>
+</article><ul class="pagination"><li class="page-item ">
+                    <span class="page-link">
+                        <a href="/">1</a>
+                    </span>
+                </li><li class="page-item active">
+                    <span class="page-link">
+                        <a href="/page/2/">2</a>
+                    </span>
+                </li><li class="page-item ">
+                    <span class="page-link">
+                        <a href="/page/3/">3</a>
+                    </span>
+                </li><li class="page-item ">
+                    <span class="page-link">
+                        <a href="/page/4/">4</a>
+                    </span>
+                </li></ul></div></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.101.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/typeit@8.6.0/dist/index.umd.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"data":{"id-1":"This is my cool site"},"typeit":{"cursorChar":"|","cursorSpeed":1000,"data":{"id-1":["id-1"]},"duration":-1,"speed":100}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

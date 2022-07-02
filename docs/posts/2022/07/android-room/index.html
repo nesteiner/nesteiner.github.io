@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>Android Room 简单使用 - My New Hugo Site</title><meta name="Description" content="This is my cool site"><meta property="og:title" content="Android Room 简单使用" />
+<meta property="og:description" content="Android Room 简单使用 说明 这次没有用内置的 SQLite 库，而是直接使用了 Room ，原因之一是 SQLite 在创建数据库的时候出错了，排查不到哪一步出错 二是这个 Room 与 Flutter 中的 floor 框架非常相似，可以无缝迁移 添加依赖 在 src/build.gradle 中 dependencies { def room_version = &#34;2.4.2&#34; implementation &#34;androidx.room:room-runtime:$room_version&#34; annotationProcessor &#34;androidx.room:room-compiler:$room_version&#34; } 配置类 Room 包含三个主要组件 数据库类 数据实体 数据访问对象(DAO) 他们的定义如下 数据实体 @Entity public class User { @PrimaryKey public int uid; @ColumnInfo(name = &#34;first_name&#34;) public String firstName; @ColumnInfo(name = &#34;last_name&#34;) public String lastName; } 数据访问对象 @Dao public interface UserDao { @Query(&#34;SELECT * FROM user&#34;) List&lt;User&gt; getAll(); @Query(&#34;SELECT * FROM user WHERE uid IN (:userIds)&#34;) List&lt;User&gt; loadAllByIds(int[] userIds); @Query(&#34;SELECT * FROM user WHERE first_name LIKE :first AND &#34; &#43; &#34;last_name LIKE :last LIMIT 1&#34;) User findByName(String first, String last); @Insert void insertAll(User." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/posts/2022/07/android-room/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-07-02T14:38:00+08:00" />
+<meta property="article:modified_time" content="2022-07-02T14:47:34+08:00" /><meta property="og:site_name" content="My cool site" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Android Room 简单使用"/>
+<meta name="twitter:description" content="Android Room 简单使用 说明 这次没有用内置的 SQLite 库，而是直接使用了 Room ，原因之一是 SQLite 在创建数据库的时候出错了，排查不到哪一步出错 二是这个 Room 与 Flutter 中的 floor 框架非常相似，可以无缝迁移 添加依赖 在 src/build.gradle 中 dependencies { def room_version = &#34;2.4.2&#34; implementation &#34;androidx.room:room-runtime:$room_version&#34; annotationProcessor &#34;androidx.room:room-compiler:$room_version&#34; } 配置类 Room 包含三个主要组件 数据库类 数据实体 数据访问对象(DAO) 他们的定义如下 数据实体 @Entity public class User { @PrimaryKey public int uid; @ColumnInfo(name = &#34;first_name&#34;) public String firstName; @ColumnInfo(name = &#34;last_name&#34;) public String lastName; } 数据访问对象 @Dao public interface UserDao { @Query(&#34;SELECT * FROM user&#34;) List&lt;User&gt; getAll(); @Query(&#34;SELECT * FROM user WHERE uid IN (:userIds)&#34;) List&lt;User&gt; loadAllByIds(int[] userIds); @Query(&#34;SELECT * FROM user WHERE first_name LIKE :first AND &#34; &#43; &#34;last_name LIKE :last LIMIT 1&#34;) User findByName(String first, String last); @Insert void insertAll(User."/>
+<meta name="application-name" content="My cool site">
+<meta name="apple-mobile-web-app-title" content="My cool site"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://example.org/posts/2022/07/android-room/" /><link rel="prev" href="http://example.org/posts/2022/07/android-toolbar/" /><link rel="next" href="http://example.org/posts/2022/07/android-communication/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Android Room 简单使用",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/example.org\/posts\/2022\/07\/android-room\/"
+        },"genre": "posts","keywords": "Room","wordcount":  270 ,
+        "url": "http:\/\/example.org\/posts\/2022\/07\/android-room\/","datePublished": "2022-07-02T14:38:00+08:00","dateModified": "2022-07-02T14:47:34+08:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "Author"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="My New Hugo Site">My cool site</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="My New Hugo Site">My cool site</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Android Room 简单使用</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Author</a></span>&nbsp;<span class="post-category">included in <a href="/categories/android/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Android</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2022-07-02">2022-07-02</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;270 words&nbsp;
+                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;2 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#android-room-简单使用">Android Room 简单使用</a>
+      <ul>
+        <li><a href="#说明">说明</a></li>
+        <li><a href="#添加依赖">添加依赖</a></li>
+        <li><a href="#配置类">配置类</a></li>
+        <li><a href="#投入使用">投入使用</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="android-room-简单使用">Android Room 简单使用</h2>
+<h3 id="说明">说明</h3>
+<p>这次没有用内置的 <code>SQLite</code> 库，而是直接使用了 <code>Room</code> ，原因之一是 <code>SQLite</code> 在创建数据库的时候出错了，排查不到哪一步出错 <!-- raw HTML omitted -->
+二是这个 <code>Room</code> 与 <strong>Flutter</strong> 中的 <code>floor</code> 框架非常相似，可以无缝迁移 <!-- raw HTML omitted --></p>
+<h3 id="添加依赖">添加依赖</h3>
+<p>在 <code>src/build.gradle</code> 中 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-groovy" data-lang="groovy"><span class="line"><span class="cl"><span class="n">dependencies</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">def</span> <span class="n">room_version</span> <span class="o">=</span> <span class="s2">&#34;2.4.2&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">implementation</span> <span class="s2">&#34;androidx.room:room-runtime:$room_version&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">annotationProcessor</span> <span class="s2">&#34;androidx.room:room-compiler:$room_version&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></div><h3 id="配置类">配置类</h3>
+<p><code>Room</code> 包含三个主要组件 <!-- raw HTML omitted --></p>
+<ul>
+<li>数据库类 <!-- raw HTML omitted --></li>
+<li>数据实体 <!-- raw HTML omitted --></li>
+<li>数据访问对象(DAO) <!-- raw HTML omitted --></li>
+</ul>
+<p>他们的定义如下 <!-- raw HTML omitted --></p>
+<h4 id="数据实体">数据实体</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Entity</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">User</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nd">@PrimaryKey</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">int</span> <span class="n">uid</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@ColumnInfo</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&#34;first_name&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">String</span> <span class="n">firstName</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@ColumnInfo</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&#34;last_name&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">String</span> <span class="n">lastName</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></div><h4 id="数据访问对象">数据访问对象</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Dao</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">UserDao</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nd">@Query</span><span class="o">(</span><span class="s">&#34;SELECT * FROM user&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span> <span class="nf">getAll</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@Query</span><span class="o">(</span><span class="s">&#34;SELECT * FROM user WHERE uid IN (:userIds)&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span> <span class="nf">loadAllByIds</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">userIds</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@Query</span><span class="o">(</span><span class="s">&#34;SELECT * FROM user WHERE first_name LIKE :first AND &#34;</span> <span class="o">+</span>
+</span></span><span class="line"><span class="cl">	   <span class="s">&#34;last_name LIKE :last LIMIT 1&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">User</span> <span class="nf">findByName</span><span class="o">(</span><span class="n">String</span> <span class="n">first</span><span class="o">,</span> <span class="n">String</span> <span class="n">last</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@Insert</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">void</span> <span class="nf">insertAll</span><span class="o">(</span><span class="n">User</span><span class="o">...</span> <span class="n">users</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@Delete</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">void</span> <span class="nf">delete</span><span class="o">(</span><span class="n">User</span> <span class="n">user</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></div><p>注意 <!-- raw HTML omitted --></p>
+<ul>
+<li>他只需要一个接口来表示 <code>DAO</code> 类型，代码会自动生成，不需要担心 <!-- raw HTML omitted --></li>
+<li>变量名替换用冒号 <code>:</code>  <!-- raw HTML omitted --></li>
+</ul>
+<h4 id="数据库类">数据库类</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Database</span><span class="o">(</span><span class="n">entities</span> <span class="o">=</span> <span class="o">{</span><span class="n">User</span><span class="o">.</span><span class="na">class</span><span class="o">},</span> <span class="n">version</span> <span class="o">=</span> <span class="n">1</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AppDatabase</span> <span class="kd">extends</span> <span class="n">RoomDatabase</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">abstract</span> <span class="n">UserDao</span> <span class="nf">userDao</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></div><h3 id="投入使用">投入使用</h3>
+<p>这里不使用官方教程提供的实例，而是 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">AppDatabase</span> <span class="n">database</span> <span class="o">=</span> <span class="n">Room</span><span class="o">.</span><span class="na">databaseBuilder</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">		<span class="n">getApplicationContext</span><span class="o">(),</span>
+</span></span><span class="line"><span class="cl">		<span class="n">AppDatabase</span><span class="o">.</span><span class="na">class</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">		<span class="s">&#34;test.db&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">		<span class="o">.</span><span class="na">allowMainThreadQueries</span><span class="o">().</span><span class="na">build</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">UserDao</span> <span class="n">userDao</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">userDao</span><span class="o">();</span>
+</span></span></code></pre></div><p>不知道为什么，直接使用 <code>build</code> 方法会产生错误，需要添加一个 <code>allowMainThreadQueries</code>  <!-- raw HTML omitted -->
+另外我们添加了一个 <code>Button</code> 和 <code>TextView</code> 来实现一些交互，简单来说，按钮来添加数据， <code>TextView</code> 来显示数据 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">Button</span> <span class="n">button</span> <span class="o">=</span> <span class="n">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">button_add</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">TextView</span> <span class="n">textView</span> <span class="o">=</span> <span class="n">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">textView</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">button</span><span class="o">.</span><span class="na">setOnClickListener</span><span class="o">(</span><span class="n">view</span> <span class="o">-&gt;</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">userDao</span><span class="o">.</span><span class="na">insertAll</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">			  <span class="k">new</span> <span class="n">User</span><span class="o">(</span><span class="n">1</span><span class="o">,</span> <span class="s">&#34;hello&#34;</span><span class="o">,</span> <span class="s">&#34;world&#34;</span><span class="o">),</span>
+</span></span><span class="line"><span class="cl">			  <span class="k">new</span> <span class="n">User</span><span class="o">(</span><span class="n">2</span><span class="o">,</span> <span class="s">&#34;fuck&#34;</span><span class="o">,</span> <span class="s">&#34;you&#34;</span><span class="o">),</span>
+</span></span><span class="line"><span class="cl">			  <span class="k">new</span> <span class="n">User</span><span class="o">(</span><span class="n">3</span><span class="o">,</span> <span class="s">&#34;holy&#34;</span><span class="o">,</span> <span class="s">&#34;shit&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">			  <span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span> <span class="n">users</span> <span class="o">=</span> <span class="n">userDao</span><span class="o">.</span><span class="na">getAll</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">	<span class="n">textView</span><span class="o">.</span><span class="na">setText</span><span class="o">(</span><span class="n">users</span><span class="o">.</span><span class="na">stream</span><span class="o">().</span><span class="na">map</span><span class="o">(</span><span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span><span class="o">.</span><span class="na">toString</span><span class="o">()).</span><span class="na">collect</span><span class="o">(</span><span class="n">Collectors</span><span class="o">.</span><span class="na">joining</span><span class="o">(</span><span class="s">&#34;\n&#34;</span><span class="o">)));</span>
+</span></span><span class="line"><span class="cl">    <span class="o">});</span>
+</span></span></code></pre></div><p>别忘了给 <code>User</code> 添加构造函数 <!-- raw HTML omitted --></p>
+<p>现在问题来了，第一次点击按钮是没有问题的，第二次点击就会出错 <!-- raw HTML omitted -->
+这是因为数据库主键重复了，我们重新设置下数据模型类 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Entity</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">User</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nd">@PrimaryKey</span><span class="o">(</span><span class="n">autoGenerate</span> <span class="o">=</span> <span class="kc">true</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">Integer</span> <span class="n">uid</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@ColumnInfo</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&#34;first_name&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">String</span> <span class="n">firstName</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@ColumnInfo</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&#34;last_name&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">String</span> <span class="n">lastName</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></div><p>像 <code>floor</code> 框架一样，将主键的值设为 <code>null</code> ，程序会在数据库中自动添加主键，这样以后修改关于添加的代码 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">button</span><span class="o">.</span><span class="na">setOnClickListener</span><span class="o">(</span><span class="n">view</span> <span class="o">-&gt;</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">userDao</span><span class="o">.</span><span class="na">insertAll</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">			  <span class="k">new</span> <span class="n">User</span><span class="o">(</span><span class="s">&#34;hello&#34;</span><span class="o">,</span> <span class="s">&#34;world&#34;</span><span class="o">),</span>
+</span></span><span class="line"><span class="cl">			  <span class="k">new</span> <span class="n">User</span><span class="o">(</span><span class="s">&#34;fuck&#34;</span><span class="o">,</span> <span class="s">&#34;you&#34;</span><span class="o">),</span>
+</span></span><span class="line"><span class="cl">			  <span class="k">new</span> <span class="n">User</span><span class="o">(</span><span class="s">&#34;holy&#34;</span><span class="o">,</span> <span class="s">&#34;shit&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">			  <span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span> <span class="n">users</span> <span class="o">=</span> <span class="n">userDao</span><span class="o">.</span><span class="na">getAll</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">	<span class="n">textView</span><span class="o">.</span><span class="na">setText</span><span class="o">(</span><span class="n">users</span><span class="o">.</span><span class="na">stream</span><span class="o">().</span><span class="na">map</span><span class="o">(</span><span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span><span class="o">.</span><span class="na">toString</span><span class="o">()).</span><span class="na">collect</span><span class="o">(</span><span class="n">Collectors</span><span class="o">.</span><span class="na">joining</span><span class="o">(</span><span class="s">&#34;\n&#34;</span><span class="o">)));</span>
+</span></span><span class="line"><span class="cl">    <span class="o">});</span>
+</span></span></code></pre></div><p>再次运行你会发现 <strong>又出错了</strong> ，错误有关数据库迁移 <code>Migration</code> <!-- raw HTML omitted -->
+这时因为原来的数据表有更改，需要修改原来的数据来兼容现有的数据库版本，这里我们简单处理，直接删掉重建一个 <!-- raw HTML omitted -->
+在创建数据库时 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">AppDatabase</span> <span class="n">database</span> <span class="o">=</span> <span class="n">Room</span><span class="o">.</span><span class="na">databaseBuilder</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">	<span class="n">getApplicationContext</span><span class="o">(),</span>
+</span></span><span class="line"><span class="cl">	<span class="n">AppDatabase</span><span class="o">.</span><span class="na">class</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;test.db&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">	<span class="o">.</span><span class="na">fallbackToDestructiveMigration</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">	<span class="o">.</span><span class="na">allowMainThreadQueries</span><span class="o">().</span><span class="na">build</span><span class="o">();</span>
+</span></span></code></pre></div></div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2022-07-02</span>
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="http://example.org/posts/2022/07/android-room/" data-title="Android Room 简单使用" data-hashtags="Room"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="http://example.org/posts/2022/07/android-room/" data-hashtag="Room"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="http://example.org/posts/2022/07/android-room/" data-title="Android Room 简单使用"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="http://example.org/posts/2022/07/android-room/" data-title="Android Room 简单使用"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.0.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="http://example.org/posts/2022/07/android-room/" data-title="Android Room 简单使用"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw" aria-hidden="true"></i>&nbsp;<a href="/tags/room/">Room</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/2022/07/android-toolbar/" class="prev" rel="prev" title="Android ToolBar 简单使用"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>Android ToolBar 简单使用</a>
+            <a href="/posts/2022/07/android-communication/" class="next" rel="next" title="Android 通信简单应用">Android 通信简单应用<i class="fas fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.101.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

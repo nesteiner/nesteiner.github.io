@@ -5,10 +5,10 @@
         <description>Flutter数据库 - Tag - My New Hugo Site</description>
         <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sat, 02 Jul 2022 01:44:00 &#43;0800</lastBuildDate><atom:link href="http://example.org/tags/flutter%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="self" type="application/rss+xml" /><item>
     <title>在 Flutter 中使用数据库</title>
-    <link>http://example.org/post/2022/07/flutter_database/</link>
+    <link>http://example.org/posts/2022/07/flutter_database/</link>
     <pubDate>Sat, 02 Jul 2022 01:44:00 &#43;0800</pubDate>
     <author>Author</author>
-    <guid>http://example.org/post/2022/07/flutter_database/</guid>
+    <guid>http://example.org/posts/2022/07/flutter_database/</guid>
     <description><![CDATA[在 Flutter 中使用数据库 介绍 以 sqlite 为例，flutter 在使用数据库时需要引入 sqflite 依赖 dependencies: flutter: sdk: flutter sqflite: 导入 package:sqflite/sqflite.dart 与 package:sqflite/sql.dart 后，可以在 openDatabase 中的 onCreate 参数中设置初始化 openDatabase( &#39;file:///home/steiner/workspace/playground/todolist/todolist.db&#39;, onCreate: (database, version) async { await database.execute( &#39;create table if not exists TaskList(&#39; &#39;id integer primary key autoincrement,&#39; &#39;name text not null&#39; &#39;);&#39; ); }, version: 1 ); 其余数据库操作参考 中文文档 组件中使用数据库 由于在 Dart 中数据库的操作是异步的，返回值是 Future 类型，对 Future 使用 await 需要在异步函数中进行， 各个组件的 build 方法又是同步的，无法使用 Future 不过 flutter 提供了 FutureBuilder 组件，为其提供 futurue 选项来构造组件 FutureBuilder({ this.]]></description>
 </item>
 </channel>

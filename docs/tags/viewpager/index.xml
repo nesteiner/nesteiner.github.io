@@ -1,0 +1,15 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>ViewPager - Tag - My New Hugo Site</title>
+        <link>http://example.org/tags/viewpager/</link>
+        <description>ViewPager - Tag - My New Hugo Site</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sat, 02 Jul 2022 14:37:00 &#43;0800</lastBuildDate><atom:link href="http://example.org/tags/viewpager/" rel="self" type="application/rss+xml" /><item>
+    <title>ViewPager 简单使用</title>
+    <link>http://example.org/posts/2022/07/viewpager/</link>
+    <pubDate>Sat, 02 Jul 2022 14:37:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/posts/2022/07/viewpager/</guid>
+    <description><![CDATA[ViewPager ViewPager 简单来说就是一个能滑动切换视图的控件，由一个 Activity 包裹，总体结构是 Activity adapter fragment fragment fragment 其中 Activity 通过 adapter 来操作 fragment 显示 Activity 布局 activity_pageview.xml &lt;RelativeLayout xmlns:android=&#34;http://schemas.android.com/apk/res/android&#34; xmlns:tools=&#34;http://schemas.android.com/tools&#34; android:layout_width=&#34;match_parent&#34; android:layout_height=&#34;match_parent&#34; &gt; &lt;androidx.viewpager.widget.ViewPager android:id=&#34;@+id/viewpager&#34; android:layout_width=&#34;fill_parent&#34; android:layout_height=&#34;fill_parent&#34; /&gt; &lt;/RelativeLayout&gt; PageViewActivity.java public class PageViewActivity extends FragmentActivity { MyPageAdapter pageAdapter; @Override public void onCreate(Bundle savedInstanceState) { super.onCreate(savedInstanceState); setContentView(R.layout.activity_page_view); List&lt;Fragment&gt; fragments = getFragments(); pageAdapter = new MyPageAdapter(getSupportFragmentManager(), fragments); ViewPager pager = (ViewPager) findViewById(R.id.viewpager); pager.setAdapter(pageAdapter); } private List&lt;Fragment&gt; getFragments() { List&lt;Fragment&gt; fList = new ArrayList&lt;Fragment&gt;(); fList.]]></description>
+</item>
+</channel>
+</rss>

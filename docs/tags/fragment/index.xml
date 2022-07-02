@@ -1,0 +1,15 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Fragment - Tag - My New Hugo Site</title>
+        <link>http://example.org/tags/fragment/</link>
+        <description>Fragment - Tag - My New Hugo Site</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sat, 02 Jul 2022 14:36:00 &#43;0800</lastBuildDate><atom:link href="http://example.org/tags/fragment/" rel="self" type="application/rss+xml" /><item>
+    <title>Android Fragment 简单使用</title>
+    <link>http://example.org/posts/2022/07/fragment/</link>
+    <pubDate>Sat, 02 Jul 2022 14:36:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/posts/2022/07/fragment/</guid>
+    <description><![CDATA[Fragment 这篇笔记大部分参考自 这篇教程 什么是 Fragment Fragment 是 Activity 界面中的一部分，可理解为模块化的 Activity Fragment 不能独立存在，必须嵌入到 Activity 中 Fragment 具有自己的生命周期，接收它自己的事件，并可以在 Activity 运行时被添加或删除 Fragment 的生命周期直接受所在的Activity的影响。如：当 Activity 暂停时，它拥有的所有 Fragment 们都暂停 Fragment 有什么用 支持动态，灵活的界面设计 如何使用 Fragment 相关回调 onAttach 方法 Fragment和Activity建立关联的时候调用（获得activity的传递的值） onCreateView 方法 为Fragment创建视图（加载布局）时调用（给当前的fragment绘制UI布局，可以使用线程更新UI） onActivityCreated 方法 当Activity中的onCreate方法执行完后调用（表示activity执行oncreate方法完成了的时候会调用此方法） onDestroyView 方法 Fragment中的布局被移除时调用（表示fragment销毁相关联的UI布局） onDetach 方法 Fragment和Activity解除关联的时候调用（脱离activity） 静态添加 Fragment 首先需要创建一个 fragment 类，并为其创建布局文件 example_fragment.xml ，再将其配置到 activity_main.xml 中 example_fragment.xml 布局文件 &lt;LinearLayout xmlns:android=&#34;http://schemas.android.com/apk/res/android&#34; xmlns:tools=&#34;http://schemas.android.com/tools&#34; android:layout_width=&#34;match_parent&#34; android:layout_height=&#34;match_parent&#34; android:orientation=&#34;vertical&#34; &gt; &lt;TextView android:text=&#34;@string/example_fragment&#34; android:layout_width=&#34;wrap_content&#34; android:layout_height=&#34;wrap_content&#34;/&gt; &lt;/LinearLayout&gt; FragmentLayoutTest.java 类文件 public class FragmentLayoutTest extends Fragment { @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) { return inflater.]]></description>
+</item>
+</channel>
+</rss>

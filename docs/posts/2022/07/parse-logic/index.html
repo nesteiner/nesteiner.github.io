@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>计算真值表 - My New Hugo Site</title><meta name="Description" content="This is my cool site"><meta property="og:title" content="计算真值表" />
+<meta property="og:description" content="程序设计说明 本来想用 lisp 程序来写，他的写法是 (function arg1 arg2 ...) S表达式不需要考虑优先级顺序，写起来比较简单 但是在这里有太多运算符，写成 lisp 很不方便 p∧￢(q→p (p ↔ q) → r p → (p ∨ ￢q ∨ r) 还好有 Julia ，他可以自定义运算符 首先将运算符作为一个函数定义(以下例子这样写是因为 &#43; 在程序中是特殊符号，需要加一个 : 前缀来标识， Julia 语言的一个 feature) function Base.:&#43;(arg1::SomeType, arg2::SomeType) return arg1 * arg2 end 解释器就可以把以下语句 arg1 &#43; arg2 解析为 Base:&#43;(arg1, arg2) 如果是调用多次 arg1 &#43; arg2 &#43; arg3 可以看作先对前两个进行求值，得出结果，与第三个参数求值 实现细节 演示说明 这里给出一个演示的例子 print(TruthTable(&#34;(p ↔ q) → r&#34;, [:p, :q, :r], (p, q, r) -&gt; (p ↔ q) → r)) 需要自定义真值表的 标题 参数表 生成真值的逻辑函数 运算符定义 ¬(p::Bool) = !" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/posts/2022/07/parse-logic/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-07-02T14:30:00+08:00" />
+<meta property="article:modified_time" content="2022-07-02T14:45:06+08:00" /><meta property="og:site_name" content="My cool site" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="计算真值表"/>
+<meta name="twitter:description" content="程序设计说明 本来想用 lisp 程序来写，他的写法是 (function arg1 arg2 ...) S表达式不需要考虑优先级顺序，写起来比较简单 但是在这里有太多运算符，写成 lisp 很不方便 p∧￢(q→p (p ↔ q) → r p → (p ∨ ￢q ∨ r) 还好有 Julia ，他可以自定义运算符 首先将运算符作为一个函数定义(以下例子这样写是因为 &#43; 在程序中是特殊符号，需要加一个 : 前缀来标识， Julia 语言的一个 feature) function Base.:&#43;(arg1::SomeType, arg2::SomeType) return arg1 * arg2 end 解释器就可以把以下语句 arg1 &#43; arg2 解析为 Base:&#43;(arg1, arg2) 如果是调用多次 arg1 &#43; arg2 &#43; arg3 可以看作先对前两个进行求值，得出结果，与第三个参数求值 实现细节 演示说明 这里给出一个演示的例子 print(TruthTable(&#34;(p ↔ q) → r&#34;, [:p, :q, :r], (p, q, r) -&gt; (p ↔ q) → r)) 需要自定义真值表的 标题 参数表 生成真值的逻辑函数 运算符定义 ¬(p::Bool) = !"/>
+<meta name="application-name" content="My cool site">
+<meta name="apple-mobile-web-app-title" content="My cool site"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://example.org/posts/2022/07/parse-logic/" /><link rel="prev" href="http://example.org/posts/2022/07/android-work/" /><link rel="next" href="http://example.org/posts/2022/07/symbolics/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "计算真值表",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/example.org\/posts\/2022\/07\/parse-logic\/"
+        },"genre": "posts","keywords": "真值表","wordcount":  207 ,
+        "url": "http:\/\/example.org\/posts\/2022\/07\/parse-logic\/","datePublished": "2022-07-02T14:30:00+08:00","dateModified": "2022-07-02T14:45:06+08:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "Author"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="My New Hugo Site">My cool site</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="My New Hugo Site">My cool site</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">计算真值表</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Author</a></span>&nbsp;<span class="post-category">included in <a href="/categories/%E7%A6%BB%E6%95%A3%E6%95%B0%E5%AD%A6/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>离散数学</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2022-07-02">2022-07-02</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;207 words&nbsp;
+                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;One minute&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#程序设计说明">程序设计说明</a></li>
+    <li><a href="#实现细节">实现细节</a>
+      <ul>
+        <li><a href="#演示说明">演示说明</a></li>
+        <li><a href="#运算符定义">运算符定义</a></li>
+        <li><a href="#真值表结构">真值表结构</a></li>
+        <li><a href="#计算真值并打印">计算真值并打印</a></li>
+      </ul>
+    </li>
+    <li><a href="#效果展示">效果展示</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="程序设计说明">程序设计说明</h2>
+<p>本来想用 <strong>lisp</strong> 程序来写，他的写法是 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-scheme" data-lang="scheme"><span class="line"><span class="cl"><span class="p">(</span><span class="nf">function</span> <span class="nv">arg1</span> <span class="nv">arg2</span> <span class="o">...</span><span class="p">)</span>
+</span></span></code></pre></div><p>S表达式不需要考虑优先级顺序，写起来比较简单 <!-- raw HTML omitted -->
+但是在这里有太多运算符，写成 <strong>lisp</strong> 很不方便 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">p∧￢(q→p
+</span></span><span class="line"><span class="cl">(p ↔ q) → r
+</span></span><span class="line"><span class="cl">p → (p ∨ ￢q ∨ r)
+</span></span></code></pre></div><p>还好有 <strong>Julia</strong> ，他可以自定义运算符 <!-- raw HTML omitted -->
+首先将运算符作为一个函数定义(以下例子这样写是因为 <strong>+</strong> 在程序中是特殊符号，需要加一个 <strong>:</strong> 前缀来标识， <strong>Julia</strong> 语言的一个 <strong>feature</strong>) <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">function</span> <span class="n">Base</span><span class="o">.:+</span><span class="p">(</span><span class="n">arg1</span><span class="o">::</span><span class="kt">SomeType</span><span class="p">,</span> <span class="n">arg2</span><span class="o">::</span><span class="kt">SomeType</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">arg1</span> <span class="o">*</span> <span class="n">arg2</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span></code></pre></div><p>解释器就可以把以下语句 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">arg1</span> <span class="o">+</span> <span class="n">arg2</span>
+</span></span></code></pre></div><p>解析为 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">Base</span><span class="o">:+</span><span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">)</span>
+</span></span></code></pre></div><p>如果是调用多次 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">arg1</span> <span class="o">+</span> <span class="n">arg2</span> <span class="o">+</span> <span class="n">arg3</span>
+</span></span></code></pre></div><p>可以看作先对前两个进行求值，得出结果，与第三个参数求值 <!-- raw HTML omitted --></p>
+<h2 id="实现细节">实现细节</h2>
+<h3 id="演示说明">演示说明</h3>
+<p>这里给出一个演示的例子 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">print</span><span class="p">(</span><span class="n">TruthTable</span><span class="p">(</span><span class="s">&#34;(p ↔ q) → r&#34;</span><span class="p">,</span> <span class="p">[</span><span class="ss">:p</span><span class="p">,</span> <span class="ss">:q</span><span class="p">,</span> <span class="ss">:r</span><span class="p">],</span> <span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">p</span> <span class="o">↔</span> <span class="n">q</span><span class="p">)</span> <span class="o">→</span> <span class="n">r</span><span class="p">))</span>
+</span></span></code></pre></div><p>需要自定义真值表的 <!-- raw HTML omitted --></p>
+<ol>
+<li>标题 <!-- raw HTML omitted --></li>
+<li>参数表 <!-- raw HTML omitted --></li>
+<li>生成真值的逻辑函数 <!-- raw HTML omitted --></li>
+</ol>
+<h3 id="运算符定义">运算符定义</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="o">¬</span><span class="p">(</span><span class="n">p</span><span class="o">::</span><span class="kt">Bool</span><span class="p">)</span> <span class="o">=</span> <span class="o">!</span><span class="n">p</span> <span class="c"># negative</span>
+</span></span><span class="line"><span class="cl"><span class="o">∧</span><span class="p">(</span><span class="n">p</span><span class="o">::</span><span class="kt">Bool</span><span class="p">,</span> <span class="n">q</span><span class="o">::</span><span class="kt">Bool</span><span class="p">)</span> <span class="o">=</span> <span class="n">p</span> <span class="o">&amp;&amp;</span> <span class="n">q</span> <span class="c">#conjunction, use \wedge</span>
+</span></span><span class="line"><span class="cl"><span class="o">∨</span><span class="p">(</span><span class="n">p</span><span class="o">::</span><span class="kt">Bool</span><span class="p">,</span> <span class="n">q</span><span class="o">::</span><span class="kt">Bool</span><span class="p">)</span> <span class="o">=</span> <span class="n">p</span> <span class="o">||</span> <span class="n">q</span> <span class="c">#disjunction, use \vee</span>
+</span></span><span class="line"><span class="cl"><span class="o">→</span><span class="p">(</span><span class="n">p</span><span class="o">::</span><span class="kt">Bool</span><span class="p">,</span> <span class="n">q</span><span class="o">::</span><span class="kt">Bool</span><span class="p">)</span> <span class="o">=</span> <span class="k">begin</span> <span class="c">#implication, use \rightarrow</span>
+</span></span><span class="line"><span class="cl">  <span class="o">!</span><span class="p">(</span><span class="n">p</span> <span class="o">==</span> <span class="nb">true</span> <span class="o">&amp;&amp;</span> <span class="n">q</span> <span class="o">==</span> <span class="nb">false</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">↔</span><span class="p">(</span><span class="n">p</span><span class="o">::</span><span class="kt">Bool</span><span class="p">,</span> <span class="n">q</span><span class="o">::</span><span class="kt">Bool</span><span class="p">)</span> <span class="o">=</span> <span class="n">p</span> <span class="o">==</span> <span class="n">q</span> <span class="c">#equivalence, use \leftrightarrow</span>
+</span></span></code></pre></div><p>这些函数我都是通过参考真值表写出来的，一开始看符号推演我都看懵了，他娘的什么玩样，要我死记硬背，还不如自己写一个 <!-- raw HTML omitted --></p>
+<h3 id="真值表结构">真值表结构</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">struct</span> <span class="kt">TruthTable</span>
+</span></span><span class="line"><span class="cl">  <span class="n">caption</span><span class="o">::</span><span class="kt">String</span>
+</span></span><span class="line"><span class="cl">  <span class="n">params</span><span class="o">::</span><span class="kt">Vector</span><span class="p">{</span><span class="kt">Symbol</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">target</span><span class="o">::</span><span class="kt">Function</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span></code></pre></div><p>我为真值表定义了三个 <strong>field</strong>  <!-- raw HTML omitted --></p>
+<ol>
+<li>__caption__ 标题 <!-- raw HTML omitted --></li>
+<li>__target__ 计算出真值的函数定义 <!-- raw HTML omitted --></li>
+<li>__params__ 为 <!-- raw HTML omitted --><!-- raw HTML omitted -->target<!-- raw HTML omitted --><!-- raw HTML omitted --> 配套的参数列表，每个都是符号类型 <!-- raw HTML omitted --></li>
+</ol>
+<h3 id="计算真值并打印">计算真值并打印</h3>
+<p><strong>Julia</strong> 语言中可以重载 <strong>print</strong> 函数来打印 <strong>TruthTable</strong> 结构体，通过访问 <strong>TruthTable</strong> 结构体 <!-- raw HTML omitted -->
+就可以查看对应的真值表 <!-- raw HTML omitted -->
+这里需要用到第三方库 <strong>DataFrames</strong>  <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">function</span> <span class="n">Base</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">truthTable</span><span class="o">::</span><span class="kt">TruthTable</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">table</span> <span class="o">=</span> <span class="n">DataFrames</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="n">len</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">truthTable</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">rows</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">^</span> <span class="n">len</span>
+</span></span><span class="line"><span class="cl">  <span class="n">logicTable</span> <span class="o">=</span> <span class="n">reshape</span><span class="p">(</span><span class="n">collect</span><span class="p">(</span><span class="n">Iterators</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">repeat</span><span class="p">([[</span><span class="nb">true</span><span class="p">,</span> <span class="nb">false</span><span class="p">]],</span> <span class="n">len</span><span class="p">)</span><span class="o">...</span><span class="p">)),</span> <span class="n">rows</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="p">(</span><span class="n">symbol</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span> <span class="k">in</span> <span class="n">Iterators</span><span class="o">.</span><span class="n">zip</span><span class="p">(</span><span class="n">truthTable</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="n">Iterators</span><span class="o">.</span><span class="n">countfrom</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">table</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="n">symbol</span><span class="p">]</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">nums</span> <span class="o">-&gt;</span> <span class="n">nums</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="n">logicTable</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">results</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">nums</span> <span class="o">-&gt;</span> <span class="n">truthTable</span><span class="o">.</span><span class="n">target</span><span class="p">(</span><span class="n">nums</span><span class="o">...</span><span class="p">),</span> <span class="n">logicTable</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">table</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="n">truthTable</span><span class="o">.</span><span class="n">caption</span><span class="p">]</span> <span class="o">=</span> <span class="n">results</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">println</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span></code></pre></div><h2 id="效果展示">效果展示</h2>
+<p><figure><img src="/ox-hugo/shortcut1.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2022-07-02</span>
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="http://example.org/posts/2022/07/parse-logic/" data-title="计算真值表" data-hashtags="真值表"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="http://example.org/posts/2022/07/parse-logic/" data-hashtag="真值表"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="http://example.org/posts/2022/07/parse-logic/" data-title="计算真值表"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="http://example.org/posts/2022/07/parse-logic/" data-title="计算真值表"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.0.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="http://example.org/posts/2022/07/parse-logic/" data-title="计算真值表"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw" aria-hidden="true"></i>&nbsp;<a href="/tags/%E7%9C%9F%E5%80%BC%E8%A1%A8/">真值表</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/2022/07/android-work/" class="prev" rel="prev" title="Android 大作业报告"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>Android 大作业报告</a>
+            <a href="/posts/2022/07/symbolics/" class="next" rel="next" title="Symbolics.jl 简单使用">Symbolics.jl 简单使用<i class="fas fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.101.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

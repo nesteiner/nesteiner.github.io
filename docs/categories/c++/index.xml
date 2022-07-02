@@ -5,10 +5,10 @@
         <description>C&#43;&#43; - Category - My New Hugo Site</description>
         <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sat, 02 Jul 2022 01:54:00 &#43;0800</lastBuildDate><atom:link href="http://example.org/categories/c&#43;&#43;/" rel="self" type="application/rss+xml" /><item>
     <title>C&#43;&#43; 期末作业报告</title>
-    <link>http://example.org/post/2022/07/cppwork/</link>
+    <link>http://example.org/posts/2022/07/cppwork/</link>
     <pubDate>Sat, 02 Jul 2022 01:54:00 &#43;0800</pubDate>
     <author>Author</author>
-    <guid>http://example.org/post/2022/07/cppwork/</guid>
+    <guid>http://example.org/posts/2022/07/cppwork/</guid>
     <description><![CDATA[项目介绍 这次作死来试试手写编辑器，作为一次 Project Based Learning ，我选择了这个教程 这个教程教你在单文件中用 1000 行C代码来实现一个迷你的编辑器，带有代码高亮，无第三方依赖 这个教程一共有7步，每一步教你实现 Setup 环境设置 Entering raw mode 进入终端原始模式 Raw input and output 原始的输入和输出 A text viewer 文本浏览 A text editor 文本编辑 Search 文字搜索 Syntax highlighting 语法高亮 这里由于能力有限，只实现到 文本浏览这一块，不过这个项目挺有意思，我打算有时间接着实现 设计思路 在 Linux 中，可以使用 ANSI 转义码（ANSI escape codes）设置终端的字符显示颜色、移动光标位置、清除字符显示等。 ANSI 转义码是由终端自身支持，独立于编程语言之外，可以在 C 语言、Java、Python、或者 Shell 中使用。 需要补充的是，电脑每秒都在按一定的频率刷新屏幕，在程序里的具体体现为，渲染好当前页面后，刷新，清楚页面，然后接着 把数据渲染上去 基于此，程序功能大致分为这么几块， data 全局数据相关 terminal 终端操作的 init 程序初始化操作 input 处理输入字符的 output 处理输出的，比如刷新屏幕 由于此前用C代码超了一遍源程序，对代码有了一些理解，这里打算用 C++ 来实现一版 另外发现在这个程序中使用类的继承是不合适的，这里用到 C++ 只是用来代替 C ，做一些抽象，少些点代码而已 作为编辑器的程序 这时候程序只是作为一个编辑器，需要响应的就只是光标的移动， 这时程序一共分为三大步 初始化环境 设置终端为原始模式 获取终端窗口大小 循环处理按键 刷新屏幕 读取按键 是 组合键 是 方向键 或 PageUp 或 Home 等按键 是 普通的字符 渲染屏幕 退出 还原终端为规范模式 注意 终端有三种工作模式：规范模式、非规范模式、原始模式 在termios结构的c_lflag中设置ICANNON标志来定义终端以何种模式工作，默认为规范模式。 规范模式 所有输入基于行进行处理。在用户输入一个行结束符（回车符、EOF等）之前， 系统调用 read 函数读不到用户输入的任何字符 其次，除了EOF之外的行结束符与普通字符一样会被 read 函数读取到缓冲区中。一次调用 read 只能读取一行数据。 非规范模式 所有输入时即时有效的，不需要用户另外输入行结束符。 原始模式 是一种特殊的非规范模式，所有的输入数据以字节为单位被处理。即有一个字节输入时，触发输入有效。 这里由于要处理方向键，组合键这类按键，所以选择 原始模式 作为文本浏览的程序 文本浏览不仅要在初始化环境时进入原始模式，还要读入文件 光标的移动由于文件的引入，需要实现 垂直滚动 和 水平滚动 ，需要全局状态来记录光标的位置 cursorx 与 cursory ， 还要记录所在的行数 colsOffset 和列数 rowsOffset ，并与终端窗口大小比较，判断是否需要滚动 除此之外还要处理文本中的制表符 &lsquo;\t&rsquo; ，需要为制表符指定渲染的长度，设置光标移动遇到制表符时，直接调到下一个字符， 这里定义一个新的 renderx 来替代 cursorx 的部分功能，并提供 cursorx 到 renderx 的转换方法 cxtorx 代码实现 主函数 int main(int argc, char * argv[]) { Editor editor; if(argc &gt;= 2) { editor.]]></description>
 </item>
 </channel>

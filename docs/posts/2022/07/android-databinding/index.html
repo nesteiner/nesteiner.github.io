@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>Android 数据绑定简单使用 - My New Hugo Site</title><meta name="Description" content="This is my cool site"><meta property="og:title" content="Android 数据绑定简单使用" />
+<meta property="og:description" content="Android 数据绑定简单使用 这次我们要替代获取控件的方法，以前是使用 findViewById 一个一个拿到控件 现在我们需要直接在 layout 中注入数据对象，我们还要直接通过 id 访问到控件 数据绑定 启用数据绑定 在 build.gradle 中添加如下代码 android { dataBinding { enable = true } } 即可开启数据绑定 修改布局文件 先看 Vue 中的数据绑定是怎样操作的 &lt;template&gt; &lt;div class=&#34;container&#34;&gt; &lt;span&gt; {{data}} &lt;/span&gt; &lt;/div&gt; &lt;/template&gt; &lt;script lang=&#34;ts&#34; setup&gt; const data = &#39;hello&#39; &lt;/script&gt; 在 XML 中 layout 类似 template 使用 data 标签声明数据 假设有数据类型 User public class User { public String name; public String password; public User(String name, String password) { this." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/posts/2022/07/android-databinding/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-07-02T14:39:00+08:00" />
+<meta property="article:modified_time" content="2022-07-02T14:48:21+08:00" /><meta property="og:site_name" content="My cool site" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Android 数据绑定简单使用"/>
+<meta name="twitter:description" content="Android 数据绑定简单使用 这次我们要替代获取控件的方法，以前是使用 findViewById 一个一个拿到控件 现在我们需要直接在 layout 中注入数据对象，我们还要直接通过 id 访问到控件 数据绑定 启用数据绑定 在 build.gradle 中添加如下代码 android { dataBinding { enable = true } } 即可开启数据绑定 修改布局文件 先看 Vue 中的数据绑定是怎样操作的 &lt;template&gt; &lt;div class=&#34;container&#34;&gt; &lt;span&gt; {{data}} &lt;/span&gt; &lt;/div&gt; &lt;/template&gt; &lt;script lang=&#34;ts&#34; setup&gt; const data = &#39;hello&#39; &lt;/script&gt; 在 XML 中 layout 类似 template 使用 data 标签声明数据 假设有数据类型 User public class User { public String name; public String password; public User(String name, String password) { this."/>
+<meta name="application-name" content="My cool site">
+<meta name="apple-mobile-web-app-title" content="My cool site"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://example.org/posts/2022/07/android-databinding/" /><link rel="prev" href="http://example.org/posts/2022/07/android-communication/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Android 数据绑定简单使用",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/example.org\/posts\/2022\/07\/android-databinding\/"
+        },"genre": "posts","keywords": "数据绑定","wordcount":  325 ,
+        "url": "http:\/\/example.org\/posts\/2022\/07\/android-databinding\/","datePublished": "2022-07-02T14:39:00+08:00","dateModified": "2022-07-02T14:48:21+08:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "Author"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="My New Hugo Site">My cool site</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="My New Hugo Site">My cool site</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Android 数据绑定简单使用</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Author</a></span>&nbsp;<span class="post-category">included in <a href="/categories/android/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Android</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2022-07-02">2022-07-02</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;325 words&nbsp;
+                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;2 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#android-数据绑定简单使用">Android 数据绑定简单使用</a>
+      <ul>
+        <li><a href="#数据绑定">数据绑定</a></li>
+        <li><a href="#响应式数据绑定">响应式数据绑定</a></li>
+        <li><a href="#补充">补充</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="android-数据绑定简单使用">Android 数据绑定简单使用</h2>
+<p>这次我们要替代获取控件的方法，以前是使用 <code>findViewById</code> 一个一个拿到控件 <!-- raw HTML omitted -->
+现在我们需要直接在 <code>layout</code> 中注入数据对象，我们还要直接通过 <code>id</code> 访问到控件 <!-- raw HTML omitted --></p>
+<h3 id="数据绑定">数据绑定</h3>
+<h4 id="启用数据绑定">启用数据绑定</h4>
+<p>在 <code>build.gradle</code> 中添加如下代码 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-groovy" data-lang="groovy"><span class="line"><span class="cl"><span class="n">android</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dataBinding</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">enable</span> <span class="o">=</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></div><p>即可开启数据绑定 <!-- raw HTML omitted --></p>
+<h4 id="修改布局文件">修改布局文件</h4>
+<p>先看 <strong>Vue</strong> 中的数据绑定是怎样操作的 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-vue" data-lang="vue"><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">template</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;container&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span> <span class="p">{{</span><span class="nx">data</span><span class="p">}}</span> <span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">template</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">script</span> <span class="na">lang</span><span class="o">=</span><span class="s">&#34;ts&#34;</span> <span class="na">setup</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">const</span> <span class="nx">data</span> <span class="o">=</span> <span class="s1">&#39;hello&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></span></code></pre></div><p>在 <strong>XML</strong> 中 <!-- raw HTML omitted --></p>
+<ul>
+<li><code>layout</code> 类似 <code>template</code> <!-- raw HTML omitted --></li>
+<li>使用 <code>data</code> 标签声明数据 <!-- raw HTML omitted --></li>
+</ul>
+<p>假设有数据类型 <code>User</code> <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">User</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">String</span> <span class="n">password</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="nf">User</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">,</span> <span class="n">String</span> <span class="n">password</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">	<span class="k">this</span><span class="o">.</span><span class="na">password</span> <span class="o">=</span> <span class="n">password</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></div><p>先在 <code>activity_main</code> 中声明数据 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;data&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;varibale</span> <span class="na">name=</span><span class="s">&#34;userInfo&#34;</span> <span class="na">type=</span><span class="s">&#34;com.example.databinding.User&#34;</span><span class="nt">/&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/data&gt;</span>
+</span></span></code></pre></div><p>再在控件中注入数据 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;LinearLayout</span>
+</span></span><span class="line"><span class="cl">     <span class="na">android:layout_width=</span><span class="s">&#34;match_parent&#34;</span>
+</span></span><span class="line"><span class="cl">     <span class="na">android:layout_height=</span><span class="s">&#34;match_parent&#34;</span>
+</span></span><span class="line"><span class="cl">     <span class="na">android:layout_margin=</span><span class="s">&#34;20dp&#34;</span>
+</span></span><span class="line"><span class="cl">     <span class="na">android:orientation=</span><span class="s">&#34;vertical&#34;</span><span class="nt">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;TextView</span> <span class="na">android:id=</span><span class="s">&#34;@+id/tv_userName&#34;</span>
+</span></span><span class="line"><span class="cl">	      <span class="na">android:text=</span><span class="s">&#34;@{userInfo.name}&#34;</span> <span class="nt">/&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;TextView</span> <span class="na">android:text=</span><span class="s">&#34;@{userInfo.password}&#34;</span> <span class="nt">/&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/LinearLayout&gt;</span>
+</span></span></code></pre></div><p>完整代码 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34;?&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;layout</span> <span class="na">xmlns:android=</span><span class="s">&#34;http://schemas.android.com/apk/res/android&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="na">xmlns:tools=</span><span class="s">&#34;http://schemas.android.com/tools&#34;</span><span class="nt">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;data&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&lt;import</span> <span class="na">type=</span><span class="s">&#34;com.leavesc.databinding_demo.model.User&#34;</span> <span class="nt">/&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&lt;variable</span>
+</span></span><span class="line"><span class="cl">	    <span class="na">name=</span><span class="s">&#34;userInfo&#34;</span>
+</span></span><span class="line"><span class="cl">	    <span class="na">type=</span><span class="s">&#34;User&#34;</span> <span class="nt">/&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;/data&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;LinearLayout</span>
+</span></span><span class="line"><span class="cl">	<span class="na">android:layout_width=</span><span class="s">&#34;match_parent&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="na">android:layout_height=</span><span class="s">&#34;match_parent&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="na">android:layout_margin=</span><span class="s">&#34;20dp&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="na">android:orientation=</span><span class="s">&#34;vertical&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="na">tools:context=</span><span class="s">&#34;com.leavesc.databinding_demo.Main2Activity&#34;</span><span class="nt">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nt">&lt;TextView</span>
+</span></span><span class="line"><span class="cl">	    <span class="na">android:id=</span><span class="s">&#34;@+id/tv_userName&#34;</span>
+</span></span><span class="line"><span class="cl">	    <span class="err">···</span>
+</span></span><span class="line"><span class="cl">	    <span class="na">android:text=</span><span class="s">&#34;@{userInfo.name}&#34;</span> <span class="nt">/&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nt">&lt;TextView</span>
+</span></span><span class="line"><span class="cl">	    <span class="err">···</span>
+</span></span><span class="line"><span class="cl">	    <span class="na">android:text=</span><span class="s">&#34;@{userInfo.password}&#34;</span> <span class="nt">/&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;/LinearLayout&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/layout&gt;</span>
+</span></span></code></pre></div><h4 id="修改-mainactivity-类">修改 MainActivity 类</h4>
+<p>在 <code>Activity</code> 中 <!-- raw HTML omitted --></p>
+<ul>
+<li>通过 <code>DataBindingUtil</code> 设置布局文件 <!-- raw HTML omitted --></li>
+<li>数据绑定对象 <code>ActivityMainBinding</code> 的实例名根据布局文件名来生成 <!-- raw HTML omitted --></li>
+<li>数据绑定对象通过 <code>setXXX</code> 方法注入数据 <!-- raw HTML omitted --></li>
+</ul>
+<!-- raw HTML omitted -->
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl"><span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onCreate</span><span class="o">(</span><span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">super</span><span class="o">.</span><span class="na">onCreate</span><span class="o">(</span><span class="n">savedInstanceState</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ActivityMainBinding</span> <span class="n">activityMainBinding</span> <span class="o">=</span> <span class="n">DataBindingUtil</span><span class="o">.</span><span class="na">setContentView</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">activity_main</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">User</span> <span class="n">user</span> <span class="o">=</span> <span class="k">new</span> <span class="n">User</span><span class="o">(</span><span class="s">&#34;leavesC&#34;</span><span class="o">,</span> <span class="s">&#34;123456&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">activityMainBinding</span><span class="o">.</span><span class="na">setUserInfo</span><span class="o">(</span><span class="n">user</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></div><h3 id="响应式数据绑定">响应式数据绑定</h3>
+<p>参考 <strong>Vue</strong> 响应式， <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-vue" data-lang="vue"><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">template</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;container&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span> <span class="p">{{</span><span class="nx">data</span><span class="p">}}</span> <span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">template</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">script</span> <span class="na">lang</span><span class="o">=</span><span class="s">&#34;ts&#34;</span> <span class="na">setup</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">const</span> <span class="nx">data</span> <span class="o">=</span> <span class="nx">ref</span><span class="p">(</span><span class="s1">&#39;hello&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></span></code></pre></div><p>只需要用 <code>ref</code> 包裹数据即可 <!-- raw HTML omitted -->
+而在 Android 中也需要用 <code>ObservableField</code> 模板类包装数据 <!-- raw HTML omitted -->
+这里定义一个 <code>ObservableGoods</code> 类型 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ObservableGoods</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">ObservableField</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">name</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">ObservableField</span><span class="o">&lt;</span><span class="n">Float</span><span class="o">&gt;</span> <span class="n">price</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">ObservableField</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">details</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="nf">ObservableGoods</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">,</span> <span class="kt">float</span> <span class="n">price</span><span class="o">,</span> <span class="n">String</span> <span class="n">details</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ObservableField</span><span class="o">&lt;&gt;(</span><span class="n">name</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">	<span class="k">this</span><span class="o">.</span><span class="na">price</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ObservableField</span><span class="o">&lt;&gt;(</span><span class="n">price</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">	<span class="k">this</span><span class="o">.</span><span class="na">details</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ObservableField</span><span class="o">&lt;&gt;(</span><span class="n">details</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></div><p>同上注入数据即可 <!-- raw HTML omitted --></p>
+<h3 id="补充">补充</h3>
+<h4 id="fragment">Fragment</h4>
+<p>假设 <code>Fragment</code> 有布局文件 <code>fragment_collection</code> ，在 <code>onCreateView</code> 中 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Nullable</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="n">View</span> <span class="nf">onCreateView</span><span class="o">(</span><span class="nd">@NonNull</span> <span class="n">LayoutInflater</span> <span class="n">inflater</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">ViewGroup</span> <span class="n">container</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">FragmentCollectionBinding</span> <span class="n">binding</span> <span class="o">=</span> <span class="n">DataBindingUtil</span><span class="o">.</span><span class="na">inflate</span><span class="o">(</span><span class="n">inflater</span><span class="o">,</span> <span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">fragment_collection</span><span class="o">,</span> <span class="n">container</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">binding</span><span class="o">.</span><span class="na">getRoot</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></div><h4 id="替代-findviewbyid">替代 findViewById</h4>
+<p>假设在布局文件中有 <code>id</code> 为 <code>tvUserName</code> 的控件，获取控件可以 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">activityMainBinding</span><span class="o">.</span><span class="na">tvUserName</span><span class="o">.</span><span class="na">setText</span><span class="o">(</span><span class="s">&#34;Hello&#34;</span><span class="o">);</span>
+</span></span></code></pre></div><h4 id="observable-容器类">Observable 容器类</h4>
+<p><code>DataBinding</code> 也提供了包装类用于替代原生的 List 和 Map，分别是 ObservableList 和 ObservableMap <!-- raw HTML omitted -->
+当其包含的数据发生变化时，绑定的视图也会随之进行刷新 <!-- raw HTML omitted -->
+不过在布局文件声明中指定模板类型的时候需要转义符 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;layout</span> <span class="na">xmlns:android=</span><span class="s">&#34;http://schemas.android.com/apk/res/android&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="na">xmlns:tools=</span><span class="s">&#34;http://schemas.android.com/tools&#34;</span><span class="nt">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;data&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&lt;import</span> <span class="na">type=</span><span class="s">&#34;android.databinding.ObservableList&#34;</span><span class="nt">/&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&lt;import</span> <span class="na">type=</span><span class="s">&#34;android.databinding.ObservableMap&#34;</span><span class="nt">/&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&lt;variable</span>
+</span></span><span class="line"><span class="cl">	    <span class="na">name=</span><span class="s">&#34;list&#34;</span>
+</span></span><span class="line"><span class="cl">	    <span class="na">type=</span><span class="s">&#34;ObservableList&amp;lt;String&amp;gt;&#34;</span><span class="nt">/&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&lt;variable</span>
+</span></span><span class="line"><span class="cl">	    <span class="na">name=</span><span class="s">&#34;map&#34;</span>
+</span></span><span class="line"><span class="cl">	    <span class="na">type=</span><span class="s">&#34;ObservableMap&amp;lt;String,String&amp;gt;&#34;</span><span class="nt">/&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&lt;variable</span>
+</span></span><span class="line"><span class="cl">	    <span class="na">name=</span><span class="s">&#34;index&#34;</span>
+</span></span><span class="line"><span class="cl">	    <span class="na">type=</span><span class="s">&#34;int&#34;</span><span class="nt">/&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&lt;variable</span>
+</span></span><span class="line"><span class="cl">	    <span class="na">name=</span><span class="s">&#34;key&#34;</span>
+</span></span><span class="line"><span class="cl">	    <span class="na">type=</span><span class="s">&#34;String&#34;</span><span class="nt">/&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;/data&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;LinearLayout</span>
+</span></span><span class="line"><span class="cl">	<span class="na">android:layout_width=</span><span class="s">&#34;match_parent&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="na">android:layout_height=</span><span class="s">&#34;match_parent&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="na">android:orientation=</span><span class="s">&#34;vertical&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="na">tools:context=</span><span class="s">&#34;com.leavesc.databinding_demo.Main12Activity&#34;</span><span class="nt">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nt">&lt;TextView</span>
+</span></span><span class="line"><span class="cl">	    <span class="na">android:padding=</span><span class="s">&#34;20dp&#34;</span>
+</span></span><span class="line"><span class="cl">	    <span class="na">android:text=</span><span class="s">&#34;@{list[index],default=xx}&#34;</span><span class="nt">/&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nt">&lt;TextView</span>
+</span></span><span class="line"><span class="cl">	    <span class="na">android:layout_marginTop=</span><span class="s">&#34;20dp&#34;</span>
+</span></span><span class="line"><span class="cl">	    <span class="na">android:padding=</span><span class="s">&#34;20dp&#34;</span>
+</span></span><span class="line"><span class="cl">	    <span class="na">android:text=</span><span class="s">&#34;@{map[key],default=yy}&#34;</span><span class="nt">/&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;/LinearLayout&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/layout&gt;</span>
+</span></span></code></pre></div></div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2022-07-02</span>
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="http://example.org/posts/2022/07/android-databinding/" data-title="Android 数据绑定简单使用" data-hashtags="数据绑定"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="http://example.org/posts/2022/07/android-databinding/" data-hashtag="数据绑定"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="http://example.org/posts/2022/07/android-databinding/" data-title="Android 数据绑定简单使用"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="http://example.org/posts/2022/07/android-databinding/" data-title="Android 数据绑定简单使用"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.0.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="http://example.org/posts/2022/07/android-databinding/" data-title="Android 数据绑定简单使用"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw" aria-hidden="true"></i>&nbsp;<a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%91%E5%AE%9A/">数据绑定</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/2022/07/android-communication/" class="prev" rel="prev" title="Android 通信简单应用"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>Android 通信简单应用</a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.101.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>ViewPager 简单使用 - My New Hugo Site</title><meta name="Description" content="This is my cool site"><meta property="og:title" content="ViewPager 简单使用" />
+<meta property="og:description" content="ViewPager ViewPager 简单来说就是一个能滑动切换视图的控件，由一个 Activity 包裹，总体结构是 Activity adapter fragment fragment fragment 其中 Activity 通过 adapter 来操作 fragment 显示 Activity 布局 activity_pageview.xml &lt;RelativeLayout xmlns:android=&#34;http://schemas.android.com/apk/res/android&#34; xmlns:tools=&#34;http://schemas.android.com/tools&#34; android:layout_width=&#34;match_parent&#34; android:layout_height=&#34;match_parent&#34; &gt; &lt;androidx.viewpager.widget.ViewPager android:id=&#34;@&#43;id/viewpager&#34; android:layout_width=&#34;fill_parent&#34; android:layout_height=&#34;fill_parent&#34; /&gt; &lt;/RelativeLayout&gt; PageViewActivity.java public class PageViewActivity extends FragmentActivity { MyPageAdapter pageAdapter; @Override public void onCreate(Bundle savedInstanceState) { super.onCreate(savedInstanceState); setContentView(R.layout.activity_page_view); List&lt;Fragment&gt; fragments = getFragments(); pageAdapter = new MyPageAdapter(getSupportFragmentManager(), fragments); ViewPager pager = (ViewPager) findViewById(R.id.viewpager); pager.setAdapter(pageAdapter); } private List&lt;Fragment&gt; getFragments() { List&lt;Fragment&gt; fList = new ArrayList&lt;Fragment&gt;(); fList." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/posts/2022/07/viewpager/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-07-02T14:37:00+08:00" />
+<meta property="article:modified_time" content="2022-07-02T14:47:05+08:00" /><meta property="og:site_name" content="My cool site" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="ViewPager 简单使用"/>
+<meta name="twitter:description" content="ViewPager ViewPager 简单来说就是一个能滑动切换视图的控件，由一个 Activity 包裹，总体结构是 Activity adapter fragment fragment fragment 其中 Activity 通过 adapter 来操作 fragment 显示 Activity 布局 activity_pageview.xml &lt;RelativeLayout xmlns:android=&#34;http://schemas.android.com/apk/res/android&#34; xmlns:tools=&#34;http://schemas.android.com/tools&#34; android:layout_width=&#34;match_parent&#34; android:layout_height=&#34;match_parent&#34; &gt; &lt;androidx.viewpager.widget.ViewPager android:id=&#34;@&#43;id/viewpager&#34; android:layout_width=&#34;fill_parent&#34; android:layout_height=&#34;fill_parent&#34; /&gt; &lt;/RelativeLayout&gt; PageViewActivity.java public class PageViewActivity extends FragmentActivity { MyPageAdapter pageAdapter; @Override public void onCreate(Bundle savedInstanceState) { super.onCreate(savedInstanceState); setContentView(R.layout.activity_page_view); List&lt;Fragment&gt; fragments = getFragments(); pageAdapter = new MyPageAdapter(getSupportFragmentManager(), fragments); ViewPager pager = (ViewPager) findViewById(R.id.viewpager); pager.setAdapter(pageAdapter); } private List&lt;Fragment&gt; getFragments() { List&lt;Fragment&gt; fList = new ArrayList&lt;Fragment&gt;(); fList."/>
+<meta name="application-name" content="My cool site">
+<meta name="apple-mobile-web-app-title" content="My cool site"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://example.org/posts/2022/07/viewpager/" /><link rel="prev" href="http://example.org/posts/2022/07/fragment/" /><link rel="next" href="http://example.org/posts/2022/07/android-theme/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "ViewPager 简单使用",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/example.org\/posts\/2022\/07\/viewpager\/"
+        },"genre": "posts","keywords": "ViewPager","wordcount":  241 ,
+        "url": "http:\/\/example.org\/posts\/2022\/07\/viewpager\/","datePublished": "2022-07-02T14:37:00+08:00","dateModified": "2022-07-02T14:47:05+08:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "Author"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="My New Hugo Site">My cool site</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="My New Hugo Site">My cool site</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">ViewPager 简单使用</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Author</a></span>&nbsp;<span class="post-category">included in <a href="/categories/android/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Android</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2022-07-02">2022-07-02</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;241 words&nbsp;
+                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;2 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#viewpager">ViewPager</a>
+      <ul>
+        <li><a href="#activity-布局">Activity 布局</a></li>
+        <li><a href="#adapter-介绍">Adapter 介绍</a></li>
+        <li><a href="#fragment-布局">Fragment 布局</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="viewpager">ViewPager</h2>
+<p><code>ViewPager</code> 简单来说就是一个能滑动切换视图的控件，由一个 <code>Activity</code> 包裹，总体结构是 <!-- raw HTML omitted --></p>
+<ul>
+<li><code>Activity</code> <!-- raw HTML omitted -->
+<ul>
+<li><strong>adapter</strong> <!-- raw HTML omitted -->
+<ul>
+<li><code>fragment</code> <!-- raw HTML omitted --></li>
+<li><code>fragment</code> <!-- raw HTML omitted --></li>
+<li><code>fragment</code> <!-- raw HTML omitted --></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>其中 <code>Activity</code> 通过 <strong>adapter</strong> 来操作 <code>fragment</code> 显示 <!-- raw HTML omitted --></p>
+<h3 id="activity-布局">Activity 布局</h3>
+<p><code>activity_pageview.xml</code> <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;RelativeLayout</span> <span class="na">xmlns:android=</span><span class="s">&#34;http://schemas.android.com/apk/res/android&#34;</span>
+</span></span><span class="line"><span class="cl">		<span class="na">xmlns:tools=</span><span class="s">&#34;http://schemas.android.com/tools&#34;</span>
+</span></span><span class="line"><span class="cl">		<span class="na">android:layout_width=</span><span class="s">&#34;match_parent&#34;</span>
+</span></span><span class="line"><span class="cl">		<span class="na">android:layout_height=</span><span class="s">&#34;match_parent&#34;</span> <span class="nt">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;androidx.viewpager.widget.ViewPager</span>
+</span></span><span class="line"><span class="cl">      <span class="na">android:id=</span><span class="s">&#34;@+id/viewpager&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="na">android:layout_width=</span><span class="s">&#34;fill_parent&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="na">android:layout_height=</span><span class="s">&#34;fill_parent&#34;</span> <span class="nt">/&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/RelativeLayout&gt;</span>
+</span></span></code></pre></div><p><code>PageViewActivity.java</code> <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">PageViewActivity</span> <span class="kd">extends</span> <span class="n">FragmentActivity</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">MyPageAdapter</span> <span class="n">pageAdapter</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onCreate</span><span class="o">(</span><span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">super</span><span class="o">.</span><span class="na">onCreate</span><span class="o">(</span><span class="n">savedInstanceState</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">setContentView</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">activity_page_view</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="n">List</span><span class="o">&lt;</span><span class="n">Fragment</span><span class="o">&gt;</span> <span class="n">fragments</span> <span class="o">=</span> <span class="n">getFragments</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="n">pageAdapter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MyPageAdapter</span><span class="o">(</span><span class="n">getSupportFragmentManager</span><span class="o">(),</span> <span class="n">fragments</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="n">ViewPager</span> <span class="n">pager</span> <span class="o">=</span> <span class="o">(</span><span class="n">ViewPager</span><span class="o">)</span> <span class="n">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">viewpager</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">pager</span><span class="o">.</span><span class="na">setAdapter</span><span class="o">(</span><span class="n">pageAdapter</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Fragment</span><span class="o">&gt;</span> <span class="nf">getFragments</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">List</span><span class="o">&lt;</span><span class="n">Fragment</span><span class="o">&gt;</span> <span class="n">fList</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">Fragment</span><span class="o">&gt;();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="n">fList</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">MyFragment</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="s">&#34;Fragment 1&#34;</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fList</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">MyFragment</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="s">&#34;Fragment 2&#34;</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">	<span class="n">fList</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">MyFragment</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="s">&#34;Fragment 3&#34;</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">fList</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></div><h3 id="adapter-介绍">Adapter 介绍</h3>
+<p><code>Adapter</code> 虽然有三种，但这里只需要介绍 <code>FragmentPagerAdapter</code> 与 <code>FragmentStatePagerAdapter</code> 即可，他们两个需要重写的方法是一致的 <!-- raw HTML omitted --></p>
+<h4 id="fragmentpageradapter">FragmentPagerAdapter</h4>
+<ul>
+<li><code>FragmentPagerAdapter</code> 是 <code>PagerAdapter</code> 中的其中一种实现 <!-- raw HTML omitted --></li>
+<li>它将每一个页面表示为一个 <code>Fragment</code> ，并且每一个 <code>Fragment</code> 都将会保存到 <code>fragment manager</code> 当中 <!-- raw HTML omitted --></li>
+<li>这种pager十分适用于有一些静态 <code>fragment</code> ，例如一组 <code>tabs</code> 的时候使用 <!-- raw HTML omitted --></li>
+<li>每个页面对应的 <code>Fragment</code> 当用户可以访问的时候会一直存在内存中，但是，当这个页面不可见的时候，view hierarchy将会被销毁 <!-- raw HTML omitted --></li>
+<li>这样子会导致应用程序占有太多资源。当页面数量比较大的时候，建议使用 <code>FragmentStatePagerAdapter</code> <!-- raw HTML omitted --></li>
+</ul>
+<h4 id="fragmentstatepageradapter">FragmentStatePagerAdapter</h4>
+<ul>
+<li>当使用FragmentStatePagerAdapter 时，实现将只保留当前页面，当页面离开视线后，就会被消除，释放其资源 <!-- raw HTML omitted --></li>
+<li>而在页面需要显示时，生成新的页面 <!-- raw HTML omitted --></li>
+<li>这么实现的好处就是当拥有大量的页面时，不必在内存中占用大量的内存 <!-- raw HTML omitted --></li>
+</ul>
+<h4 id="实例">实例</h4>
+<p><code>MyPageAdapter.java</code> <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyPageAdapter</span> <span class="kd">extends</span> <span class="n">FragmentStatePagerAdapter</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Fragment</span><span class="o">&gt;</span> <span class="n">fragments</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="nf">MyPageAdapter</span><span class="o">(</span><span class="n">FragmentManager</span> <span class="n">fm</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Fragment</span><span class="o">&gt;</span> <span class="n">fragments</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">super</span><span class="o">(</span><span class="n">fm</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">	<span class="k">this</span><span class="o">.</span><span class="na">fragments</span> <span class="o">=</span> <span class="n">fragments</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">Fragment</span> <span class="nf">getItem</span><span class="o">(</span><span class="kt">int</span> <span class="n">position</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">fragments</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">position</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getCount</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">fragments</span><span class="o">.</span><span class="na">size</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></div><h3 id="fragment-布局">Fragment 布局</h3>
+<p><code>fragment_layout.xml</code> <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34;?&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;TextView</span> <span class="na">xmlns:android=</span><span class="s">&#34;http://schemas.android.com/apk/res/android&#34;</span>
+</span></span><span class="line"><span class="cl">	  <span class="na">android:id=</span><span class="s">&#34;@+id/tv_bg&#34;</span>
+</span></span><span class="line"><span class="cl">	  <span class="na">android:layout_width=</span><span class="s">&#34;match_parent&#34;</span>
+</span></span><span class="line"><span class="cl">	  <span class="na">android:layout_height=</span><span class="s">&#34;match_parent&#34;</span>
+</span></span><span class="line"><span class="cl">	  <span class="na">android:gravity=</span><span class="s">&#34;center_horizontal&#34;</span>
+</span></span><span class="line"><span class="cl">	  <span class="na">android:paddingTop=</span><span class="s">&#34;100dp&#34;</span><span class="nt">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/TextView&gt;</span>
+</span></span></code></pre></div><p><code>MyFragment.java</code> <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyFragment</span> <span class="kd">extends</span> <span class="n">Fragment</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">EXTRA_MESSAGE</span> <span class="o">=</span> <span class="s">&#34;EXTRA_MESSAGE&#34;</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">MyFragment</span> <span class="nf">newInstance</span><span class="o">(</span><span class="n">String</span> <span class="n">message</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">MyFragment</span> <span class="n">f</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MyFragment</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Bundle</span> <span class="n">bdl</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Bundle</span><span class="o">(</span><span class="n">1</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">bdl</span><span class="o">.</span><span class="na">putString</span><span class="o">(</span><span class="n">EXTRA_MESSAGE</span><span class="o">,</span> <span class="n">message</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">f</span><span class="o">.</span><span class="na">setArguments</span><span class="o">(</span><span class="n">bdl</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">f</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">View</span> <span class="nf">onCreateView</span><span class="o">(</span><span class="n">LayoutInflater</span> <span class="n">inflater</span><span class="o">,</span> <span class="n">ViewGroup</span> <span class="n">container</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">			     <span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">String</span> <span class="n">message</span> <span class="o">=</span> <span class="n">getArguments</span><span class="o">().</span><span class="na">getString</span><span class="o">(</span><span class="n">EXTRA_MESSAGE</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">View</span> <span class="n">v</span> <span class="o">=</span> <span class="n">inflater</span><span class="o">.</span><span class="na">inflate</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">myfragment_layout</span><span class="o">,</span> <span class="n">container</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">TextView</span> <span class="n">messageTextView</span> <span class="o">=</span> <span class="o">(</span><span class="n">TextView</span><span class="o">)</span><span class="n">v</span><span class="o">.</span><span class="na">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">textView</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">messageTextView</span><span class="o">.</span><span class="na">setText</span><span class="o">(</span><span class="n">message</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">v</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></div></div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2022-07-02</span>
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="http://example.org/posts/2022/07/viewpager/" data-title="ViewPager 简单使用" data-hashtags="ViewPager"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="http://example.org/posts/2022/07/viewpager/" data-hashtag="ViewPager"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="http://example.org/posts/2022/07/viewpager/" data-title="ViewPager 简单使用"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="http://example.org/posts/2022/07/viewpager/" data-title="ViewPager 简单使用"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.0.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="http://example.org/posts/2022/07/viewpager/" data-title="ViewPager 简单使用"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw" aria-hidden="true"></i>&nbsp;<a href="/tags/viewpager/">ViewPager</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/2022/07/fragment/" class="prev" rel="prev" title="Android Fragment 简单使用"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>Android Fragment 简单使用</a>
+            <a href="/posts/2022/07/android-theme/" class="next" rel="next" title="Android 样式与主题">Android 样式与主题<i class="fas fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.101.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

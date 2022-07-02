@@ -3,20 +3,28 @@
         <title>Flutter - Tag - My New Hugo Site</title>
         <link>http://example.org/tags/flutter/</link>
         <description>Flutter - Tag - My New Hugo Site</description>
-        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sat, 02 Jul 2022 01:43:00 &#43;0800</lastBuildDate><atom:link href="http://example.org/tags/flutter/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sat, 02 Jul 2022 14:29:00 &#43;0800</lastBuildDate><atom:link href="http://example.org/tags/flutter/" rel="self" type="application/rss+xml" /><item>
+    <title>Android 大作业报告</title>
+    <link>http://example.org/posts/2022/07/android-work/</link>
+    <pubDate>Sat, 02 Jul 2022 14:29:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/posts/2022/07/android-work/</guid>
+    <description><![CDATA[项目介绍 这次的大作业用的 Flutter 框架，虽然构建 UI 界面很容易，难的是各个组件之间的通信，以及对 async/await 的异步操作 这个应用由于时间原因选择了 Flutter 来开发，只实现了登录界面，笔记界面，通知界面 由于还没有对应用进行优化，解耦，数据库的操作只有应用开启时的读取数据，删除，添加，修改操作都没有实现 功能结构 登录界面 这里只提供了登录界面，没有提供登录的相关操作，不过表单还是有的 笔记界面 笔记界面的每一项由一个 NoteCard 组件构成，只提供了编辑功能，路由切换后会重置 需要编辑时点击右边的三点按钮，扩展的编辑面板显示 编辑完成后，点击 Save 保存之后 消息界面 消息界面完全仿照 原来的应用，没有什么稀奇的 设计类 这里介绍下这个项目的结构，重点不是代码，从入口讲起 入口类 void main() =&gt; runApp(App()); class App extends StatelessWidget { final title = &#39;HomeApp&#39;; @override Widget build(BuildContext context) { // TODO: implement build return MaterialApp( title: title, home: Home(), ); } } 主页的设计 主页中由三个页面，需要引入一个 TabView 组件来进行路由切换 其中主页为 class Home extends StatefulWidget { @override HomeState createState() =&gt; HomeState(); } 主页的构建由另一个类 HomeState 来实现，在其中使用 TabView class HomeState extends State&lt;Home&gt; with SingleTickerProviderStateMixin{ late final TabController controller = TabController(length: 3, vsync: this); @override void dispose() { // TODO: implement dispose controller.]]></description>
+</item>
+<item>
     <title>Flutter 中 provider 的使用</title>
-    <link>http://example.org/post/2022/07/provider/</link>
+    <link>http://example.org/posts/2022/07/provider/</link>
     <pubDate>Sat, 02 Jul 2022 01:43:00 &#43;0800</pubDate>
     <author>Author</author>
-    <guid>http://example.org/post/2022/07/provider/</guid>
+    <guid>http://example.org/posts/2022/07/provider/</guid>
     <description><![CDATA[Provider 的引入 Provider 解决的是组件之间传递数据的问题 在 Vue 中，父组件通过 props 传递数据给子组件，子组件通过 $emit 通知父组件，然后 Vue 重新渲染 DOM 在 Vue 中，也可以使用 provider 和 inject 传递数据，不过不能很好的处理响应性 与 Vue 相同的是，Flutter 的 Provider 的引入解决了数据传递中嵌套组件过多的问题，若在当前节点没有找到 Provider 组件， 则会通过上下文寻找 Provider ，直至找到 不过想使用 Provider，父组件得暴露出一个对象用以交互， 而这个对象得继承自 ChangeNotifier 以 ChangeNotifierProvider为例 ChangeNotifierProvider( builder: (context) =&gt; ExposedObject, child: ... ) 子组件想使用其中的值，得通过 Consumer 组件或者 context.read&lt;ExposedType&gt; Consumer( create: (context, ExposedType expose, child) { // call expose } ) var expose = context.read&lt;ExposedType&gt;(); 注意 除了 context.read 外，还有 context.]]></description>
 </item>
 <item>
     <title>Flutter Counter</title>
-    <link>http://example.org/post/2022/07/counter/</link>
+    <link>http://example.org/posts/2022/07/counter/</link>
     <pubDate>Sat, 02 Jul 2022 01:42:00 &#43;0800</pubDate>
     <author>Author</author>
-    <guid>http://example.org/post/2022/07/counter/</guid>
+    <guid>http://example.org/posts/2022/07/counter/</guid>
     <description><![CDATA[如何写一个 Flutter 应用 我们从一个计数器讲起， 首先建立 Counter 类 class Counter extends StatelessWidget { Counter(): super(); @override Widget build(BuildContext context) { // TODO: implement build return MaterialApp( title: &#39;Flutter Counter&#39;, theme: ThemeData(primarySwatch: Colors.blue), home: CounterHomePage(title: &#39;Flutter Counter Home Page&#39;), ); } } 在内部定义了构造方法，并且重构了 build 方法 其中 build 方法返回了一个 MaterialApp ，这就是 Flutter 提供的根组件，接下来只需提供一个 Widget ，将其赋值给 home 作为主页程序即可 再来看看赋值 home 的组件 CounterHomePage 是怎么写的 class CounterHomePage extends StatefulWidget { CounterHomePage({this.title = &#39;Hello World&#39;}): super(); String title; @override CounterHomePageState createState() =&gt; CounterHomePageState(); } 这个类继承自 StatefulWidget ，与 Counter 类继承的 StatelessWidget 成对比， Counter 是无状态的组件， CounterHomePage 是有状态的组件 其中重写了 StatefulWidget 的 createState 方法，返回值是用来管理其状态的 CounterHomePageState class CounterHomePageState extends State&lt;CounterHomePage&gt; { int count = 0; void incrementCount() { setState(() { count += 1; }); } @override Widget build(BuildContext context) { // TODO: implement build return Scaffold( appBar: AppBar(title: Text(widget.]]></description>
 </item>
 </channel>

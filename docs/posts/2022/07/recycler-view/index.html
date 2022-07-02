@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>RecyclerView 简单使用 - My New Hugo Site</title><meta name="Description" content="This is my cool site"><meta property="og:title" content="RecyclerView 简单使用" />
+<meta property="og:description" content="RecyclerView 这个 View 的使用当初我用的不是很明白，现在有点懂了，我们自顶向下设计 View 代码总览 在 MainActivity 中， @Override protected void onCreate(Bundle savedInstanceState) { super.onCreate(savedInstanceState); setContentView(R.layout.activity_main); RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview); List&lt;Integer&gt; data = Stream.iterate(1, n -&gt; n &#43; 1).limit(100).collect(Collectors.toList()); CustomAdapter adapter = new CustomAdapter(data); RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 4); recyclerView.setAdapter(adapter); recyclerView.setLayoutManager(layoutManager); } 我们 定义了一个 RecyclerView 定义了一个 CustomAdapter 为 CustomAdapter 提供了数据 为 RecyclerView 设置 adapter 为 RecyclerView 设置 layoutmanager 注意，这里我们没用到 ViewHolder 这个东西，这个东西由 Adapter 操纵，相当于 RecyclerView Adapter ViewHolder ViewHolder ViewHolder ViewHolder 有关Adapter 定义 Adapter 需要继承 RecyclerView." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/posts/2022/07/recycler-view/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-07-02T14:36:00+08:00" />
+<meta property="article:modified_time" content="2022-07-02T14:46:50+08:00" /><meta property="og:site_name" content="My cool site" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="RecyclerView 简单使用"/>
+<meta name="twitter:description" content="RecyclerView 这个 View 的使用当初我用的不是很明白，现在有点懂了，我们自顶向下设计 View 代码总览 在 MainActivity 中， @Override protected void onCreate(Bundle savedInstanceState) { super.onCreate(savedInstanceState); setContentView(R.layout.activity_main); RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview); List&lt;Integer&gt; data = Stream.iterate(1, n -&gt; n &#43; 1).limit(100).collect(Collectors.toList()); CustomAdapter adapter = new CustomAdapter(data); RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 4); recyclerView.setAdapter(adapter); recyclerView.setLayoutManager(layoutManager); } 我们 定义了一个 RecyclerView 定义了一个 CustomAdapter 为 CustomAdapter 提供了数据 为 RecyclerView 设置 adapter 为 RecyclerView 设置 layoutmanager 注意，这里我们没用到 ViewHolder 这个东西，这个东西由 Adapter 操纵，相当于 RecyclerView Adapter ViewHolder ViewHolder ViewHolder ViewHolder 有关Adapter 定义 Adapter 需要继承 RecyclerView."/>
+<meta name="application-name" content="My cool site">
+<meta name="apple-mobile-web-app-title" content="My cool site"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://example.org/posts/2022/07/recycler-view/" /><link rel="prev" href="http://example.org/posts/2022/07/mljflux/" /><link rel="next" href="http://example.org/posts/2022/07/fragment/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "RecyclerView 简单使用",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/example.org\/posts\/2022\/07\/recycler-view\/"
+        },"genre": "posts","keywords": "RecyclerView","wordcount":  232 ,
+        "url": "http:\/\/example.org\/posts\/2022\/07\/recycler-view\/","datePublished": "2022-07-02T14:36:00+08:00","dateModified": "2022-07-02T14:46:50+08:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "Author"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="My New Hugo Site">My cool site</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="My New Hugo Site">My cool site</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">RecyclerView 简单使用</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Author</a></span>&nbsp;<span class="post-category">included in <a href="/categories/android/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Android</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2022-07-02">2022-07-02</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;232 words&nbsp;
+                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;2 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#recyclerview">RecyclerView</a>
+      <ul>
+        <li><a href="#代码总览">代码总览</a></li>
+        <li><a href="#有关adapter">有关Adapter</a></li>
+        <li><a href="#有关viewholder">有关ViewHolder</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="recyclerview">RecyclerView</h2>
+<p>这个 <code>View</code> 的使用当初我用的不是很明白，现在有点懂了，我们自顶向下设计 <code>View</code> <!-- raw HTML omitted --></p>
+<h3 id="代码总览">代码总览</h3>
+<p>在 <code>MainActivity</code> 中， <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl"><span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onCreate</span><span class="o">(</span><span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">super</span><span class="o">.</span><span class="na">onCreate</span><span class="o">(</span><span class="n">savedInstanceState</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">setContentView</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">activity_main</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">RecyclerView</span> <span class="n">recyclerView</span> <span class="o">=</span> <span class="o">(</span><span class="n">RecyclerView</span><span class="o">)</span> <span class="n">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">recyclerview</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span> <span class="n">data</span> <span class="o">=</span> <span class="n">Stream</span><span class="o">.</span><span class="na">iterate</span><span class="o">(</span><span class="n">1</span><span class="o">,</span> <span class="n">n</span> <span class="o">-&gt;</span> <span class="n">n</span> <span class="o">+</span> <span class="n">1</span><span class="o">).</span><span class="na">limit</span><span class="o">(</span><span class="n">100</span><span class="o">).</span><span class="na">collect</span><span class="o">(</span><span class="n">Collectors</span><span class="o">.</span><span class="na">toList</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">    <span class="n">CustomAdapter</span> <span class="n">adapter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CustomAdapter</span><span class="o">(</span><span class="n">data</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">RecyclerView</span><span class="o">.</span><span class="na">LayoutManager</span> <span class="n">layoutManager</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GridLayoutManager</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">4</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">recyclerView</span><span class="o">.</span><span class="na">setAdapter</span><span class="o">(</span><span class="n">adapter</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">recyclerView</span><span class="o">.</span><span class="na">setLayoutManager</span><span class="o">(</span><span class="n">layoutManager</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></div><p>我们 <!-- raw HTML omitted --></p>
+<ol>
+<li>定义了一个 <code>RecyclerView</code> <!-- raw HTML omitted --></li>
+<li>定义了一个 <code>CustomAdapter</code> <!-- raw HTML omitted --></li>
+<li>为 <code>CustomAdapter</code> 提供了数据 <!-- raw HTML omitted --></li>
+<li>为 <code>RecyclerView</code> 设置 <code>adapter</code> <!-- raw HTML omitted --></li>
+<li>为 <code>RecyclerView</code> 设置 <code>layoutmanager</code> <!-- raw HTML omitted --></li>
+</ol>
+<p>注意，这里我们没用到 <code>ViewHolder</code> 这个东西，这个东西由 <code>Adapter</code> 操纵，相当于 <!-- raw HTML omitted --></p>
+<ul>
+<li><code>RecyclerView</code> <!-- raw HTML omitted -->
+<ul>
+<li><code>Adapter</code> <!-- raw HTML omitted -->
+<ul>
+<li><code>ViewHolder</code> <!-- raw HTML omitted --></li>
+<li><code>ViewHolder</code> <!-- raw HTML omitted --></li>
+<li><code>ViewHolder</code> <!-- raw HTML omitted --></li>
+<li><code>ViewHolder</code> <!-- raw HTML omitted --></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="有关adapter">有关Adapter</h3>
+<p>定义 <code>Adapter</code> 需要继承 <code>RecyclerView.Adapter</code> ，他的作用是衔接 <code>RecyclerView</code> 与 <code>ViewHolder</code> ，即 <code>RecyclerView</code> 通过 <!-- raw HTML omitted -->
+<code>Adapter</code> 来设置每个 <code>ViewHolder</code> 的视图，这里我们需要设置三个关键方法 <!-- raw HTML omitted --></p>
+<ul>
+<li><code>onCreateViewHolder</code> <!-- raw HTML omitted -->
+每当 <code>RecyclerView</code> 需要创建新的 ViewHolder 时，它都会调用此方法n <!-- raw HTML omitted -->
+此方法会创建并初始化 <code>ViewHolder</code> 及其关联的 <code>View</code> ，但不会填充视图的内容，因为 <code>ViewHolder</code> 此时尚未绑定到具体数据。 <!-- raw HTML omitted --></li>
+<li><code>onBindViewHolder</code> <!-- raw HTML omitted -->
+<code>RecyclerView</code> 调用此方法将 <code>ViewHolder</code> 与数据相关联 <!-- raw HTML omitted --></li>
+<li><code>getItemCount</code> <!-- raw HTML omitted -->
+<code>RecyclerView</code> 调用此方法来获取数据集的大小 <!-- raw HTML omitted --></li>
+</ul>
+<p>这里我们为 <code>Adapter</code> 设置私有数据 <code>data</code> <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CustomAdapter</span> <span class="kd">extends</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">Adapter</span><span class="o">&lt;</span><span class="n">CustomViewHolder</span><span class="o">&gt;</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span> <span class="n">data</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="nf">CustomAdapter</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span> <span class="n">data</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">this</span><span class="o">.</span><span class="na">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@NonNull</span>
+</span></span><span class="line"><span class="cl">    <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">CustomViewHolder</span> <span class="nf">onCreateViewHolder</span><span class="o">(</span><span class="nd">@NonNull</span> <span class="n">ViewGroup</span> <span class="n">parent</span><span class="o">,</span> <span class="kt">int</span> <span class="n">viewType</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">final</span> <span class="n">View</span> <span class="n">view</span> <span class="o">=</span> <span class="n">LayoutInflater</span><span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="n">parent</span><span class="o">.</span><span class="na">getContext</span><span class="o">()).</span><span class="na">inflate</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">item_layout</span><span class="o">,</span> <span class="n">parent</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="k">new</span> <span class="n">CustomViewHolder</span><span class="o">(</span><span class="n">view</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onBindViewHolder</span><span class="o">(</span><span class="nd">@NonNull</span> <span class="n">CustomViewHolder</span> <span class="n">holder</span><span class="o">,</span> <span class="kt">int</span> <span class="n">position</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">holder</span><span class="o">.</span><span class="na">setText</span><span class="o">(</span><span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">&#34;this is item %d&#34;</span><span class="o">,</span> <span class="n">data</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">position</span><span class="o">)));</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getItemCount</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="na">size</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></div><p>由于上面的代码使用到了 <code>ViewHolder</code> ，也要看下面的代码才能理解 <!-- raw HTML omitted --></p>
+<h3 id="有关viewholder">有关ViewHolder</h3>
+<p><code>ViewHolder</code> 用来表示一个布局，因此需要为其设置布局和类代码，这里随便布局一下 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;LinearLayout</span> <span class="na">xmlns:android=</span><span class="s">&#34;http://schemas.android.com/apk/res/android&#34;</span>
+</span></span><span class="line"><span class="cl">	      <span class="na">android:layout_width=</span><span class="s">&#34;match_parent&#34;</span>
+</span></span><span class="line"><span class="cl">	      <span class="na">android:layout_height=</span><span class="s">&#34;wrap_content&#34;</span><span class="nt">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;TextView</span> <span class="na">android:id=</span><span class="s">&#34;@+id/textview&#34;</span>
+</span></span><span class="line"><span class="cl">	    <span class="na">android:layout_width=</span><span class="s">&#34;match_parent&#34;</span>
+</span></span><span class="line"><span class="cl">	    <span class="na">android:layout_height=</span><span class="s">&#34;wrap_content&#34;</span><span class="nt">/&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/LinearLayout&gt;</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CustomViewHolder</span> <span class="kd">extends</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">TextView</span> <span class="n">textView</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="nf">CustomViewHolder</span><span class="o">(</span><span class="nd">@NonNull</span> <span class="n">View</span> <span class="n">itemView</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">super</span><span class="o">(</span><span class="n">itemView</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">textView</span> <span class="o">=</span> <span class="n">itemView</span><span class="o">.</span><span class="na">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">textview</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setText</span><span class="o">(</span><span class="n">String</span> <span class="n">text</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">textView</span><span class="o">.</span><span class="na">setText</span><span class="o">(</span><span class="n">text</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></div><p>在 <code>ViewHolder</code> 中，我们 <!-- raw HTML omitted --></p>
+<ul>
+<li>为其定义了一个私有变量 <code>TextView</code> <!-- raw HTML omitted --></li>
+<li>定义了一个 <code>setText</code> 来设置 <code>TextView</code> 的显示 <!-- raw HTML omitted --></li>
+<li>外部可以使用 <code>setText</code> 来设置布局的显示，看 <code>Adapter</code> 的代码 <!-- raw HTML omitted --></li>
+</ul>
+<p>至此，相关代码已完成编写，可以运行了</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2022-07-02</span>
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="http://example.org/posts/2022/07/recycler-view/" data-title="RecyclerView 简单使用" data-hashtags="RecyclerView"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="http://example.org/posts/2022/07/recycler-view/" data-hashtag="RecyclerView"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="http://example.org/posts/2022/07/recycler-view/" data-title="RecyclerView 简单使用"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="http://example.org/posts/2022/07/recycler-view/" data-title="RecyclerView 简单使用"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.0.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="http://example.org/posts/2022/07/recycler-view/" data-title="RecyclerView 简单使用"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw" aria-hidden="true"></i>&nbsp;<a href="/tags/recyclerview/">RecyclerView</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/2022/07/mljflux/" class="prev" rel="prev" title="MLJFlux 简单使用"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>MLJFlux 简单使用</a>
+            <a href="/posts/2022/07/fragment/" class="next" rel="next" title="Android Fragment 简单使用">Android Fragment 简单使用<i class="fas fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.101.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

@@ -1,0 +1,15 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>离散数学 - Category - My New Hugo Site</title>
+        <link>http://example.org/categories/%E7%A6%BB%E6%95%A3%E6%95%B0%E5%AD%A6/</link>
+        <description>离散数学 - Category - My New Hugo Site</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sat, 02 Jul 2022 14:30:00 &#43;0800</lastBuildDate><atom:link href="http://example.org/categories/%E7%A6%BB%E6%95%A3%E6%95%B0%E5%AD%A6/" rel="self" type="application/rss+xml" /><item>
+    <title>计算真值表</title>
+    <link>http://example.org/posts/2022/07/parse-logic/</link>
+    <pubDate>Sat, 02 Jul 2022 14:30:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/posts/2022/07/parse-logic/</guid>
+    <description><![CDATA[程序设计说明 本来想用 lisp 程序来写，他的写法是 (function arg1 arg2 ...) S表达式不需要考虑优先级顺序，写起来比较简单 但是在这里有太多运算符，写成 lisp 很不方便 p∧￢(q→p (p ↔ q) → r p → (p ∨ ￢q ∨ r) 还好有 Julia ，他可以自定义运算符 首先将运算符作为一个函数定义(以下例子这样写是因为 + 在程序中是特殊符号，需要加一个 : 前缀来标识， Julia 语言的一个 feature) function Base.:+(arg1::SomeType, arg2::SomeType) return arg1 * arg2 end 解释器就可以把以下语句 arg1 + arg2 解析为 Base:+(arg1, arg2) 如果是调用多次 arg1 + arg2 + arg3 可以看作先对前两个进行求值，得出结果，与第三个参数求值 实现细节 演示说明 这里给出一个演示的例子 print(TruthTable(&#34;(p ↔ q) → r&#34;, [:p, :q, :r], (p, q, r) -&gt; (p ↔ q) → r)) 需要自定义真值表的 标题 参数表 生成真值的逻辑函数 运算符定义 ¬(p::Bool) = !]]></description>
+</item>
+</channel>
+</rss>

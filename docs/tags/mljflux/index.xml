@@ -1,0 +1,15 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>MLJFlux - Tag - My New Hugo Site</title>
+        <link>http://example.org/tags/mljflux/</link>
+        <description>MLJFlux - Tag - My New Hugo Site</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sat, 02 Jul 2022 14:33:00 &#43;0800</lastBuildDate><atom:link href="http://example.org/tags/mljflux/" rel="self" type="application/rss+xml" /><item>
+    <title>MLJFlux 简单使用</title>
+    <link>http://example.org/posts/2022/07/mljflux/</link>
+    <pubDate>Sat, 02 Jul 2022 14:33:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/posts/2022/07/mljflux/</guid>
+    <description><![CDATA[介绍 MLJFlux 就是 MLJ 框架对 Flux 的封装，由于我学不会 Flux ，所以我就退而求其次，学别人装好的工具 同学们可以参照这个 PlayGround 来学习 MLJFlux 其中 features 表示特征 hidden layers 表示隐藏层 learning rate 设置学习率 activation 设置每个神经元的激活函数 regularzation 设置正则化方法 regularzation rate 设置正则化惩罚力度 但在 MLJ 和 MLJFlux 中，你是找不到任何有关学习率的参数设置的，因为已经有方法可以不设置学习率了，具体参考这篇文章 在 MLJFlux 中，有以下几种模型 model type prediction type scitype(x) &lt;: _ scitype(y) &lt;: _ NeuralNetworkRegressor Deterministic Tale{Continuous} with n_in columns AbstractVectir{&lt;:Continuous} n_out = 1 MultitargetNeuralNetworkRegressor Deterministic Table{Continuous} with n_in columns &lt;: Table(Continuous) with n_out columns NeuralNetworkClassifier Probabilistic &lt;:Table(Continuous) with n_in columns AbstractVector{&lt;:Finite} with n_out classes ImageClassifier Probabilistic AbstractVector(&lt;:Image{W,H}) with n_in = (W, H) AbstractVector{&lt;:Finite} with n_out classes 他们的参数有 builder : Default = MLJFlux.]]></description>
+</item>
+</channel>
+</rss>

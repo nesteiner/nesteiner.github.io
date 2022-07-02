@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>C&#43;&#43; 期末作业报告 - My New Hugo Site</title><meta name="Description" content="This is my cool site"><meta property="og:title" content="C&#43;&#43; 期末作业报告" />
+<meta property="og:description" content="项目介绍 这次作死来试试手写编辑器，作为一次 Project Based Learning ，我选择了这个教程 这个教程教你在单文件中用 1000 行C代码来实现一个迷你的编辑器，带有代码高亮，无第三方依赖 这个教程一共有7步，每一步教你实现 Setup 环境设置 Entering raw mode 进入终端原始模式 Raw input and output 原始的输入和输出 A text viewer 文本浏览 A text editor 文本编辑 Search 文字搜索 Syntax highlighting 语法高亮 这里由于能力有限，只实现到 文本浏览这一块，不过这个项目挺有意思，我打算有时间接着实现 设计思路 在 Linux 中，可以使用 ANSI 转义码（ANSI escape codes）设置终端的字符显示颜色、移动光标位置、清除字符显示等。 ANSI 转义码是由终端自身支持，独立于编程语言之外，可以在 C 语言、Java、Python、或者 Shell 中使用。 需要补充的是，电脑每秒都在按一定的频率刷新屏幕，在程序里的具体体现为，渲染好当前页面后，刷新，清楚页面，然后接着 把数据渲染上去 基于此，程序功能大致分为这么几块， data 全局数据相关 terminal 终端操作的 init 程序初始化操作 input 处理输入字符的 output 处理输出的，比如刷新屏幕 由于此前用C代码超了一遍源程序，对代码有了一些理解，这里打算用 C&#43;&#43; 来实现一版 另外发现在这个程序中使用类的继承是不合适的，这里用到 C&#43;&#43; 只是用来代替 C ，做一些抽象，少些点代码而已 作为编辑器的程序 这时候程序只是作为一个编辑器，需要响应的就只是光标的移动， 这时程序一共分为三大步 初始化环境 设置终端为原始模式 获取终端窗口大小 循环处理按键 刷新屏幕 读取按键 是 组合键 是 方向键 或 PageUp 或 Home 等按键 是 普通的字符 渲染屏幕 退出 还原终端为规范模式 注意 终端有三种工作模式：规范模式、非规范模式、原始模式 在termios结构的c_lflag中设置ICANNON标志来定义终端以何种模式工作，默认为规范模式。 规范模式 所有输入基于行进行处理。在用户输入一个行结束符（回车符、EOF等）之前， 系统调用 read 函数读不到用户输入的任何字符 其次，除了EOF之外的行结束符与普通字符一样会被 read 函数读取到缓冲区中。一次调用 read 只能读取一行数据。 非规范模式 所有输入时即时有效的，不需要用户另外输入行结束符。 原始模式 是一种特殊的非规范模式，所有的输入数据以字节为单位被处理。即有一个字节输入时，触发输入有效。 这里由于要处理方向键，组合键这类按键，所以选择 原始模式 作为文本浏览的程序 文本浏览不仅要在初始化环境时进入原始模式，还要读入文件 光标的移动由于文件的引入，需要实现 垂直滚动 和 水平滚动 ，需要全局状态来记录光标的位置 cursorx 与 cursory ， 还要记录所在的行数 colsOffset 和列数 rowsOffset ，并与终端窗口大小比较，判断是否需要滚动 除此之外还要处理文本中的制表符 &lsquo;\t&rsquo; ，需要为制表符指定渲染的长度，设置光标移动遇到制表符时，直接调到下一个字符， 这里定义一个新的 renderx 来替代 cursorx 的部分功能，并提供 cursorx 到 renderx 的转换方法 cxtorx 代码实现 主函数 int main(int argc, char * argv[]) { Editor editor; if(argc &gt;= 2) { editor." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/posts/2022/07/cppwork/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-07-02T01:54:00+08:00" />
+<meta property="article:modified_time" content="2022-07-02T14:44:34+08:00" /><meta property="og:site_name" content="My cool site" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="C&#43;&#43; 期末作业报告"/>
+<meta name="twitter:description" content="项目介绍 这次作死来试试手写编辑器，作为一次 Project Based Learning ，我选择了这个教程 这个教程教你在单文件中用 1000 行C代码来实现一个迷你的编辑器，带有代码高亮，无第三方依赖 这个教程一共有7步，每一步教你实现 Setup 环境设置 Entering raw mode 进入终端原始模式 Raw input and output 原始的输入和输出 A text viewer 文本浏览 A text editor 文本编辑 Search 文字搜索 Syntax highlighting 语法高亮 这里由于能力有限，只实现到 文本浏览这一块，不过这个项目挺有意思，我打算有时间接着实现 设计思路 在 Linux 中，可以使用 ANSI 转义码（ANSI escape codes）设置终端的字符显示颜色、移动光标位置、清除字符显示等。 ANSI 转义码是由终端自身支持，独立于编程语言之外，可以在 C 语言、Java、Python、或者 Shell 中使用。 需要补充的是，电脑每秒都在按一定的频率刷新屏幕，在程序里的具体体现为，渲染好当前页面后，刷新，清楚页面，然后接着 把数据渲染上去 基于此，程序功能大致分为这么几块， data 全局数据相关 terminal 终端操作的 init 程序初始化操作 input 处理输入字符的 output 处理输出的，比如刷新屏幕 由于此前用C代码超了一遍源程序，对代码有了一些理解，这里打算用 C&#43;&#43; 来实现一版 另外发现在这个程序中使用类的继承是不合适的，这里用到 C&#43;&#43; 只是用来代替 C ，做一些抽象，少些点代码而已 作为编辑器的程序 这时候程序只是作为一个编辑器，需要响应的就只是光标的移动， 这时程序一共分为三大步 初始化环境 设置终端为原始模式 获取终端窗口大小 循环处理按键 刷新屏幕 读取按键 是 组合键 是 方向键 或 PageUp 或 Home 等按键 是 普通的字符 渲染屏幕 退出 还原终端为规范模式 注意 终端有三种工作模式：规范模式、非规范模式、原始模式 在termios结构的c_lflag中设置ICANNON标志来定义终端以何种模式工作，默认为规范模式。 规范模式 所有输入基于行进行处理。在用户输入一个行结束符（回车符、EOF等）之前， 系统调用 read 函数读不到用户输入的任何字符 其次，除了EOF之外的行结束符与普通字符一样会被 read 函数读取到缓冲区中。一次调用 read 只能读取一行数据。 非规范模式 所有输入时即时有效的，不需要用户另外输入行结束符。 原始模式 是一种特殊的非规范模式，所有的输入数据以字节为单位被处理。即有一个字节输入时，触发输入有效。 这里由于要处理方向键，组合键这类按键，所以选择 原始模式 作为文本浏览的程序 文本浏览不仅要在初始化环境时进入原始模式，还要读入文件 光标的移动由于文件的引入，需要实现 垂直滚动 和 水平滚动 ，需要全局状态来记录光标的位置 cursorx 与 cursory ， 还要记录所在的行数 colsOffset 和列数 rowsOffset ，并与终端窗口大小比较，判断是否需要滚动 除此之外还要处理文本中的制表符 &lsquo;\t&rsquo; ，需要为制表符指定渲染的长度，设置光标移动遇到制表符时，直接调到下一个字符， 这里定义一个新的 renderx 来替代 cursorx 的部分功能，并提供 cursorx 到 renderx 的转换方法 cxtorx 代码实现 主函数 int main(int argc, char * argv[]) { Editor editor; if(argc &gt;= 2) { editor."/>
+<meta name="application-name" content="My cool site">
+<meta name="apple-mobile-web-app-title" content="My cool site"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://example.org/posts/2022/07/cppwork/" /><link rel="prev" href="http://example.org/posts/2022/07/linear_model/" /><link rel="next" href="http://example.org/posts/2022/07/android-work/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "C++ 期末作业报告",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/example.org\/posts\/2022\/07\/cppwork\/"
+        },"genre": "posts","keywords": "C\u002b\u002b, 编辑器","wordcount":  744 ,
+        "url": "http:\/\/example.org\/posts\/2022\/07\/cppwork\/","datePublished": "2022-07-02T01:54:00+08:00","dateModified": "2022-07-02T14:44:34+08:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "Author"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="My New Hugo Site">My cool site</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="My New Hugo Site">My cool site</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">C++ 期末作业报告</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Author</a></span>&nbsp;<span class="post-category">included in <a href="/categories/c++/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>C++</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2022-07-02">2022-07-02</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;744 words&nbsp;
+                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;4 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#项目介绍">项目介绍</a></li>
+    <li><a href="#设计思路">设计思路</a>
+      <ul>
+        <li><a href="#作为编辑器的程序">作为编辑器的程序</a></li>
+        <li><a href="#作为文本浏览的程序">作为文本浏览的程序</a></li>
+      </ul>
+    </li>
+    <li><a href="#代码实现">代码实现</a>
+      <ul>
+        <li><a href="#主函数">主函数</a></li>
+        <li><a href="#数据对象-editor">数据对象 Editor</a></li>
+        <li><a href="#初始化环境">初始化环境</a></li>
+        <li><a href="#事件循环处理">事件循环处理</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="项目介绍">项目介绍</h2>
+<p>这次作死来试试手写编辑器，作为一次 <strong>Project Based Learning</strong> ，我选择了<a href="https://viewsourcecode.org/snaptoken/kilo/index.html" target="_blank" rel="noopener noreffer ">这个教程</a> <!-- raw HTML omitted -->
+这个教程教你在单文件中用 1000 行C代码来实现一个迷你的编辑器，带有代码高亮，无第三方依赖 <!-- raw HTML omitted -->
+这个教程一共有7步，每一步教你实现 <!-- raw HTML omitted --></p>
+<ol>
+<li><code>Setup</code> 环境设置 <!-- raw HTML omitted --></li>
+<li><code>Entering raw mode</code> 进入终端原始模式 <!-- raw HTML omitted --></li>
+<li><code>Raw input and output</code> 原始的输入和输出 <!-- raw HTML omitted --></li>
+<li><code>A text viewer</code> 文本浏览 <!-- raw HTML omitted --></li>
+<li><code>A text editor</code> 文本编辑 <!-- raw HTML omitted --></li>
+<li><code>Search</code> 文字搜索 <!-- raw HTML omitted --></li>
+<li><code>Syntax highlighting</code> 语法高亮 <!-- raw HTML omitted --></li>
+</ol>
+<p>这里由于能力有限，只实现到 文本浏览这一块，不过这个项目挺有意思，我打算有时间接着实现 <!-- raw HTML omitted --></p>
+<p><figure><img src="/ox-hugo/editor.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<h2 id="设计思路">设计思路</h2>
+<blockquote>
+<p>在 Linux 中，可以使用 ANSI 转义码（ANSI escape codes）设置终端的字符显示颜色、移动光标位置、清除字符显示等。 <!-- raw HTML omitted -->
+ANSI 转义码是由终端自身支持，独立于编程语言之外，可以在 C 语言、Java、Python、或者 Shell 中使用。 <!-- raw HTML omitted --></p>
+</blockquote>
+<p>需要补充的是，电脑每秒都在按一定的频率刷新屏幕，在程序里的具体体现为，渲染好当前页面后，刷新，清楚页面，然后接着 <!-- raw HTML omitted -->
+把数据渲染上去 <!-- raw HTML omitted --></p>
+<p>基于此，程序功能大致分为这么几块， <!-- raw HTML omitted --></p>
+<ol>
+<li><code>data</code> 全局数据相关 <!-- raw HTML omitted --></li>
+<li><code>terminal</code> 终端操作的 <!-- raw HTML omitted --></li>
+<li><code>init</code> 程序初始化操作 <!-- raw HTML omitted --></li>
+<li><code>input</code> 处理输入字符的 <!-- raw HTML omitted --></li>
+<li><code>output</code> 处理输出的，比如刷新屏幕 <!-- raw HTML omitted --></li>
+</ol>
+<p>由于此前用C代码超了一遍源程序，对代码有了一些理解，这里打算用 <code>C++</code> 来实现一版 <!-- raw HTML omitted -->
+另外发现在这个程序中使用类的继承是不合适的，这里用到 <code>C++</code> 只是用来代替 <code>C</code> ，做一些抽象，少些点代码而已 <!-- raw HTML omitted --></p>
+<h3 id="作为编辑器的程序">作为编辑器的程序</h3>
+<p>这时候程序只是作为一个编辑器，需要响应的就只是光标的移动， 这时程序一共分为三大步 <!-- raw HTML omitted --></p>
+<h4 id="初始化环境">初始化环境</h4>
+<ul>
+<li>设置终端为原始模式 <!-- raw HTML omitted --></li>
+<li>获取终端窗口大小 <!-- raw HTML omitted --></li>
+</ul>
+<h4 id="循环处理按键">循环处理按键</h4>
+<ol>
+<li>刷新屏幕 <!-- raw HTML omitted --></li>
+<li>读取按键 <!-- raw HTML omitted -->
+<ul>
+<li>是 组合键 <!-- raw HTML omitted --></li>
+<li>是 方向键 或 <code>PageUp</code> 或 <code>Home</code> 等按键 <!-- raw HTML omitted --></li>
+<li>是 普通的字符 <!-- raw HTML omitted --></li>
+</ul>
+</li>
+<li>渲染屏幕 <!-- raw HTML omitted --></li>
+</ol>
+<h4 id="退出">退出</h4>
+<p>还原终端为规范模式 <!-- raw HTML omitted --></p>
+<p>注意 <!-- raw HTML omitted --></p>
+<ol>
+<li>终端有三种工作模式：规范模式、非规范模式、原始模式 <!-- raw HTML omitted --></li>
+<li>在termios结构的c_lflag中设置ICANNON标志来定义终端以何种模式工作，默认为规范模式。 <!-- raw HTML omitted --></li>
+<li><strong>规范模式</strong> 所有输入基于行进行处理。在用户输入一个行结束符（回车符、EOF等）之前， <!-- raw HTML omitted -->
+系统调用 <code>read</code> 函数读不到用户输入的任何字符 <!-- raw HTML omitted -->
+其次，除了EOF之外的行结束符与普通字符一样会被 <code>read</code> 函数读取到缓冲区中。一次调用 <code>read</code> 只能读取一行数据。 <!-- raw HTML omitted --></li>
+<li><strong>非规范模式</strong> 所有输入时即时有效的，不需要用户另外输入行结束符。 <!-- raw HTML omitted --></li>
+<li><strong>原始模式</strong> 是一种特殊的非规范模式，所有的输入数据以字节为单位被处理。即有一个字节输入时，触发输入有效。 <!-- raw HTML omitted --></li>
+</ol>
+<p>这里由于要处理方向键，组合键这类按键，所以选择 <strong>原始模式</strong> <!-- raw HTML omitted --></p>
+<h3 id="作为文本浏览的程序">作为文本浏览的程序</h3>
+<p>文本浏览不仅要在初始化环境时进入原始模式，还要读入文件 <!-- raw HTML omitted -->
+光标的移动由于文件的引入，需要实现 <strong>垂直滚动</strong> 和 <strong>水平滚动</strong> ，需要全局状态来记录光标的位置 <code>cursorx</code> 与 <code>cursory</code> ， <!-- raw HTML omitted -->
+还要记录所在的行数 <code>colsOffset</code> 和列数 <code>rowsOffset</code> ，并与终端窗口大小比较，判断是否需要滚动 <!-- raw HTML omitted --></p>
+<p>除此之外还要处理文本中的制表符 &lsquo;\t&rsquo; ，需要为制表符指定渲染的长度，设置光标移动遇到制表符时，直接调到下一个字符， <!-- raw HTML omitted -->
+这里定义一个新的 <code>renderx</code> 来替代 <code>cursorx</code> 的部分功能，并提供 <code>cursorx</code> 到 <code>renderx</code> 的转换方法 <code>cxtorx</code> <!-- raw HTML omitted --></p>
+<h2 id="代码实现">代码实现</h2>
+<h3 id="主函数">主函数</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span> <span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Editor</span> <span class="n">editor</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">if</span><span class="p">(</span><span class="n">argc</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">editor</span><span class="p">.</span><span class="n">open</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">editor</span><span class="p">.</span><span class="n">setStatus</span><span class="p">(</span><span class="s">&#34;HELP: Ctrl-Q = quit&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">while</span> <span class="p">(</span><span class="nb">true</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">editor</span><span class="p">.</span><span class="n">refreshScreen</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">key</span> <span class="o">=</span> <span class="n">editor</span><span class="p">.</span><span class="n">readkey</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="n">editor</span><span class="p">.</span><span class="n">processkey</span><span class="p">(</span><span class="n">key</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>参考我们的设计思路，定义一个 <code>Editor</code> 类，在其构造时就将终端进入原始模式，并获取终端窗口大小 <!-- raw HTML omitted --></p>
+<h3 id="数据对象-editor">数据对象 Editor</h3>
+<p><code>Editor</code> 表示编辑器，通过其存储的变量来实现光标移动和文件读取等功能 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Editor</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="k">private</span><span class="o">:</span>			<span class="c1">// for basic
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">int</span> <span class="n">screenrows</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">screencols</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">cursorx</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">cursory</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">renderx</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">private</span><span class="o">:</span>			<span class="c1">// for read file
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">rows</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">rowoffset</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">coloffset</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">private</span><span class="o">:</span>			<span class="c1">// for status
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">string</span> <span class="n">filename</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">string</span> <span class="n">status</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">time_t</span> <span class="n">status_time</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">private</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">windowsize</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">void</span> <span class="nf">enableraw</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="nf">cxtorx</span><span class="p">(</span><span class="n">string</span> <span class="o">&amp;</span> <span class="n">chars</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Editor</span><span class="p">();</span> 			<span class="cm">/* this is for initialize */</span>
+</span></span><span class="line"><span class="cl">  <span class="o">~</span><span class="n">Editor</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span></code></pre></div><p>他还有一系列函数来处理终端输入，输出 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">readkey</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">void</span> <span class="nf">processkey</span><span class="p">(</span><span class="kt">int</span> <span class="n">key</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">void</span> <span class="nf">open</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span> <span class="n">filename</span><span class="p">);</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">void</span> <span class="n">refreshScreen</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">void</span> <span class="nf">drawrows</span><span class="p">(</span><span class="n">string</span> <span class="o">&amp;</span> <span class="n">appendbuf</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">void</span> <span class="nf">drawStatusBar</span><span class="p">(</span><span class="n">string</span> <span class="o">&amp;</span> <span class="n">appendbuf</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">void</span> <span class="nf">drawMessageBar</span><span class="p">(</span><span class="n">string</span> <span class="o">&amp;</span> <span class="n">appendbuf</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">void</span> <span class="nf">setStatus</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span> <span class="n">fmt</span><span class="p">,</span> <span class="p">...);</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">void</span> <span class="nf">scroll</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="n">string</span> <span class="nf">updaterow</span><span class="p">(</span><span class="n">string</span> <span class="o">&amp;</span> <span class="n">chars</span><span class="p">);</span>
+</span></span></code></pre></div><p>这里我顺带着把光标的移动给抽象成函数了 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">private</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">void</span> <span class="n">moveleft</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">void</span> <span class="nf">moveright</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">void</span> <span class="nf">moveup</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">void</span> <span class="nf">movedown</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">void</span> <span class="nf">homekey</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">void</span> <span class="nf">endkey</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">void</span> <span class="nf">pageup</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">void</span> <span class="nf">pagedown</span><span class="p">();</span>
+</span></span></code></pre></div><h3 id="初始化环境">初始化环境</h3>
+<p>编辑器中还添加了一个功能， <code>status bar</code>  <!-- raw HTML omitted -->
+在获取了 <code>screenrows</code> 后需要减掉两行来放 <code>status bar</code> 和 <code>status message</code> <!-- raw HTML omitted --></p>
+<p>在构造函数中 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">Editor</span><span class="o">::</span><span class="n">Editor</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">cursorx</span> <span class="o">=</span> <span class="n">cursory</span> <span class="o">=</span> <span class="n">renderx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">screencols</span> <span class="o">=</span> <span class="n">screenrows</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">rowoffset</span> <span class="o">=</span> <span class="n">coloffset</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">filename</span> <span class="o">=</span> <span class="s">&#34;&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">status</span> <span class="o">=</span> <span class="s">&#34;&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">status_time</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">enableraw</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="n">windowsize</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="n">screenrows</span> <span class="o">-=</span> <span class="mi">2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>其中的一些私有函数定义为 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">Editor</span><span class="o">::</span><span class="n">windowsize</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">struct</span> <span class="nc">winsize</span> <span class="n">ws</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="n">ioctl</span><span class="p">(</span><span class="n">STDOUT_FILENO</span><span class="p">,</span> <span class="n">TIOCGWINSZ</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ws</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="o">||</span> <span class="n">ws</span><span class="p">.</span><span class="n">ws_col</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">screencols</span> <span class="o">=</span> <span class="n">ws</span><span class="p">.</span><span class="n">ws_col</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">screenrows</span> <span class="o">=</span> <span class="n">ws</span><span class="p">.</span><span class="n">ws_row</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="n">Editor</span><span class="o">::</span><span class="n">enableraw</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">struct</span> <span class="nc">termios</span> <span class="n">raw</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">tcgetattr</span><span class="p">(</span><span class="n">STDIN_FILENO</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">originTermios</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">raw</span> <span class="o">=</span> <span class="n">originTermios</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">raw</span><span class="p">.</span><span class="n">c_iflag</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="p">(</span><span class="n">BRKINT</span> <span class="o">|</span> <span class="n">ICRNL</span> <span class="o">|</span> <span class="n">INPCK</span> <span class="o">|</span> <span class="n">ISTRIP</span> <span class="o">|</span> <span class="n">IXON</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">raw</span><span class="p">.</span><span class="n">c_oflag</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="p">(</span><span class="n">OPOST</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">raw</span><span class="p">.</span><span class="n">c_cflag</span> <span class="o">|=</span> <span class="p">(</span><span class="n">CS8</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">raw</span><span class="p">.</span><span class="n">c_lflag</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="p">(</span><span class="n">ECHO</span> <span class="o">|</span> <span class="n">ICANON</span> <span class="o">|</span> <span class="n">IEXTEN</span> <span class="o">|</span> <span class="n">ISIG</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">raw</span><span class="p">.</span><span class="n">c_cc</span><span class="p">[</span><span class="n">VMIN</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">raw</span><span class="p">.</span><span class="n">c_cc</span><span class="p">[</span><span class="n">VTIME</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">tcsetattr</span><span class="p">(</span><span class="n">STDIN_FILENO</span><span class="p">,</span> <span class="n">TCSAFLUSH</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">raw</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>其中 <code>originTermios</code> 是全局变量 <!-- raw HTML omitted --></p>
+<h3 id="事件循环处理">事件循环处理</h3>
+<p>在主函数中，编辑器打开了一个文本，然后处理键盘输入事件 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">if</span><span class="p">(</span><span class="n">argc</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">editor</span><span class="p">.</span><span class="n">open</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl"> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">editor</span><span class="p">.</span><span class="n">setStatus</span><span class="p">(</span><span class="s">&#34;HELP: Ctrl-Q = quit&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">while</span> <span class="p">(</span><span class="nb">true</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">editor</span><span class="p">.</span><span class="n">refreshScreen</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">key</span> <span class="o">=</span> <span class="n">editor</span><span class="p">.</span><span class="n">readkey</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="n">editor</span><span class="p">.</span><span class="n">processkey</span><span class="p">(</span><span class="n">key</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"> <span class="p">}</span>
+</span></span></code></pre></div><h4 id="1-dot-如何打开文件">1. 如何打开文件</h4>
+<p><code>Editor</code> 用一个 <code>string</code> 动态数组 <code>rows</code> 保存每一行的文本内容 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">void</span> <span class="n">Editor</span><span class="o">::</span><span class="n">open</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span> <span class="n">path</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">filename</span> <span class="o">=</span> <span class="n">path</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ifstream</span> <span class="nf">is</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">ios</span><span class="o">::</span><span class="n">in</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">string</span> <span class="n">buffer</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">std</span><span class="o">::</span><span class="n">getline</span><span class="p">(</span><span class="n">is</span><span class="p">,</span> <span class="n">buffer</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">while</span><span class="p">(</span><span class="n">is</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">rows</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">getline</span><span class="p">(</span><span class="n">is</span><span class="p">,</span> <span class="n">buffer</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">is</span><span class="p">.</span><span class="n">close</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h4 id="2-dot-如何刷新屏幕">2. 如何刷新屏幕</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">void</span> <span class="n">Editor</span><span class="o">::</span><span class="n">refreshScreen</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">scroll</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">string</span> <span class="n">appendbuf</span> <span class="o">=</span> <span class="s">&#34;&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">appendbuf</span> <span class="o">+=</span> <span class="s">&#34;\e[?25l&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">appendbuf</span> <span class="o">+=</span> <span class="s">&#34;\e[H&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">drawrows</span><span class="p">(</span><span class="n">appendbuf</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">drawStatusBar</span><span class="p">(</span><span class="n">appendbuf</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">drawMessageBar</span><span class="p">(</span><span class="n">appendbuf</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">stringstream</span> <span class="n">ss</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// ss &lt;&lt; &#34;\e[&#34; &lt;&lt; cursory + 1 &lt;&lt; &#34;;&#34; &lt;&lt; cursorx + 1 &lt;&lt; &#34;H&#34;;
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">ss</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;\e[&#34;</span>
+</span></span><span class="line"><span class="cl">     <span class="o">&lt;&lt;</span> <span class="n">cursory</span> <span class="o">-</span> <span class="n">rowoffset</span> <span class="o">+</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">     <span class="o">&lt;&lt;</span> <span class="s">&#34;;&#34;</span>
+</span></span><span class="line"><span class="cl">     <span class="o">&lt;&lt;</span> <span class="n">renderx</span> <span class="o">-</span> <span class="n">coloffset</span> <span class="o">+</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">     <span class="o">&lt;&lt;</span> <span class="s">&#34;H&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">appendbuf</span> <span class="o">+=</span> <span class="n">ss</span><span class="p">.</span><span class="n">str</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="n">appendbuf</span> <span class="o">+=</span> <span class="s">&#34;\e[?25h&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">appendbuf</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">flush</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><ol>
+<li>首先调整光标位置，处理一些越界的情况，调用函数 <code>scroll</code> <!-- raw HTML omitted --></li>
+<li>添加 ANSI 转义字符 <code>\e[?25l</code> <strong>隐藏光标</strong> <!-- raw HTML omitted --></li>
+<li>添加 ANSI 转义字符 <code>\e[H</code> <strong>定位光标到左上角</strong> <!-- raw HTML omitted --></li>
+<li>渲染此时的文本内容 <code>drawrow</code> <!-- raw HTML omitted --></li>
+<li>渲染 <code>status bar</code> <!-- raw HTML omitted --></li>
+<li>渲染 <code>status message</code> <!-- raw HTML omitted --></li>
+<li>添加 ANSI 转义字符 <code>\e[x;yH</code> <strong>定位光标</strong> 到 <code>(x, y)</code> <!-- raw HTML omitted --></li>
+<li>添加 ANSI 转义字符 <code>\e[?25h</code> <strong>显示光标</strong> <!-- raw HTML omitted --></li>
+</ol>
+<p>注意， <code>cout</code> 后一定要加 <code>std::flush</code> ，马上打印出字符串，不然字符串就会留在缓存区中，看到的情况就是 <strong>没有光标</strong> <!-- raw HTML omitted --></p>
+<h4 id="3-dot-如何读取按键">3. 如何读取按键</h4>
+<p>这里用的完全是作者的代码，其中全都是 <code>C</code> 的一些技巧，正考虑如何写一个 <code>C++</code> 风格的，更加精简的 <code>readKey</code> 函数 <!-- raw HTML omitted -->
+这段代码的主要功能是，判断输入的按键是字符还是一些方向键，不管怎么样，他都扔一个 <strong>整数</strong> 的 <code>key</code> 出去 <!-- raw HTML omitted -->
+切忌，一定要用 <code>int</code> 来接受这个 <code>key</code> ，不然按什么键都不会有反映 <!-- raw HTML omitted --></p>
+<h4 id="4-dot-如何处理按键">4. 如何处理按键</h4>
+<p>还好这个程序没有没有实现文本编辑功能，只需要根据按键移动光标即可，这里用 <code>processKey</code> 来处理 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">void</span> <span class="n">Editor</span><span class="o">::</span><span class="n">processkey</span><span class="p">(</span><span class="kt">int</span> <span class="n">key</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">switch</span> <span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">case</span> <span class="nl">HOME_KEY</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">homekey</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="k">break</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">case</span> <span class="nl">END_KEY</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">endkey</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="k">break</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">case</span> <span class="nl">PAGE_UP</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">pageup</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="k">break</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">case</span> <span class="nl">PAGE_DOWN</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">pagedown</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="k">break</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">case</span> <span class="nl">ARROW_UP</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">moveup</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="k">break</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">case</span> <span class="nl">ARROW_DOWN</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">movedown</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="k">break</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">case</span> <span class="nl">ARROW_LEFT</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">moveleft</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="k">break</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">case</span> <span class="nl">ARROW_RIGHT</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">moveright</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="k">break</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">string</span> <span class="n">row</span> <span class="o">=</span> <span class="p">(</span><span class="n">cursory</span> <span class="o">&gt;=</span> <span class="n">rows</span><span class="p">.</span><span class="n">size</span><span class="p">())</span> <span class="o">?</span> <span class="s">&#34;&#34;</span> <span class="o">:</span> <span class="n">rows</span><span class="p">[</span><span class="n">cursory</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">rowlen</span> <span class="o">=</span> <span class="n">row</span><span class="p">.</span><span class="n">length</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span><span class="p">(</span><span class="n">cursorx</span> <span class="o">&gt;</span> <span class="n">rowlen</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cursorx</span> <span class="o">=</span> <span class="n">rowlen</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>最后几行的代码是在每次光标移动后，如果光标的 <code>x</code> 坐标超过这行文字的长度，将光标对其到行尾 <!-- raw HTML omitted --></p>
+<h4 id="5-dot-什么时候退出">5. 什么时候退出</h4>
+<p>我们定义按下 <code>Ctrl + Q</code> 组合键退出， <!-- raw HTML omitted -->
+首先要辨认 <code>Ctrl</code> 系列组合键，这里使用文本宏 <code>CTRL_KEY</code> <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#define CTRL_KEY(k) ((k) &amp; 0x1f)
+</span></span></span></code></pre></div><p>在 <code>processKey</code> 中，添加一个条件开关即可 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">case</span> <span class="nf">CTRL_KEY</span><span class="p">(</span><span class="sc">&#39;q&#39;</span><span class="p">)</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;\e[2J&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">flush</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;\e[H&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">flush</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">break</span><span class="p">;</span>
+</span></span></code></pre></div><p>转义符 <code>\e[2J</code> 表示 清除屏幕显示的内容，不过在 Ubuntu 上测试，光标位置会保持不变 <!-- raw HTML omitted -->
+转义符 <code>\e[H</code> 表示将光标移动到左上角，不过在本机测试时好像不会 <!-- raw HTML omitted --></p>
+<h4 id="6-dot-如何将终端还原为规范模式">6. 如何将终端还原为规范模式</h4>
+<p>由于我们是手动退出的，程序跳过了 <code>Editor</code> 的析构函数并回收资源，我们需要定义一个函数 <code>disableraw</code> 来注册到 <code>atexit</code> 系统调用中 <!-- raw HTML omitted -->
+这样程序退出的时候终端就会还原 <!-- raw HTML omitted -->
+其中 <code>disableraw</code> 定义为 <code>Editor</code> 的静态函数(这里是我设计失误) <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">void</span> <span class="n">Editor</span><span class="o">::</span><span class="n">disableraw</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">tcsetattr</span><span class="p">(</span><span class="n">STDIN_FILENO</span><span class="p">,</span> <span class="n">TCSAFLUSH</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">originTermios</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>然后在构造函数中添加即可 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">atexit</span><span class="p">(</span><span class="n">Editor</span><span class="o">::</span><span class="n">disableraw</span><span class="p">);</span>
+</span></span></code></pre></div></div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2022-07-02</span>
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="http://example.org/posts/2022/07/cppwork/" data-title="C&#43;&#43; 期末作业报告" data-hashtags="C&#43;&#43;,编辑器"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="http://example.org/posts/2022/07/cppwork/" data-hashtag="C&#43;&#43;"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="http://example.org/posts/2022/07/cppwork/" data-title="C&#43;&#43; 期末作业报告"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="http://example.org/posts/2022/07/cppwork/" data-title="C&#43;&#43; 期末作业报告"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.0.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="http://example.org/posts/2022/07/cppwork/" data-title="C&#43;&#43; 期末作业报告"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw" aria-hidden="true"></i>&nbsp;<a href="/tags/c&#43;&#43;/">C&#43;&#43;</a>,&nbsp;<a href="/tags/%E7%BC%96%E8%BE%91%E5%99%A8/">编辑器</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/2022/07/linear_model/" class="prev" rel="prev" title="MLJ中 线性模型 在回归预测中的简单使用"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>MLJ中 线性模型 在回归预测中的简单使用</a>
+            <a href="/posts/2022/07/android-work/" class="next" rel="next" title="Android 大作业报告">Android 大作业报告<i class="fas fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.101.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

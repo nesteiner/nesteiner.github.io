@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>Android 大作业报告 - My New Hugo Site</title><meta name="Description" content="This is my cool site"><meta property="og:title" content="Android 大作业报告" />
+<meta property="og:description" content="项目介绍 这次的大作业用的 Flutter 框架，虽然构建 UI 界面很容易，难的是各个组件之间的通信，以及对 async/await 的异步操作 这个应用由于时间原因选择了 Flutter 来开发，只实现了登录界面，笔记界面，通知界面 由于还没有对应用进行优化，解耦，数据库的操作只有应用开启时的读取数据，删除，添加，修改操作都没有实现 功能结构 登录界面 这里只提供了登录界面，没有提供登录的相关操作，不过表单还是有的 笔记界面 笔记界面的每一项由一个 NoteCard 组件构成，只提供了编辑功能，路由切换后会重置 需要编辑时点击右边的三点按钮，扩展的编辑面板显示 编辑完成后，点击 Save 保存之后 消息界面 消息界面完全仿照 原来的应用，没有什么稀奇的 设计类 这里介绍下这个项目的结构，重点不是代码，从入口讲起 入口类 void main() =&gt; runApp(App()); class App extends StatelessWidget { final title = &#39;HomeApp&#39;; @override Widget build(BuildContext context) { // TODO: implement build return MaterialApp( title: title, home: Home(), ); } } 主页的设计 主页中由三个页面，需要引入一个 TabView 组件来进行路由切换 其中主页为 class Home extends StatefulWidget { @override HomeState createState() =&gt; HomeState(); } 主页的构建由另一个类 HomeState 来实现，在其中使用 TabView class HomeState extends State&lt;Home&gt; with SingleTickerProviderStateMixin{ late final TabController controller = TabController(length: 3, vsync: this); @override void dispose() { // TODO: implement dispose controller." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/posts/2022/07/android-work/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-07-02T14:29:00+08:00" />
+<meta property="article:modified_time" content="2022-07-02T14:44:50+08:00" /><meta property="og:site_name" content="My cool site" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Android 大作业报告"/>
+<meta name="twitter:description" content="项目介绍 这次的大作业用的 Flutter 框架，虽然构建 UI 界面很容易，难的是各个组件之间的通信，以及对 async/await 的异步操作 这个应用由于时间原因选择了 Flutter 来开发，只实现了登录界面，笔记界面，通知界面 由于还没有对应用进行优化，解耦，数据库的操作只有应用开启时的读取数据，删除，添加，修改操作都没有实现 功能结构 登录界面 这里只提供了登录界面，没有提供登录的相关操作，不过表单还是有的 笔记界面 笔记界面的每一项由一个 NoteCard 组件构成，只提供了编辑功能，路由切换后会重置 需要编辑时点击右边的三点按钮，扩展的编辑面板显示 编辑完成后，点击 Save 保存之后 消息界面 消息界面完全仿照 原来的应用，没有什么稀奇的 设计类 这里介绍下这个项目的结构，重点不是代码，从入口讲起 入口类 void main() =&gt; runApp(App()); class App extends StatelessWidget { final title = &#39;HomeApp&#39;; @override Widget build(BuildContext context) { // TODO: implement build return MaterialApp( title: title, home: Home(), ); } } 主页的设计 主页中由三个页面，需要引入一个 TabView 组件来进行路由切换 其中主页为 class Home extends StatefulWidget { @override HomeState createState() =&gt; HomeState(); } 主页的构建由另一个类 HomeState 来实现，在其中使用 TabView class HomeState extends State&lt;Home&gt; with SingleTickerProviderStateMixin{ late final TabController controller = TabController(length: 3, vsync: this); @override void dispose() { // TODO: implement dispose controller."/>
+<meta name="application-name" content="My cool site">
+<meta name="apple-mobile-web-app-title" content="My cool site"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://example.org/posts/2022/07/android-work/" /><link rel="prev" href="http://example.org/posts/2022/07/cppwork/" /><link rel="next" href="http://example.org/posts/2022/07/parse-logic/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Android 大作业报告",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/example.org\/posts\/2022\/07\/android-work\/"
+        },"genre": "posts","keywords": "Flutter","wordcount":  451 ,
+        "url": "http:\/\/example.org\/posts\/2022\/07\/android-work\/","datePublished": "2022-07-02T14:29:00+08:00","dateModified": "2022-07-02T14:44:50+08:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "Author"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="My New Hugo Site">My cool site</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="My New Hugo Site">My cool site</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Android 大作业报告</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Author</a></span>&nbsp;<span class="post-category">included in <a href="/categories/flutter/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Flutter</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2022-07-02">2022-07-02</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;451 words&nbsp;
+                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;3 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#项目介绍">项目介绍</a></li>
+    <li><a href="#功能结构">功能结构</a>
+      <ul>
+        <li><a href="#登录界面">登录界面</a></li>
+        <li><a href="#笔记界面">笔记界面</a></li>
+        <li><a href="#消息界面">消息界面</a></li>
+      </ul>
+    </li>
+    <li><a href="#设计类">设计类</a>
+      <ul>
+        <li><a href="#入口类">入口类</a></li>
+        <li><a href="#主页的设计">主页的设计</a></li>
+        <li><a href="#login界面的设计">Login界面的设计</a></li>
+        <li><a href="#笔记界面的设计">笔记界面的设计</a></li>
+      </ul>
+    </li>
+    <li><a href="#数据库">数据库</a>
+      <ul>
+        <li><a href="#数据模型的操作">数据模型的操作</a></li>
+        <li><a href="#组件的构建">组件的构建</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="项目介绍">项目介绍</h2>
+<p>这次的大作业用的 <strong>Flutter</strong> 框架，虽然构建 UI 界面很容易，难的是各个组件之间的通信，以及对 async/await 的异步操作 <!-- raw HTML omitted -->
+这个应用由于时间原因选择了 <strong>Flutter</strong> 来开发，只实现了登录界面，笔记界面，通知界面 <!-- raw HTML omitted -->
+由于还没有对应用进行优化，解耦，数据库的操作只有应用开启时的读取数据，删除，添加，修改操作都没有实现 <!-- raw HTML omitted --></p>
+<h2 id="功能结构">功能结构</h2>
+<h3 id="登录界面">登录界面</h3>
+<p>这里只提供了登录界面，没有提供登录的相关操作，不过表单还是有的 <!-- raw HTML omitted --></p>
+<p><figure><img src="/ox-hugo/2021-06-24_02-28-03_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<h3 id="笔记界面">笔记界面</h3>
+<p>笔记界面的每一项由一个 NoteCard 组件构成，只提供了编辑功能，路由切换后会重置 <!-- raw HTML omitted --></p>
+<p><figure><img src="/ox-hugo/2021-06-24_02-35-06_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<p>需要编辑时点击右边的三点按钮，扩展的编辑面板显示 <!-- raw HTML omitted --></p>
+<p><figure><img src="/ox-hugo/2021-06-24_02-36-12_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<p>编辑完成后，点击 Save 保存之后 <!-- raw HTML omitted --></p>
+<p><figure><img src="/ox-hugo/2021-06-24_02-36-52_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<h3 id="消息界面">消息界面</h3>
+<p>消息界面完全仿照 原来的应用，没有什么稀奇的 <!-- raw HTML omitted --></p>
+<p><figure><img src="/ox-hugo/2021-06-24_02-37-47_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<h2 id="设计类">设计类</h2>
+<p>这里介绍下这个项目的结构，重点不是代码，从入口讲起 <!-- raw HTML omitted --></p>
+<h3 id="入口类">入口类</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-dart" data-lang="dart"><span class="line"><span class="cl"><span class="kt">void</span> <span class="n">main</span><span class="p">()</span> <span class="o">=&gt;</span> <span class="n">runApp</span><span class="p">(</span><span class="n">App</span><span class="p">());</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">class</span> <span class="nc">App</span> <span class="kd">extends</span> <span class="n">StatelessWidget</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">final</span> <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;HomeApp&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="err">@</span><span class="n">override</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Widget</span> <span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span> <span class="n">context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// TODO: implement build
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">return</span> <span class="n">MaterialApp</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">      <span class="nl">title:</span> <span class="n">title</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nl">home:</span> <span class="n">Home</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">    <span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h3 id="主页的设计">主页的设计</h3>
+<p>主页中由三个页面，需要引入一个 TabView 组件来进行路由切换 <!-- raw HTML omitted --></p>
+<p>其中主页为 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="kr">class</span> <span class="nx">Home</span> <span class="kr">extends</span> <span class="nx">StatefulWidget</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="err">@</span><span class="nx">override</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">HomeState</span> <span class="nx">createState</span><span class="p">()</span> <span class="p">=&gt;</span> <span class="nx">HomeState</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>主页的构建由另一个类 HomeState 来实现，在其中使用 TabView <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-dart" data-lang="dart"><span class="line"><span class="cl"><span class="kd">class</span> <span class="nc">HomeState</span> <span class="kd">extends</span> <span class="n">State</span><span class="o">&lt;</span><span class="n">Home</span><span class="o">&gt;</span> <span class="kd">with</span> <span class="n">SingleTickerProviderStateMixin</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">late</span> <span class="kd">final</span> <span class="n">TabController</span> <span class="n">controller</span> <span class="o">=</span> <span class="n">TabController</span><span class="p">(</span><span class="nl">length:</span> <span class="m">3</span><span class="p">,</span> <span class="nl">vsync:</span> <span class="k">this</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="err">@</span><span class="n">override</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">void</span> <span class="n">dispose</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// TODO: implement dispose
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">controller</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="k">super</span><span class="p">.</span><span class="n">dispose</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="err">@</span><span class="n">override</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Widget</span> <span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span> <span class="n">context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// TODO: implement build
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">return</span> <span class="n">Scaffold</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">      <span class="nl">appBar:</span> <span class="n">AppBar</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="nl">bottom:</span> <span class="n">TabBar</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">	  <span class="nl">controller:</span> <span class="n">controller</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	  <span class="nl">tabs:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">	    <span class="n">Tab</span><span class="p">(</span><span class="nl">icon:</span> <span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">login</span><span class="p">),),</span>
+</span></span><span class="line"><span class="cl">	    <span class="n">Tab</span><span class="p">(</span><span class="nl">icon:</span> <span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">note</span><span class="p">),),</span>
+</span></span><span class="line"><span class="cl">	    <span class="n">Tab</span><span class="p">(</span><span class="nl">icon:</span> <span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">message</span><span class="p">),),</span>
+</span></span><span class="line"><span class="cl">	  <span class="p">],</span>
+</span></span><span class="line"><span class="cl">	<span class="p">),</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nl">title:</span> <span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Keep Alive&#39;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">      <span class="p">),</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="nl">body:</span> <span class="n">TabBarView</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="nl">controller:</span> <span class="n">controller</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="nl">children:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">	  <span class="n">LoginRoute</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">	  <span class="n">NoteRoute</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">	  <span class="n">NotificationRoute</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">	<span class="p">],</span>
+</span></span><span class="line"><span class="cl">      <span class="p">),</span>
+</span></span><span class="line"><span class="cl">    <span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h3 id="login界面的设计">Login界面的设计</h3>
+<p>Login 的界面构建有些复杂，需要将其分解为几个部分 <!-- raw HTML omitted --></p>
+<ol>
+<li>
+<p>buildTopBannerWidget <!-- raw HTML omitted --></p>
+</li>
+<li>
+<p>buildAccountLoginTip <!-- raw HTML omitted --></p>
+</li>
+<li>
+<p>buildEditWidget <!-- raw HTML omitted --></p>
+</li>
+<li>
+<p>buildLoginButton <!-- raw HTML omitted --></p>
+<p>之后再将这些组件整合到一个 Column 中即可 <!-- raw HTML omitted -->
+需要注意的是，对文本框进行编辑时，会出现底部空间不够绘制的情况，需要在 build 方法中使用 SingleChildScrollView 来处理 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-dart" data-lang="dart"><span class="line"><span class="cl"><span class="err">@</span><span class="n">override</span>
+</span></span><span class="line"><span class="cl"><span class="n">Widget</span> <span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span> <span class="n">context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">SingleChildScrollView</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="nl">child:</span> <span class="n">buildColumn</span><span class="p">(</span><span class="n">context</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">  <span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div></li>
+</ol>
+<h3 id="笔记界面的设计">笔记界面的设计</h3>
+<p>在应用打开的时候，需要从数据库读取，再生成数据对象 NoteCard <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-dart" data-lang="dart"><span class="line"><span class="cl"><span class="kd">class</span> <span class="nc">NoteCard</span> <span class="kd">extends</span> <span class="n">StatefulWidget</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">String</span> <span class="n">title</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">String</span> <span class="n">content</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">NoteCard</span><span class="p">({</span><span class="kd">required</span> <span class="k">this</span><span class="p">.</span><span class="n">title</span><span class="p">,</span> <span class="kd">required</span> <span class="k">this</span><span class="p">.</span><span class="n">content</span><span class="p">});</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="err">@</span><span class="n">override</span>
+</span></span><span class="line"><span class="cl">  <span class="n">CardState</span> <span class="n">createState</span><span class="p">()</span> <span class="o">=&gt;</span> <span class="n">CardState</span><span class="p">(</span><span class="nl">title:</span> <span class="n">title</span><span class="p">,</span> <span class="nl">content:</span> <span class="n">content</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>通知界面也是如此 <!-- raw HTML omitted -->
+有关数据库的操作写在下面 <!-- raw HTML omitted --></p>
+<h2 id="数据库">数据库</h2>
+<p>由于 dart 是单线程的语言，打开数据库需要一定的时间，为了不影响整个程序的效率，dart 使用了异步的概念 <!-- raw HTML omitted -->
+这里将数据库的增，删，改，查操作都写在数据模型类中 <!-- raw HTML omitted --></p>
+<h3 id="数据模型的操作">数据模型的操作</h3>
+<p>存储笔记的数据模型 note 中 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-dart" data-lang="dart"><span class="line"><span class="cl"><span class="kd">static</span> <span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span> <span class="n">insert</span><span class="p">(</span><span class="n">Database</span> <span class="n">db</span><span class="p">,</span> <span class="n">Note</span> <span class="n">note</span><span class="p">)</span> <span class="kd">async</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">await</span> <span class="n">db</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">tableName</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">note</span><span class="p">.</span><span class="n">toMap</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">    <span class="nl">conflictAlgorithm:</span> <span class="n">ConflictAlgorithm</span><span class="p">.</span><span class="n">replace</span>
+</span></span><span class="line"><span class="cl">  <span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">static</span> <span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span> <span class="n">delete</span><span class="p">(</span><span class="n">Database</span> <span class="n">db</span><span class="p">,</span> <span class="kt">int</span> <span class="n">id</span><span class="p">)</span> <span class="kd">async</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">await</span> <span class="n">db</span><span class="p">.</span><span class="n">delete</span><span class="p">(</span><span class="n">tableName</span><span class="p">,</span> <span class="nl">where:</span> <span class="s1">&#39;id = ?&#39;</span><span class="p">,</span> <span class="nl">whereArgs:</span> <span class="p">[</span><span class="n">id</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">static</span> <span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span> <span class="n">update</span><span class="p">(</span><span class="n">Database</span> <span class="n">db</span><span class="p">,</span> <span class="n">Note</span> <span class="n">note</span><span class="p">)</span> <span class="kd">async</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">await</span> <span class="n">db</span><span class="p">.</span><span class="n">update</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">tableName</span><span class="p">,</span> <span class="n">note</span><span class="p">.</span><span class="n">toMap</span><span class="p">(),</span> <span class="nl">where:</span> <span class="s1">&#39;id = ?&#39;</span><span class="p">,</span> <span class="nl">whereArgs:</span> <span class="p">[</span><span class="n">note</span><span class="p">.</span><span class="n">id</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">static</span> <span class="n">Future</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Note</span><span class="o">&gt;&gt;</span> <span class="n">all</span><span class="p">(</span><span class="n">Database</span> <span class="n">db</span><span class="p">)</span> <span class="kd">async</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">final</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Map</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span> <span class="kt">dynamic</span><span class="o">&gt;&gt;</span> <span class="n">maps</span> <span class="o">=</span> <span class="kd">await</span> <span class="n">db</span><span class="p">.</span><span class="n">query</span><span class="p">(</span><span class="n">tableName</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">List</span><span class="p">.</span><span class="n">generate</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">maps</span><span class="p">.</span><span class="n">length</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">(</span><span class="n">index</span><span class="p">)</span> <span class="o">=&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Note</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">      <span class="nl">id:</span> <span class="n">maps</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">      <span class="nl">title:</span> <span class="n">maps</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="s1">&#39;title&#39;</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">      <span class="nl">content:</span> <span class="n">maps</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="s1">&#39;content&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="p">));</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>类似的，存储消息的数据模型 notify 中 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-dart" data-lang="dart"><span class="line"><span class="cl"><span class="kd">static</span> <span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span> <span class="n">insert</span><span class="p">(</span><span class="n">Database</span> <span class="n">db</span><span class="p">,</span> <span class="n">Notify</span> <span class="n">notification</span><span class="p">)</span> <span class="kd">async</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">await</span> <span class="n">db</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">tableName</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">notification</span><span class="p">.</span><span class="n">toMap</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">    <span class="nl">conflictAlgorithm:</span> <span class="n">ConflictAlgorithm</span><span class="p">.</span><span class="n">replace</span>
+</span></span><span class="line"><span class="cl">  <span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">static</span> <span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span> <span class="n">delete</span><span class="p">(</span><span class="n">Database</span> <span class="n">db</span><span class="p">,</span> <span class="kt">int</span> <span class="n">id</span><span class="p">)</span> <span class="kd">async</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">await</span> <span class="n">db</span><span class="p">.</span><span class="n">delete</span><span class="p">(</span><span class="n">tableName</span><span class="p">,</span> <span class="nl">where:</span> <span class="s1">&#39;id = ?&#39;</span><span class="p">,</span> <span class="nl">whereArgs:</span> <span class="p">[</span><span class="n">id</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">static</span> <span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span> <span class="n">update</span><span class="p">(</span><span class="n">Database</span> <span class="n">db</span><span class="p">,</span> <span class="n">Notify</span> <span class="n">notification</span><span class="p">)</span> <span class="kd">async</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">await</span> <span class="n">db</span><span class="p">.</span><span class="n">update</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">tableName</span><span class="p">,</span> <span class="n">notification</span><span class="p">.</span><span class="n">toMap</span><span class="p">(),</span> <span class="nl">where:</span> <span class="s1">&#39;id = ?&#39;</span><span class="p">,</span> <span class="nl">whereArgs:</span> <span class="p">[</span><span class="n">notification</span><span class="p">.</span><span class="n">id</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">static</span> <span class="n">Future</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Notify</span><span class="o">&gt;&gt;</span> <span class="n">all</span><span class="p">(</span><span class="n">Database</span> <span class="n">db</span><span class="p">)</span> <span class="kd">async</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">final</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Map</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span> <span class="kt">dynamic</span><span class="o">&gt;&gt;</span> <span class="n">maps</span> <span class="o">=</span> <span class="kd">await</span> <span class="n">db</span><span class="p">.</span><span class="n">query</span><span class="p">(</span><span class="n">tableName</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">List</span><span class="p">.</span><span class="n">generate</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">maps</span><span class="p">.</span><span class="n">length</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">(</span><span class="n">index</span><span class="p">)</span> <span class="o">=&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Notify</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">      <span class="nl">id:</span> <span class="n">maps</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">      <span class="nl">className:</span> <span class="n">maps</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="s1">&#39;className&#39;</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">      <span class="nl">notifyContent:</span> <span class="n">maps</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="s1">&#39;notifyContent&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="p">));</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h3 id="组件的构建">组件的构建</h3>
+<p>这里为什么要单独讲组件的构建，因为这里牵扯到数据的异步加载，还有 build 方法不能定义为异步的，具体参照<a href="https://flutterigniter.com/build-widget-with-async-method-call/" target="_blank" rel="noopener noreffer ">这篇文章</a> <!-- raw HTML omitted -->
+另外这里应用的构建代码定义在路由界面中 <!-- raw HTML omitted -->
+在 NoteRoute 中，先定义一个异步回调 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-dart" data-lang="dart"><span class="line"><span class="cl"><span class="n">Future</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">NoteCard</span><span class="o">&gt;&gt;</span> <span class="n">callAsyncFetch</span><span class="p">()</span> <span class="kd">async</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">final</span> <span class="n">database</span> <span class="o">=</span> <span class="n">openDatabase</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">join</span><span class="p">(</span><span class="kd">await</span> <span class="n">getDatabasesPath</span><span class="p">(),</span> <span class="s1">&#39;todolist.db&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kd">var</span> <span class="n">cards</span> <span class="o">=</span> <span class="kd">await</span> <span class="n">Note</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="kd">await</span> <span class="n">database</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">cards</span><span class="p">.</span><span class="n">map</span><span class="p">((</span><span class="n">e</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">NoteCard</span><span class="p">(</span><span class="nl">title:</span> <span class="n">e</span><span class="p">.</span><span class="n">title</span><span class="p">,</span> <span class="nl">content:</span> <span class="n">e</span><span class="p">.</span><span class="n">content</span><span class="p">)).</span><span class="n">toList</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>再将 build 的返回值改为 FutureBuilder ，指定 future 与 builder <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-dart" data-lang="dart"><span class="line"><span class="cl"><span class="err">@</span><span class="n">override</span>
+</span></span><span class="line"><span class="cl"><span class="n">Widget</span> <span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span> <span class="n">context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// TODO: implement build
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">return</span> <span class="n">FutureBuilder</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="nl">future:</span> <span class="n">callAsyncFetch</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">    <span class="nl">builder:</span> <span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">AsyncSnapshot</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">NoteCard</span><span class="o">&gt;&gt;</span> <span class="n">snapshot</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span><span class="p">(</span><span class="n">snapshot</span><span class="p">.</span><span class="n">hasData</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">ListView</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">	  <span class="nl">children:</span> <span class="n">snapshot</span><span class="p">.</span><span class="n">data</span><span class="o">!</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="p">);</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">CircularProgressIndicator</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div></div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2022-07-02</span>
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="http://example.org/posts/2022/07/android-work/" data-title="Android 大作业报告" data-hashtags="Flutter"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="http://example.org/posts/2022/07/android-work/" data-hashtag="Flutter"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="http://example.org/posts/2022/07/android-work/" data-title="Android 大作业报告"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="http://example.org/posts/2022/07/android-work/" data-title="Android 大作业报告"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.0.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="http://example.org/posts/2022/07/android-work/" data-title="Android 大作业报告"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw" aria-hidden="true"></i>&nbsp;<a href="/tags/flutter/">Flutter</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/2022/07/cppwork/" class="prev" rel="prev" title="C&#43;&#43; 期末作业报告"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>C++ 期末作业报告</a>
+            <a href="/posts/2022/07/parse-logic/" class="next" rel="next" title="计算真值表">计算真值表<i class="fas fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.101.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

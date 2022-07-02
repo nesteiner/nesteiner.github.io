@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>Titanic 生存预测，使用Logistic分类 - My New Hugo Site</title><meta name="Description" content="This is my cool site"><meta property="og:title" content="Titanic 生存预测，使用Logistic分类" />
+<meta property="og:description" content="项目介绍 最近终于去学习 Julia 了，重温了下没做完的 Titanic 项目，打算做完 那就先导入必要的库吧 using MLJ, DataFrames, StableRNGs, CSV, Plots plotly() 还要从 Kaggle 上下载好数据集 train.csv 与 test.csv ， 并用 CSV 模块加载 origin_data = CSV.read(&#34;data/train.csv&#34;, DataFrame) 到提交的时候，数据表中的字段 PassengerId(Integer) 与 Survived(Integer) 数据探索 字段含义 我从网上查到这些字段的含义，有些字段的类型虽然是 Float ，但也是 1.0, 2.0之类的，比如 Age 字段名称 字段含义 字段类型 PassengerId 乘客ID Int Survived 是否存活 Int Pclass 乘客等级(1/2/3等舱位) Int Name 乘客姓名 String Sex 性别 String Age 年龄 Float SibSp 堂兄弟/妹个数 Float Parch 父母与小孩个数 Float Ticket 船票信息 String Fare 票价 Float Cabin 客舱 String Embarked 登船港口 String 字段科学类型 这个数据集使用分类预测，先要统一好各个字段的科学类型，不然一些 model 对字段不起作用 这里需要每个输入的数据类型是 Continuous, 而输出类型为 Multiclass 使用 schema 查看情况 schema(origin_data) 描述数据 看看这个数据有多少缺斤少两的 describe(origin_data) 数据处理 探索完数据后，接下来可以 填充缺失的数据 扔掉不用的数据 生成新的字段，或者优化数据 对 train." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/posts/2022/07/titanic/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-07-02T01:53:00+08:00" />
+<meta property="article:modified_time" content="2022-07-02T14:44:03+08:00" /><meta property="og:site_name" content="My cool site" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Titanic 生存预测，使用Logistic分类"/>
+<meta name="twitter:description" content="项目介绍 最近终于去学习 Julia 了，重温了下没做完的 Titanic 项目，打算做完 那就先导入必要的库吧 using MLJ, DataFrames, StableRNGs, CSV, Plots plotly() 还要从 Kaggle 上下载好数据集 train.csv 与 test.csv ， 并用 CSV 模块加载 origin_data = CSV.read(&#34;data/train.csv&#34;, DataFrame) 到提交的时候，数据表中的字段 PassengerId(Integer) 与 Survived(Integer) 数据探索 字段含义 我从网上查到这些字段的含义，有些字段的类型虽然是 Float ，但也是 1.0, 2.0之类的，比如 Age 字段名称 字段含义 字段类型 PassengerId 乘客ID Int Survived 是否存活 Int Pclass 乘客等级(1/2/3等舱位) Int Name 乘客姓名 String Sex 性别 String Age 年龄 Float SibSp 堂兄弟/妹个数 Float Parch 父母与小孩个数 Float Ticket 船票信息 String Fare 票价 Float Cabin 客舱 String Embarked 登船港口 String 字段科学类型 这个数据集使用分类预测，先要统一好各个字段的科学类型，不然一些 model 对字段不起作用 这里需要每个输入的数据类型是 Continuous, 而输出类型为 Multiclass 使用 schema 查看情况 schema(origin_data) 描述数据 看看这个数据有多少缺斤少两的 describe(origin_data) 数据处理 探索完数据后，接下来可以 填充缺失的数据 扔掉不用的数据 生成新的字段，或者优化数据 对 train."/>
+<meta name="application-name" content="My cool site">
+<meta name="apple-mobile-web-app-title" content="My cool site"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://example.org/posts/2022/07/titanic/" /><link rel="prev" href="http://example.org/posts/2022/07/flutter_database/" /><link rel="next" href="http://example.org/posts/2022/07/linear_model/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Titanic 生存预测，使用Logistic分类",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/example.org\/posts\/2022\/07\/titanic\/"
+        },"genre": "posts","keywords": "Julia, 数据分析","wordcount":  789 ,
+        "url": "http:\/\/example.org\/posts\/2022\/07\/titanic\/","datePublished": "2022-07-02T01:53:00+08:00","dateModified": "2022-07-02T14:44:03+08:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "Author"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="My New Hugo Site">My cool site</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="My New Hugo Site">My cool site</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Titanic 生存预测，使用Logistic分类</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Author</a></span>&nbsp;<span class="post-category">included in <a href="/categories/julia/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Julia</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2022-07-02">2022-07-02</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;789 words&nbsp;
+                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;4 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#项目介绍">项目介绍</a></li>
+    <li><a href="#数据探索">数据探索</a>
+      <ul>
+        <li><a href="#字段含义">字段含义</a></li>
+        <li><a href="#字段科学类型">字段科学类型</a></li>
+        <li><a href="#描述数据">描述数据</a></li>
+      </ul>
+    </li>
+    <li><a href="#数据处理">数据处理</a>
+      <ul>
+        <li><a href="#对-train-dot-csv-的数据处理策略">对 train.csv 的数据处理策略</a></li>
+        <li><a href="#对-test-dot-csv-的数据处理策略">对 test.csv 的数据处理策略</a></li>
+        <li><a href="#数据处理模型">数据处理模型</a></li>
+        <li><a href="#数据相关性"><!-- raw HTML omitted -->TODO<!-- raw HTML omitted --> 数据相关性</a></li>
+      </ul>
+    </li>
+    <li><a href="#模型训练">模型训练</a>
+      <ul>
+        <li><a href="#引入模型">引入模型</a></li>
+        <li><a href="#拆解数据">拆解数据</a></li>
+        <li><a href="#模型训练与调试">模型训练与调试</a></li>
+      </ul>
+    </li>
+    <li><a href="#投入使用">投入使用</a>
+      <ul>
+        <li><a href="#加载数据">加载数据</a></li>
+        <li><a href="#处理数据">处理数据</a></li>
+        <li><a href="#生成预测结果">生成预测结果</a></li>
+        <li><a href="#上传数据">上传数据</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="项目介绍">项目介绍</h2>
+<p>最近终于去学习 Julia 了，重温了下没做完的 Titanic 项目，打算做完 <!-- raw HTML omitted -->
+那就先导入必要的库吧 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">using</span> <span class="n">MLJ</span><span class="p">,</span> <span class="n">DataFrames</span><span class="p">,</span> <span class="n">StableRNGs</span><span class="p">,</span> <span class="n">CSV</span><span class="p">,</span> <span class="n">Plots</span>
+</span></span><span class="line"><span class="cl"><span class="n">plotly</span><span class="p">()</span>
+</span></span></code></pre></div><p>还要从 <a href="https://www.kaggle.com/c/titanic/overview" target="_blank" rel="noopener noreffer ">Kaggle</a> 上下载好数据集 train.csv 与 test.csv ， 并用 CSV 模块加载 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">origin_data</span> <span class="o">=</span> <span class="n">CSV</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&#34;data/train.csv&#34;</span><span class="p">,</span> <span class="n">DataFrame</span><span class="p">)</span>
+</span></span></code></pre></div><p>到提交的时候，数据表中的字段 PassengerId(Integer) 与 Survived(Integer) <!-- raw HTML omitted --></p>
+<h2 id="数据探索">数据探索</h2>
+<h3 id="字段含义">字段含义</h3>
+<p>我从网上查到这些字段的含义，有些字段的类型虽然是 <strong>Float</strong> ，但也是 1.0, 2.0之类的，比如 <strong>Age</strong> <!-- raw HTML omitted --></p>
+<table>
+<thead>
+<tr>
+<th>字段名称</th>
+<th>字段含义</th>
+<th>字段类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PassengerId</td>
+<td>乘客ID</td>
+<td>Int</td>
+</tr>
+<tr>
+<td>Survived</td>
+<td>是否存活</td>
+<td>Int</td>
+</tr>
+<tr>
+<td>Pclass</td>
+<td>乘客等级(1/2/3等舱位)</td>
+<td>Int</td>
+</tr>
+<tr>
+<td>Name</td>
+<td>乘客姓名</td>
+<td>String</td>
+</tr>
+<tr>
+<td>Sex</td>
+<td>性别</td>
+<td>String</td>
+</tr>
+<tr>
+<td>Age</td>
+<td>年龄</td>
+<td>Float</td>
+</tr>
+<tr>
+<td>SibSp</td>
+<td>堂兄弟/妹个数</td>
+<td>Float</td>
+</tr>
+<tr>
+<td>Parch</td>
+<td>父母与小孩个数</td>
+<td>Float</td>
+</tr>
+<tr>
+<td>Ticket</td>
+<td>船票信息</td>
+<td>String</td>
+</tr>
+<tr>
+<td>Fare</td>
+<td>票价</td>
+<td>Float</td>
+</tr>
+<tr>
+<td>Cabin</td>
+<td>客舱</td>
+<td>String</td>
+</tr>
+<tr>
+<td>Embarked</td>
+<td>登船港口</td>
+<td>String</td>
+</tr>
+</tbody>
+</table>
+<h3 id="字段科学类型">字段科学类型</h3>
+<p>这个数据集使用分类预测，先要统一好各个字段的科学类型，不然一些 model 对字段不起作用 <!-- raw HTML omitted -->
+这里需要每个输入的数据类型是 <strong>Continuous</strong>, 而输出类型为 <strong>Multiclass</strong> <!-- raw HTML omitted -->
+使用 schema 查看情况 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">schema</span><span class="p">(</span><span class="n">origin_data</span><span class="p">)</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2021-08-19_00-32-57_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<h3 id="描述数据">描述数据</h3>
+<p>看看这个数据有多少缺斤少两的 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">describe</span><span class="p">(</span><span class="n">origin_data</span><span class="p">)</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2021-08-19_00-33-10_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<h2 id="数据处理">数据处理</h2>
+<p>探索完数据后，接下来可以 <!-- raw HTML omitted --></p>
+<ul>
+<li>填充缺失的数据 <!-- raw HTML omitted --></li>
+<li>扔掉不用的数据 <!-- raw HTML omitted --></li>
+<li>生成新的字段，或者优化数据 <!-- raw HTML omitted --></li>
+</ul>
+<h3 id="对-train-dot-csv-的数据处理策略">对 train.csv 的数据处理策略</h3>
+<p>从 train.csv 加载的数据中，我们发现 <!-- raw HTML omitted --></p>
+<ul>
+<li>Age 字段有缺失的数据，我们用众数填充 <!-- raw HTML omitted --></li>
+<li>Embarked 字段有缺失的数据，同上 <!-- raw HTML omitted --></li>
+<li>Cabin 字段缺失值太多，丢掉 <!-- raw HTML omitted --></li>
+<li>我觉得 PassengerId, Name, Ticket 不会影响，丢掉 <!-- raw HTML omitted --></li>
+</ul>
+<p>我们打算对票价 Fare 字段进行一些处理，大部分数据都是小数，数值之间相差太大，对其用函数 <!-- raw HTML omitted --></p>
+<p>f(x) = log(x + 1) <!-- raw HTML omitted -->
+进行划分，划分的结果为 <!-- raw HTML omitted -->1.0, 2.0, 3.0, 4.0, 5.0<!-- raw HTML omitted --> <!-- raw HTML omitted --></p>
+<p>另外对一些特征进行整合，比如 <!-- raw HTML omitted --></p>
+<ul>
+<li>生成新字段 FeatureA: 将 age &lt; 12 或 sex == &ldquo;female&rdquo; 的乘客化为 A 类，其余为 B 类 <!-- raw HTML omitted --></li>
+<li>统计自己以及家人数量，将 SibSp 与 Parch 字段相加后，再加上自身的数量1 <!-- raw HTML omitted --></li>
+<li>将 Embarked, FeatureA 字段进行 Onehot 编码 <!-- raw HTML omitted --></li>
+<li>当然，新特征代替旧特征，旧特征可以丢弃了 <!-- raw HTML omitted --></li>
+</ul>
+<p>不过在处理数据前，先把各个字段的科学类型转换好 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">typeTransformModel</span><span class="p">(</span><span class="n">dataframe</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">)</span> <span class="o">=</span> <span class="k">begin</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="k">in</span><span class="p">(</span><span class="s">&#34;Survived&#34;</span><span class="p">,</span> <span class="n">names</span><span class="p">(</span><span class="n">dataframe</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">coerce!</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="ss">:Survived</span> <span class="o">=&gt;</span> <span class="n">Multiclass</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">coerce!</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">Count</span> <span class="o">=&gt;</span> <span class="n">Continuous</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">coerce!</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">Textual</span> <span class="o">=&gt;</span> <span class="n">Multiclass</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">dataframe</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span></code></pre></div><p>接下来定义数据处理模型 <!-- raw HTML omitted --></p>
+<h4 id="填充缺失值">填充缺失值</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">fillMissingModel</span> <span class="o">=</span> <span class="n">FillImputer</span><span class="p">(</span><span class="n">features</span><span class="o">=</span><span class="p">[</span><span class="ss">:Age</span><span class="p">,</span> <span class="ss">:Embarked</span><span class="p">],</span> <span class="n">continuous_fill</span> <span class="o">=</span> <span class="n">e</span> <span class="o">-&gt;</span> <span class="n">skipmissing</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">mode</span><span class="p">,</span> <span class="n">finite_fill</span> <span class="o">=</span> <span class="n">e</span> <span class="o">-&gt;</span> <span class="n">skipmissing</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">mode</span><span class="p">)</span>
+</span></span></code></pre></div><h4 id="生成新的特征">生成新的特征</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">newFeatureModel!</span><span class="p">(</span><span class="n">dataframe</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">)</span> <span class="o">=</span> <span class="k">begin</span>
+</span></span><span class="line"><span class="cl">  <span class="c"># MODULE FeatureA 聚集 Age, Sex --&gt; 12岁以下儿童以及妇女，12岁以上男性</span>
+</span></span><span class="line"><span class="cl">  <span class="n">feature_filter_a</span><span class="p">(</span><span class="n">age</span><span class="p">,</span> <span class="n">sex</span><span class="p">)</span> <span class="o">=</span> <span class="n">age</span> <span class="o">&gt;=</span> <span class="mi">12</span> <span class="o">&amp;&amp;</span> <span class="n">sex</span> <span class="o">==</span> <span class="s">&#34;male&#34;</span> <span class="o">?</span> <span class="s">&#34;A&#34;</span> <span class="o">:</span> <span class="s">&#34;B&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:FeatureA</span><span class="p">]</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">feature_filter_a</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:Age</span><span class="p">],</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:Sex</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c"># MODULE FeatureB 聚集 SibSp, Parch ---&gt; 家庭人员数量</span>
+</span></span><span class="line"><span class="cl">  <span class="n">family_size</span><span class="p">(</span><span class="n">number</span><span class="p">)</span> <span class="o">=</span> <span class="k">begin</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">number</span> <span class="o">==</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">    <span class="k">elseif</span> <span class="n">number</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="o">&amp;&amp;</span> <span class="n">number</span> <span class="o">&lt;=</span> <span class="mi">4</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">    <span class="k">else</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="mi">2</span>
+</span></span><span class="line"><span class="cl">    <span class="k">end</span>
+</span></span><span class="line"><span class="cl">  <span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:FeatureB</span><span class="p">]</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">family_size</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:Parch</span><span class="p">]</span> <span class="o">.+</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:SibSp</span><span class="p">]</span> <span class="o">.+</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c"># MODULE FeatureC log(Fare + 1), encode(Pclass) -&gt; 1, 2, 3  </span>
+</span></span><span class="line"><span class="cl">  <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:Fare</span><span class="p">]</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">floor</span><span class="p">,</span> <span class="n">log</span><span class="o">.</span><span class="p">(</span><span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:Fare</span><span class="p">]</span> <span class="o">.+</span> <span class="mi">1</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c"># TODO don&#39;t forget to coerce scitype</span>
+</span></span><span class="line"><span class="cl">  <span class="n">coerce!</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="ss">:FeatureA</span> <span class="o">=&gt;</span> <span class="n">Multiclass</span><span class="p">,</span> <span class="ss">:FeatureB</span> <span class="o">=&gt;</span> <span class="n">Continuous</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">dataframe</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span></code></pre></div><h4 id="对-embarked-进行-onehot-编码">对 Embarked 进行 OneHot 编码</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">encodeModel</span> <span class="o">=</span> <span class="n">OneHotEncoder</span><span class="p">(</span><span class="n">features</span><span class="o">=</span><span class="p">[</span><span class="ss">:Embarked</span><span class="p">,</span> <span class="ss">:FeatureA</span><span class="p">])</span>
+</span></span></code></pre></div><h4 id="丢弃不用的特征">丢弃不用的特征</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">dropUnusedModel</span> <span class="o">=</span> <span class="n">FeatureSelector</span><span class="p">(</span><span class="n">features</span> <span class="o">=</span> <span class="p">[</span><span class="ss">:Age</span><span class="p">,</span> <span class="ss">:Sex</span><span class="p">,</span> <span class="ss">:SibSp</span><span class="p">,</span> <span class="ss">:Parch</span><span class="p">,</span> <span class="ss">:Cabin</span><span class="p">,</span> <span class="ss">:PassengerId</span><span class="p">,</span> <span class="ss">:Name</span><span class="p">,</span> <span class="ss">:Ticket</span><span class="p">],</span> <span class="n">ignore</span><span class="o">=</span><span class="nb">true</span><span class="p">)</span>
+</span></span></code></pre></div><h3 id="对-test-dot-csv-的数据处理策略">对 test.csv 的数据处理策略</h3>
+<p>从 test.csv 加载的数据与 train.csv 有点不同， <!-- raw HTML omitted --></p>
+<ul>
+<li>缺失值有 Age, Fare，没有 Embarked <!-- raw HTML omitted --></li>
+<li>没有 Survived 字段 <!-- raw HTML omitted --></li>
+</ul>
+<p>我们只需要重新为其定义填充缺失值的模型即可 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">fillMissingModel</span> <span class="o">=</span> <span class="n">FillImputer</span><span class="p">(</span><span class="n">features</span><span class="o">=</span><span class="p">[</span><span class="ss">:Age</span><span class="p">,</span> <span class="ss">:Fare</span><span class="p">],</span> <span class="n">continuous_fill</span> <span class="o">=</span> <span class="n">e</span> <span class="o">-&gt;</span> <span class="n">skipmissing</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">mode</span><span class="p">)</span>
+</span></span></code></pre></div><h3 id="数据处理模型">数据处理模型</h3>
+<p>将各个模型串联起来，即可获得模型 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">transformModel</span> <span class="o">=</span> <span class="nd">@pipeline</span> <span class="n">typeTransformModel</span> <span class="n">fillMissingModel</span> <span class="n">newFeatureModel!</span> <span class="n">encodeModel</span> <span class="n">dropUnusedModel</span>
+</span></span><span class="line"><span class="cl"><span class="n">transformMachine</span> <span class="o">=</span> <span class="n">machine</span><span class="p">(</span><span class="n">transformModel</span><span class="p">,</span> <span class="n">origin_data</span><span class="p">)</span>
+</span></span></code></pre></div><p>接下来拟合 transformMachine ，转换原始数据得到 output_data <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">fit!</span><span class="p">(</span><span class="n">transformMachine</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">output_data</span> <span class="o">=</span> <span class="n">MLJ</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">transformMachine</span><span class="p">,</span> <span class="n">origin_data</span><span class="p">)</span>
+</span></span></code></pre></div><p>查看以下数据是否符合我们的预期 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">schema</span><span class="p">(</span><span class="n">output_data</span><span class="p">)</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2021-08-18_17-01-01_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<p>对 test.csv 的数据转换需要重新定义 fillMissingModel <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">origin_sample</span> <span class="o">=</span> <span class="n">CSV</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&#34;data/test.csv&#34;</span><span class="p">,</span> <span class="n">DataFrame</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c"># generic typeTransformModel, ignore</span>
+</span></span><span class="line"><span class="cl"><span class="n">fillMissingModel</span> <span class="o">=</span> <span class="n">FillImputer</span><span class="p">(</span><span class="n">features</span><span class="o">=</span><span class="p">[</span><span class="ss">:Age</span><span class="p">,</span> <span class="ss">:Fare</span><span class="p">],</span> <span class="n">continuous_fill</span> <span class="o">=</span> <span class="n">e</span> <span class="o">-&gt;</span> <span class="n">skipmissing</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">mode</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># generic new feature generate</span>
+</span></span><span class="line"><span class="cl"><span class="c"># generic encode model</span>
+</span></span><span class="line"><span class="cl"><span class="c"># generic drop unused</span>
+</span></span><span class="line"><span class="cl"><span class="n">transformSampleModel</span> <span class="o">=</span> <span class="n">transformModel</span> <span class="o">=</span> <span class="nd">@pipeline</span> <span class="n">typeTransformModel</span> <span class="n">fillMissingModel</span> <span class="n">newFeatureModel!</span> <span class="n">encodeModel</span> <span class="n">dropUnusedModel</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">transformSampleMachine</span> <span class="o">=</span> <span class="n">machine</span><span class="p">(</span><span class="n">transformSampleModel</span><span class="p">,</span> <span class="n">origin_sample</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">fit!</span><span class="p">(</span><span class="n">transformSampleMachine</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">output_sample</span> <span class="o">=</span> <span class="n">MLJ</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">transformSampleMachine</span><span class="p">,</span> <span class="n">origin_sample</span><span class="p">)</span>
+</span></span></code></pre></div><h3 id="数据相关性"><!-- raw HTML omitted -->TODO<!-- raw HTML omitted --> 数据相关性</h3>
+<p>其实还可以看看各个字段间的相关性，画个热力图就行了，问了以下 Slack 的人，发现在 StatsPlots 中已经有函数 corrplot <!-- raw HTML omitted -->
+<a href="https://github.com/JuliaPlots/StatsPlots.jl#corrplot-and-cornerplot" target="_blank" rel="noopener noreffer ">相关文档在这</a> <!-- raw HTML omitted -->
+但是吧这个图像好像不是热力图，我还是先放着吧 <!-- raw HTML omitted --></p>
+<h2 id="模型训练">模型训练</h2>
+<h3 id="引入模型">引入模型</h3>
+<p>这是个分类问题，我打算使用 LogisticClassifier ，其他分类器也可以 <!-- raw HTML omitted -->
+从 MLJLinearModels 中导入模型 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">using</span> <span class="n">MLJLinearModels</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@load</span> <span class="n">LogisticClassifier</span> <span class="n">pkg</span><span class="o">=</span><span class="n">MLJLinearModels</span>
+</span></span><span class="line"><span class="cl"><span class="n">clf</span> <span class="o">=</span> <span class="n">LogisticClassifier</span><span class="p">()</span>
+</span></span></code></pre></div><p>依据文档，其中的参数为 <!-- raw HTML omitted --></p>
+<ul>
+<li>penalty (Symbol or String): the penalty to use, either :l2, :l1, :en (elastic net) or :none. (Default: :l2) <!-- raw HTML omitted --></li>
+<li>lambda (Real): strength of the regulariser if penalty is :l2 or :l1. Strength of the L2 regulariser if penalty is :en. <!-- raw HTML omitted --></li>
+<li>gamma (Real): strength of the L1 regulariser if penalty is :en. <!-- raw HTML omitted --></li>
+<li>fit_intercept (Bool): whether to fit an intercept (Default: true) <!-- raw HTML omitted --></li>
+<li>penalize_intercept (Bool): whether to penalize intercept (Default: false) <!-- raw HTML omitted --></li>
+<li>solver (Solver): type of solver to use, default if nothing. <!-- raw HTML omitted --></li>
+</ul>
+<h3 id="拆解数据">拆解数据</h3>
+<p>先把特征字段和预测结果分开 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">Y</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="n">output_data</span><span class="p">,</span> <span class="n">colname</span> <span class="o">-&gt;</span> <span class="n">colname</span> <span class="o">==</span> <span class="ss">:Survived</span><span class="p">,</span> <span class="n">colname</span> <span class="o">-&gt;</span> <span class="nb">true</span><span class="p">)</span>
+</span></span></code></pre></div><p>再定义训练集和测试集的行数 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">rng</span> <span class="o">=</span> <span class="n">StableRNG</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">train_row</span><span class="p">,</span> <span class="n">test_row</span> <span class="o">=</span> <span class="n">partition</span><span class="p">(</span><span class="n">eachindex</span><span class="p">(</span><span class="n">Y</span><span class="p">),</span> <span class="mf">0.7</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="n">rng</span><span class="p">)</span>
+</span></span></code></pre></div><h3 id="模型训练与调试">模型训练与调试</h3>
+<p>如果不需要调试模型的话，直接输入以下代码查看模型的训练情况 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">mach</span> <span class="o">=</span> <span class="n">machine</span><span class="p">(</span><span class="n">clf</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">fit!</span><span class="p">(</span><span class="n">mach</span><span class="p">,</span> <span class="n">rows</span><span class="o">=</span><span class="n">train_row</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">cv</span> <span class="o">=</span> <span class="n">CV</span><span class="p">(</span><span class="n">nfolds</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="n">rng</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">evaluate!</span><span class="p">(</span><span class="n">mach</span><span class="p">,</span> <span class="n">rows</span><span class="o">=</span><span class="n">test_row</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	  <span class="n">measures</span><span class="o">=</span><span class="p">[</span><span class="n">cross_entropy</span><span class="p">,</span> <span class="n">auc</span><span class="p">],</span> <span class="n">resampling</span><span class="o">=</span><span class="n">cv</span><span class="p">)</span>
+</span></span></code></pre></div><p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/ox-hugo/2021-08-19_00-41-44_screenshot.png"
+        data-srcset="/ox-hugo/2021-08-19_00-41-44_screenshot.png, /ox-hugo/2021-08-19_00-41-44_screenshot.png 1.5x, /ox-hugo/2021-08-19_00-41-44_screenshot.png 2x"
+        data-sizes="auto"
+        alt="/ox-hugo/2021-08-19_00-41-44_screenshot.png"
+        title="/ox-hugo/2021-08-19_00-41-44_screenshot.png" /> <!-- raw HTML omitted -->
+对结果不满意的话，让我们来优化这个模型的参数，这里的优化策略使用 Grid，其中有三个维度 <!-- raw HTML omitted --></p>
+<ul>
+<li>range of lambda <!-- raw HTML omitted --></li>
+<li>range of penalty <!-- raw HTML omitted --></li>
+<li>range of gamma <!-- raw HTML omitted --></li>
+</ul>
+<p>他们的定义是 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">r_lambda</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">clf</span><span class="p">,</span> <span class="ss">:lambda</span><span class="p">,</span> <span class="n">lower</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">upper</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="ss">:linear</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">r_penalty</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">clf</span><span class="p">,</span> <span class="ss">:penalty</span><span class="p">,</span> <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="ss">:l1</span><span class="p">,</span> <span class="ss">:l2</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="n">r_gamma</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">clf</span><span class="p">,</span> <span class="ss">:gamma</span><span class="p">,</span> <span class="n">lower</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">upper</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="ss">:linear</span><span class="p">)</span>
+</span></span></code></pre></div><p>由于 penalty 不是连续的，设置范围的时候可以手动设置他的值 <!-- raw HTML omitted --></p>
+<p>设置好调优策略后，就可以新建一个自调优模型 self_tuning_model 来进行训练了 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">tuning</span> <span class="o">=</span> <span class="n">Grid</span><span class="p">(</span><span class="n">resolution</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">rng</span> <span class="o">=</span> <span class="n">rng</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">self_tuning_model</span> <span class="o">=</span> <span class="n">TunedModel</span><span class="p">(</span><span class="n">model</span> <span class="o">=</span> <span class="n">clf</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			       <span class="n">range</span> <span class="o">=</span> <span class="p">[</span><span class="n">r_lambda</span><span class="p">,</span> <span class="n">r_penalty</span><span class="p">,</span> <span class="n">r_gamma</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">			       <span class="n">tuning</span> <span class="o">=</span> <span class="n">tuning</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			       <span class="n">resampling</span> <span class="o">=</span> <span class="n">CV</span><span class="p">(</span><span class="n">nfolds</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span> <span class="n">rng</span> <span class="o">=</span> <span class="n">rng</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">			       <span class="n">measure</span> <span class="o">=</span> <span class="n">cross_entropy</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">self_tuning_mach</span> <span class="o">=</span> <span class="n">machine</span><span class="p">(</span><span class="n">self_tuning_model</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">fit!</span><span class="p">(</span><span class="n">self_tuning_mach</span><span class="p">,</span> <span class="n">rows</span><span class="o">=</span><span class="n">train_row</span><span class="p">,</span> <span class="n">verbosity</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span></span></code></pre></div><p>调试完毕后，获取最优模型并评估 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">best_model</span> <span class="o">=</span> <span class="n">fitted_params</span><span class="p">(</span><span class="n">self_tuning_mach</span><span class="p">)</span><span class="o">.</span><span class="n">best_model</span>
+</span></span><span class="line"><span class="cl"><span class="n">best_mach</span>  <span class="o">=</span> <span class="n">machine</span><span class="p">(</span><span class="n">best_model</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">evaluate!</span><span class="p">(</span><span class="n">best_mach</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	  <span class="n">resampling</span> <span class="o">=</span> <span class="n">CV</span><span class="p">(</span><span class="n">nfolds</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span> <span class="n">rng</span> <span class="o">=</span> <span class="n">rng</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">	  <span class="n">measure</span> <span class="o">=</span> <span class="p">[</span><span class="n">cross_entropy</span><span class="p">,</span> <span class="n">area_under_curve</span><span class="p">],</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+</span></span></code></pre></div><p>看看训练结果 <!-- raw HTML omitted --></p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/ox-hugo/2021-08-19_00-42-13_screenshot.png"
+        data-srcset="/ox-hugo/2021-08-19_00-42-13_screenshot.png, /ox-hugo/2021-08-19_00-42-13_screenshot.png 1.5x, /ox-hugo/2021-08-19_00-42-13_screenshot.png 2x"
+        data-sizes="auto"
+        alt="/ox-hugo/2021-08-19_00-42-13_screenshot.png"
+        title="/ox-hugo/2021-08-19_00-42-13_screenshot.png" /> <!-- raw HTML omitted -->
+好像没多少变化，那看看 roc 曲线 <!-- raw HTML omitted --></p>
+<p><figure><img src="/ox-hugo/2021-08-19_00-42-26_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<h2 id="投入使用">投入使用</h2>
+<p><strong><strong>注意</strong></strong> <!-- raw HTML omitted -->
+MLJ为分类结果定义了两种情况，一种是概率的，一种是二分的，而 LogisticClassifier 输出的结果是概率的 <!-- raw HTML omitted -->
+生成数据的最后还需要处理一遍 <!-- raw HTML omitted --></p>
+<h3 id="加载数据">加载数据</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">origin_sample</span> <span class="o">=</span> <span class="n">CSV</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&#34;data/test.csv&#34;</span><span class="p">,</span> <span class="n">DataFrame</span><span class="p">)</span>
+</span></span></code></pre></div><h3 id="处理数据">处理数据</h3>
+<p>当然别忘了重新定义 fillMissingModel <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">fillMissingModel</span> <span class="o">=</span> <span class="n">FillImputer</span><span class="p">(</span><span class="n">features</span><span class="o">=</span><span class="p">[</span><span class="ss">:Age</span><span class="p">,</span> <span class="ss">:Fare</span><span class="p">],</span> <span class="n">continuous_fill</span> <span class="o">=</span> <span class="n">e</span> <span class="o">-&gt;</span> <span class="n">skipmissing</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">mode</span><span class="p">)</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">transformSampleModel</span> <span class="o">=</span> <span class="n">transformModel</span> <span class="o">=</span> <span class="nd">@pipeline</span> <span class="n">typeTransformModel</span> <span class="n">fillMissingModel</span> <span class="n">newFeatureModel!</span> <span class="n">encodeModel</span> <span class="n">dropUnusedModel</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">transformSampleMachine</span> <span class="o">=</span> <span class="n">machine</span><span class="p">(</span><span class="n">transformSampleModel</span><span class="p">,</span> <span class="n">origin_sample</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">fit!</span><span class="p">(</span><span class="n">transformSampleMachine</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">output_sample</span> <span class="o">=</span> <span class="n">MLJ</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">transformSampleMachine</span><span class="p">,</span> <span class="n">origin_sample</span><span class="p">)</span>
+</span></span></code></pre></div><h3 id="生成预测结果">生成预测结果</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">output_predict</span> <span class="o">=</span> <span class="n">mode</span><span class="o">.</span><span class="p">(</span><span class="n">predict</span><span class="p">(</span><span class="n">best_mach</span><span class="p">,</span> <span class="n">output_sample</span><span class="p">))</span> <span class="o">|&gt;</span> <span class="n">nums</span> <span class="o">-&gt;</span> <span class="n">convert</span><span class="p">(</span><span class="kt">Vector</span><span class="p">{</span><span class="kt">Int</span><span class="p">},</span> <span class="n">nums</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">output_frame</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">output_frame</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:PassengerId</span><span class="p">]</span> <span class="o">=</span> <span class="n">convert</span><span class="p">(</span><span class="kt">Vector</span><span class="p">{</span><span class="kt">Int</span><span class="p">},</span> <span class="n">origin_sample</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:PassengerId</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="n">output_frame</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:Survived</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_predict</span>
+</span></span><span class="line"><span class="cl"><span class="n">CSV</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#34;data/predict.csv&#34;</span><span class="p">,</span> <span class="n">output_frame</span><span class="p">)</span>
+</span></span></code></pre></div><p>其中调用 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">mode</span><span class="p">(</span><span class="n">d</span><span class="o">::</span><span class="kt">UnivariateDistribution</span><span class="p">)</span>
+</span></span></code></pre></div><p>mode 返回概率最大的数，在这里只有对0与1的概率 <!-- raw HTML omitted --></p>
+<h3 id="上传数据">上传数据</h3>
+<p>将 predict.csv 上传至 <a href="https://www.kaggle.com/c/titanic/submit" target="_blank" rel="noopener noreffer ">https://www.kaggle.com/c/titanic/submit</a> <!-- raw HTML omitted --></p>
+<p><figure><img src="/ox-hugo/2021-08-19_00-42-46_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2022-07-02</span>
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="http://example.org/posts/2022/07/titanic/" data-title="Titanic 生存预测，使用Logistic分类" data-hashtags="Julia,数据分析"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="http://example.org/posts/2022/07/titanic/" data-hashtag="Julia"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="http://example.org/posts/2022/07/titanic/" data-title="Titanic 生存预测，使用Logistic分类"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="http://example.org/posts/2022/07/titanic/" data-title="Titanic 生存预测，使用Logistic分类"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.0.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="http://example.org/posts/2022/07/titanic/" data-title="Titanic 生存预测，使用Logistic分类"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw" aria-hidden="true"></i>&nbsp;<a href="/tags/julia/">Julia</a>,&nbsp;<a href="/tags/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/">数据分析</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/2022/07/flutter_database/" class="prev" rel="prev" title="在 Flutter 中使用数据库"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>在 Flutter 中使用数据库</a>
+            <a href="/posts/2022/07/linear_model/" class="next" rel="next" title="MLJ中 线性模型 在回归预测中的简单使用">MLJ中 线性模型 在回归预测中的简单使用<i class="fas fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.101.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

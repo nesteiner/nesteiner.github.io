@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>Scrapy 爬虫的简单使用 - My New Hugo Site</title><meta name="Description" content="This is my cool site"><meta property="og:title" content="Scrapy 爬虫的简单使用" />
+<meta property="og:description" content="简单的爬虫流程 一般的，程序向网站请求网页 程序 =========&gt; 网站 而后，网站返回网页与程序 程序 &lt;========= 网站 接着程序负责解析得到的 HTML 数据即可 Scrapy 如何扩展这一流程 程序请求网页时， scrapy 添加了中间件在双方之间 程序 =====&gt; 中间件 ======&gt; 网站 网站返回数据时，也需要通过中间件 程序 &lt;===== 中间件 &lt;====== 网站 程序解析完数据后，不会马上处理数据，而是把一个网页的数据打包成一个 Item 数据，传递给 pipeline 处理 pipeline &lt;==== item &lt;==== 程序 Scrapy 简单示例 这里以爬取美图录的图片为例(注意，我不打算用默认的 start_urls 数据) 首先我们到一个模特的主页上，比如 接下来我们要从这个 指定模特页面 上的每一个专辑上爬取图片 准备项目 安装 scrapy sudo pip3 install scrapy 创建新项目 scrapy startproject meitulu 基础设定 在 meitulu/spiders/ 下我们新建一个爬虫文件 evelyn.py class Spider(scrapy.Spider): name = &#39;evelyn&#39; 其中的 name 属性是为了调用的时候能找到爬虫位置，比如调用这个爬虫的时候，我们指定 name scrapy crawl evelyn 添加命令行参数 def __init__(self, albumUrl=None, *args, **kwargs): if albumUrl == None: raise Exception(&#39;usage: -a albumUrl=." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/posts/2022/07/scrapy-spider/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-07-02T14:31:00+08:00" />
+<meta property="article:modified_time" content="2022-07-02T14:45:36+08:00" /><meta property="og:site_name" content="My cool site" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Scrapy 爬虫的简单使用"/>
+<meta name="twitter:description" content="简单的爬虫流程 一般的，程序向网站请求网页 程序 =========&gt; 网站 而后，网站返回网页与程序 程序 &lt;========= 网站 接着程序负责解析得到的 HTML 数据即可 Scrapy 如何扩展这一流程 程序请求网页时， scrapy 添加了中间件在双方之间 程序 =====&gt; 中间件 ======&gt; 网站 网站返回数据时，也需要通过中间件 程序 &lt;===== 中间件 &lt;====== 网站 程序解析完数据后，不会马上处理数据，而是把一个网页的数据打包成一个 Item 数据，传递给 pipeline 处理 pipeline &lt;==== item &lt;==== 程序 Scrapy 简单示例 这里以爬取美图录的图片为例(注意，我不打算用默认的 start_urls 数据) 首先我们到一个模特的主页上，比如 接下来我们要从这个 指定模特页面 上的每一个专辑上爬取图片 准备项目 安装 scrapy sudo pip3 install scrapy 创建新项目 scrapy startproject meitulu 基础设定 在 meitulu/spiders/ 下我们新建一个爬虫文件 evelyn.py class Spider(scrapy.Spider): name = &#39;evelyn&#39; 其中的 name 属性是为了调用的时候能找到爬虫位置，比如调用这个爬虫的时候，我们指定 name scrapy crawl evelyn 添加命令行参数 def __init__(self, albumUrl=None, *args, **kwargs): if albumUrl == None: raise Exception(&#39;usage: -a albumUrl=."/>
+<meta name="application-name" content="My cool site">
+<meta name="apple-mobile-web-app-title" content="My cool site"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://example.org/posts/2022/07/scrapy-spider/" /><link rel="prev" href="http://example.org/posts/2022/07/symbolics/" /><link rel="next" href="http://example.org/posts/2022/07/julia-calculus/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Scrapy 爬虫的简单使用",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/example.org\/posts\/2022\/07\/scrapy-spider\/"
+        },"genre": "posts","keywords": "Scrapy, 爬虫, Scrapy","wordcount":  337 ,
+        "url": "http:\/\/example.org\/posts\/2022\/07\/scrapy-spider\/","datePublished": "2022-07-02T14:31:00+08:00","dateModified": "2022-07-02T14:45:36+08:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "Author"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="My New Hugo Site">My cool site</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="My New Hugo Site">My cool site</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Scrapy 爬虫的简单使用</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Author</a></span>&nbsp;<span class="post-category">included in <a href="/categories/python/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Python</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2022-07-02">2022-07-02</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;337 words&nbsp;
+                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;2 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#简单的爬虫流程">简单的爬虫流程</a></li>
+    <li><a href="#scrapy-如何扩展这一流程">Scrapy 如何扩展这一流程</a></li>
+    <li><a href="#scrapy-简单示例">Scrapy 简单示例</a>
+      <ul>
+        <li><a href="#准备项目">准备项目</a></li>
+        <li><a href="#基础设定">基础设定</a></li>
+        <li><a href="#添加命令行参数">添加命令行参数</a></li>
+        <li><a href="#解析函数-parsealbum">解析函数 parseAlbum</a></li>
+        <li><a href="#解析函数-parse">解析函数 parse</a></li>
+        <li><a href="#pipeline-处理结果">Pipeline 处理结果</a></li>
+        <li><a href="#全局设置">全局设置</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="简单的爬虫流程">简单的爬虫流程</h2>
+<p>一般的，程序向网站请求网页 <!-- raw HTML omitted --></p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<p>程序 =========&gt; 网站 <!-- raw HTML omitted --></p>
+<!-- raw HTML omitted -->
+<p>而后，网站返回网页与程序 <!-- raw HTML omitted --></p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<p>程序 &lt;========= 网站 <!-- raw HTML omitted --></p>
+<!-- raw HTML omitted -->
+<p>接着程序负责解析得到的 <strong>HTML</strong> 数据即可 <!-- raw HTML omitted --></p>
+<h2 id="scrapy-如何扩展这一流程">Scrapy 如何扩展这一流程</h2>
+<p>程序请求网页时， <code>scrapy</code> 添加了中间件在双方之间 <!-- raw HTML omitted --></p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<p>程序 =====&gt; 中间件 ======&gt; 网站 <!-- raw HTML omitted --></p>
+<!-- raw HTML omitted -->
+<p>网站返回数据时，也需要通过中间件 <!-- raw HTML omitted --></p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<p>程序 &lt;===== 中间件 &lt;====== 网站 <!-- raw HTML omitted --></p>
+<!-- raw HTML omitted -->
+<p>程序解析完数据后，不会马上处理数据，而是把一个网页的数据打包成一个 <code>Item</code> 数据，传递给 <code>pipeline</code> 处理 <!-- raw HTML omitted --></p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<p>pipeline &lt;==== item &lt;==== 程序 <!-- raw HTML omitted --></p>
+<!-- raw HTML omitted -->
+<h2 id="scrapy-简单示例">Scrapy 简单示例</h2>
+<p>这里以爬取美图录的图片为例(注意，我不打算用默认的 <code>start_urls</code> 数据) <!-- raw HTML omitted -->
+首先我们到一个模特的主页上，比如 <!-- raw HTML omitted --></p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="images/Scrapy_%e7%ae%80%e5%8d%95%e7%a4%ba%e4%be%8b/2022-04-10_20-13-21_screenshot.png"
+        data-srcset="images/Scrapy_%e7%ae%80%e5%8d%95%e7%a4%ba%e4%be%8b/2022-04-10_20-13-21_screenshot.png, images/Scrapy_%e7%ae%80%e5%8d%95%e7%a4%ba%e4%be%8b/2022-04-10_20-13-21_screenshot.png 1.5x, images/Scrapy_%e7%ae%80%e5%8d%95%e7%a4%ba%e4%be%8b/2022-04-10_20-13-21_screenshot.png 2x"
+        data-sizes="auto"
+        alt="images/Scrapy_简单示例/2022-04-10_20-13-21_screenshot.png"
+        title="images/Scrapy_简单示例/2022-04-10_20-13-21_screenshot.png" /> <!-- raw HTML omitted -->
+接下来我们要从这个 <strong>指定模特页面</strong> 上的每一个专辑上爬取图片 <!-- raw HTML omitted --></p>
+<h3 id="准备项目">准备项目</h3>
+<ol>
+<li>
+<p>安装 <code>scrapy</code> <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo pip3 install scrapy
+</span></span></code></pre></div></li>
+<li>
+<p>创建新项目 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">scrapy startproject meitulu
+</span></span></code></pre></div></li>
+</ol>
+<h3 id="基础设定">基础设定</h3>
+<p>在 <code>meitulu/spiders/</code> 下我们新建一个爬虫文件 <code>evelyn.py</code> <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Spider</span><span class="p">(</span><span class="n">scrapy</span><span class="o">.</span><span class="n">Spider</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;evelyn&#39;</span>
+</span></span></code></pre></div><p>其中的 <code>name</code> 属性是为了调用的时候能找到爬虫位置，比如调用这个爬虫的时候，我们指定 <code>name</code> <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">scrapy crawl evelyn
+</span></span></code></pre></div><h3 id="添加命令行参数">添加命令行参数</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">albumUrl</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">albumUrl</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">	<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;usage: -a albumUrl=...&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nb">super</span><span class="p">(</span><span class="n">Spider</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="bp">self</span><span class="o">.</span><span class="n">start_url</span> <span class="o">=</span> <span class="n">albumUrl</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">start_requests</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">yield</span> <span class="n">scrapy</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">start_url</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">)</span>
+</span></span></code></pre></div><p>这里在类的 <code>__init__</code> 方法上我们做了修改，第二个参数是命令行参数名称，默认为 <code>None</code> ，第三，第四个参数不需要管 <!-- raw HTML omitted -->
+我们这样调用 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">scrapy crawl evelyn -a <span class="nv">albumUrl</span><span class="o">=</span><span class="s1">&#39;http://meitulu.cn/t/Evelynaili/&#39;</span>
+</span></span></code></pre></div><p>注意这里我们没有定义 <code>start_urls</code> 而是 <code>start_url</code> ，这里我覆盖了这种默认行为，重新定义了 <code>start_requests</code>  <!-- raw HTML omitted -->
+并将获取到的响应交给 <code>self.parse</code> 回调来解析 <!-- raw HTML omitted --></p>
+<h3 id="解析函数-parsealbum">解析函数 parseAlbum</h3>
+<p>这里的函数解析一张专辑中的每一张图片，然后解析出 <code>item</code> ，传递给 <code>pipeline</code> ，如果有下一页，继续请求 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">parseAlbum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">firstUrl</span><span class="p">,</span> <span class="n">albumName</span><span class="p">,</span> <span class="n">count</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">url</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">css</span><span class="p">(</span><span class="s1">&#39;div.content center a img.content_img::attr(src)&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">extract_first</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">count</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.jpg&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">yield</span> <span class="n">Image</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">albumName</span><span class="o">=</span><span class="n">albumName</span><span class="p">,</span> <span class="n">fromUrl</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">nextPage</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">urljoin</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">css</span><span class="p">(</span><span class="s1">&#39;div.content center a::attr(href)&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">extract_first</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">nextPage</span> <span class="o">!=</span> <span class="n">firstUrl</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">	<span class="k">yield</span> <span class="n">scrapy</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">	    <span class="n">url</span><span class="o">=</span><span class="n">nextPage</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	    <span class="n">callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parseAlbum</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	    <span class="n">cb_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">firstUrl</span><span class="o">=</span><span class="n">nextPage</span><span class="p">,</span> <span class="n">albumName</span><span class="o">=</span><span class="n">albumName</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="n">count</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+</span></span></code></pre></div><p>在函数中， <!-- raw HTML omitted --></p>
+<ul>
+<li><code>firstUrl</code> <!-- raw HTML omitted -->
+表示专辑的第一页网址，也是专辑的入口地址，设置他是因为最后一页的下一页是 <code>firstUrl</code> ， <!-- raw HTML omitted -->
+需要用来判断当前页是否为最后一页 <!-- raw HTML omitted --></li>
+<li><code>albumName</code> <!-- raw HTML omitted -->
+表示专辑名称，设置他是因为我看了下html代码，每一张图片的 <code>alt</code> 属性都是专辑名，为其命名也麻烦 <!-- raw HTML omitted --></li>
+<li><code>count</code> <!-- raw HTML omitted -->
+所以我就设置了这个参数，需要请求下一页的时候，这个参数就加1 <!-- raw HTML omitted --></li>
+</ul>
+<h3 id="解析函数-parse">解析函数 parse</h3>
+<p>这个函数获取模特主页中每一张专辑的地址，然后传递给 <code>self.parseAlbum</code> 回调，并通过 <code>cb_kwargs</code> 添加额外的函数参数 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">urls</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">css</span><span class="p">(</span><span class="s1">&#39;div.main div.boxs ul.img li&gt;a::attr(href)&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">extract</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">albumUrls</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">url</span><span class="p">:</span> <span class="n">response</span><span class="o">.</span><span class="n">urljoin</span><span class="p">(</span><span class="n">url</span><span class="p">),</span> <span class="n">urls</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">names</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">css</span><span class="p">(</span><span class="s1">&#39;div.main div.boxs ul.img li p.p_title&gt; a::text&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">extract</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="n">albumUrl</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">albumUrls</span><span class="p">,</span> <span class="n">names</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">	<span class="k">yield</span> <span class="n">scrapy</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">	    <span class="n">url</span><span class="o">=</span><span class="n">albumUrl</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	    <span class="n">callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parseAlbum</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	    <span class="n">cb_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">firstUrl</span><span class="o">=</span><span class="n">albumUrl</span><span class="p">,</span> <span class="n">albumName</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+</span></span></code></pre></div><h3 id="pipeline-处理结果">Pipeline 处理结果</h3>
+<p>由于直接请求图片会被网站检测，并返回 403 代码，这里我们伪造下请求头 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">default_headers</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;Accept&#39;</span><span class="p">:</span> <span class="s1">&#39;image/avif,image/webp,*/*&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;Accept-Encoding&#39;</span><span class="p">:</span> <span class="s1">&#39;gzip, deflate&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;Accept-Language&#39;</span><span class="p">:</span> <span class="s1">&#39;zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;Host&#39;</span><span class="p">:</span> <span class="s1">&#39;image.meitulu.cn&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;Referer&#39;</span><span class="p">:</span> <span class="s1">&#39;http://meitulu.cn/&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="s1">&#39;Mozilla/5.0 (X11; Linux x86_64; rv:99.0) Gecko/20100101 Firefox/99.0&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>接下来我们写一个类来继承 <code>FilesPipeline</code> ，处理结果 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">scrapy.pipelines.images</span> <span class="kn">import</span> <span class="n">FilesPipeline</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">MeituluPipeline</span><span class="p">(</span><span class="n">FilesPipeline</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">default_headers</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="s1">&#39;Accept&#39;</span><span class="p">:</span> <span class="s1">&#39;image/avif,image/webp,*/*&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="s1">&#39;Accept-Encoding&#39;</span><span class="p">:</span> <span class="s1">&#39;gzip, deflate&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="s1">&#39;Accept-Language&#39;</span><span class="p">:</span> <span class="s1">&#39;zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="s1">&#39;Host&#39;</span><span class="p">:</span> <span class="s1">&#39;image.meitulu.cn&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="s1">&#39;Referer&#39;</span><span class="p">:</span> <span class="s1">&#39;http://meitulu.cn/&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="s1">&#39;Mozilla/5.0 (X11; Linux x86_64; rv:99.0) Gecko/20100101 Firefox/99.0&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">file_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">item</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">	<span class="n">dirname</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;albumName&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">	<span class="n">basename</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">basename</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">get_media_requests</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">	<span class="k">yield</span> <span class="n">scrapy</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">],</span> <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">default_headers</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">item_completed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">item</span>
+</span></span></code></pre></div><p>其中有三个函数可以挑选着来重写 <!-- raw HTML omitted --></p>
+<ul>
+<li><code>file_path</code> <!-- raw HTML omitted -->
+指定 <code>item</code> 存贮的文件名 <!-- raw HTML omitted --></li>
+<li><code>get_media_requests</code> <!-- raw HTML omitted -->
+自定义如何请求图片的函数 <!-- raw HTML omitted --></li>
+<li><code>item_completed</code> <!-- raw HTML omitted -->
+下载完图片后如何处理 <!-- raw HTML omitted --></li>
+</ul>
+<p>另外这个 <code>file_path</code> 的重写我忘了从哪个教程里粘贴过来的了，先用着吧 <!-- raw HTML omitted --></p>
+<h3 id="全局设置">全局设置</h3>
+<h4 id="开启-pipeline">开启 pipeline</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">ITEM_PIPELINES</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">   <span class="s1">&#39;meitulu.pipelines.MeituluPipeline&#39;</span><span class="p">:</span> <span class="mi">300</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h4 id="设置-文件存贮-默认位置">设置 文件存贮 默认位置</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">FILES_STORE</span> <span class="o">=</span> <span class="s1">&#39;/home/steiner/workspace/meitulu/capture/&#39;</span>
+</span></span></code></pre></div></div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2022-07-02</span>
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="http://example.org/posts/2022/07/scrapy-spider/" data-title="Scrapy 爬虫的简单使用" data-hashtags="Scrapy,爬虫,Scrapy"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="http://example.org/posts/2022/07/scrapy-spider/" data-hashtag="Scrapy"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="http://example.org/posts/2022/07/scrapy-spider/" data-title="Scrapy 爬虫的简单使用"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="http://example.org/posts/2022/07/scrapy-spider/" data-title="Scrapy 爬虫的简单使用"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.0.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="http://example.org/posts/2022/07/scrapy-spider/" data-title="Scrapy 爬虫的简单使用"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw" aria-hidden="true"></i>&nbsp;<a href="/tags/scrapy/">Scrapy</a>,&nbsp;<a href="/tags/%E7%88%AC%E8%99%AB/">爬虫</a>,&nbsp;<a href="/tags/scrapy/">Scrapy</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/2022/07/symbolics/" class="prev" rel="prev" title="Symbolics.jl 简单使用"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>Symbolics.jl 简单使用</a>
+            <a href="/posts/2022/07/julia-calculus/" class="next" rel="next" title="Julia 微积分简要介绍">Julia 微积分简要介绍<i class="fas fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.101.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

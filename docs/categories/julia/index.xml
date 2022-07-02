@@ -3,20 +3,52 @@
         <title>Julia - Category - My New Hugo Site</title>
         <link>http://example.org/categories/julia/</link>
         <description>Julia - Category - My New Hugo Site</description>
-        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sat, 02 Jul 2022 01:54:00 &#43;0800</lastBuildDate><atom:link href="http://example.org/categories/julia/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sat, 02 Jul 2022 14:33:00 &#43;0800</lastBuildDate><atom:link href="http://example.org/categories/julia/" rel="self" type="application/rss+xml" /><item>
+    <title>MLJFlux 简单使用</title>
+    <link>http://example.org/posts/2022/07/mljflux/</link>
+    <pubDate>Sat, 02 Jul 2022 14:33:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/posts/2022/07/mljflux/</guid>
+    <description><![CDATA[介绍 MLJFlux 就是 MLJ 框架对 Flux 的封装，由于我学不会 Flux ，所以我就退而求其次，学别人装好的工具 同学们可以参照这个 PlayGround 来学习 MLJFlux 其中 features 表示特征 hidden layers 表示隐藏层 learning rate 设置学习率 activation 设置每个神经元的激活函数 regularzation 设置正则化方法 regularzation rate 设置正则化惩罚力度 但在 MLJ 和 MLJFlux 中，你是找不到任何有关学习率的参数设置的，因为已经有方法可以不设置学习率了，具体参考这篇文章 在 MLJFlux 中，有以下几种模型 model type prediction type scitype(x) &lt;: _ scitype(y) &lt;: _ NeuralNetworkRegressor Deterministic Tale{Continuous} with n_in columns AbstractVectir{&lt;:Continuous} n_out = 1 MultitargetNeuralNetworkRegressor Deterministic Table{Continuous} with n_in columns &lt;: Table(Continuous) with n_out columns NeuralNetworkClassifier Probabilistic &lt;:Table(Continuous) with n_in columns AbstractVector{&lt;:Finite} with n_out classes ImageClassifier Probabilistic AbstractVector(&lt;:Image{W,H}) with n_in = (W, H) AbstractVector{&lt;:Finite} with n_out classes 他们的参数有 builder : Default = MLJFlux.]]></description>
+</item>
+<item>
+    <title>有监督回归</title>
+    <link>http://example.org/posts/2022/07/julia-regressor/</link>
+    <pubDate>Sat, 02 Jul 2022 14:33:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/posts/2022/07/julia-regressor/</guid>
+    <description><![CDATA[算法介绍 这里简要介绍下各算法和他们之间的关系，详细理解请百度一下 基本算法 最小二乘法是众多机器学习算法中极为重要的一种基础算法 单纯的最小二乘法对于包含噪声的学习过程经常有过拟合的弱点，这往往是由于学习模型对于训练样本而言过于复杂 l2 约束 由此，引入带有约束条件的最小二乘法 &mdash;- Ridge 回归 带有约束条件的最小二乘法和交叉验证法的组合，在实际应用中是非常有效的回归方法 然而，当参数特别多的时候，求解各参数以及学习得到的函数的输出值的过程，都需要耗费大量的时间 l1 约束 由此，引入可以吧大部分参数都置为0的稀疏学习算法 因为大部分参数都变成了0，所以就可以快速地求解各参数以及学习得到的函数的输出值 l1 + l2 约束 虽然 l1 约束的最小二乘学习法是非常有用的学习方法，但是在实际应用中，经常会遇到些许限制 在 Lasso 回归求解路径中，对于 N×P 的设计矩阵来说，最多只能选出 min(N,p) 个变量 当 p&gt;N 的时候，最多只能选出N个预测变量．因此，对于 p∼N 的情况，Lasso方法不能够很好的选出真实的模型． 如果预测变量具有群组效应，则用Lasso回 归时，只能选出其中的一个预测变量 对于通常的 N&gt;P 的情形，如果预测变量中 存在很强的共线性，Lasso的预测表现受控于岭回归 基于以上几点Lasso回归的局限性，Zou和 Hastie在2005年提出了弹性网回归方法，回归系 数表达式为 \(\hat \beta^{ridge} =\mathop{\arg\min}_{\beta} \{\sum \limits _{i=1}^{N}(y_i-\beta_0-\sum\limits_{j=1}^px_{ij}\beta_j)^2+\lambda\sum \limits_{j=1}^{p}|\beta_{j}|+\lambda\sum \limits_{j=1}^{p}\beta_{j}^2\}\) MLJLinearModels 使用 Ridge \(J = \frac{1}{n}\sum_{i = 1}^n (f( x_i) - y_i)^2 + \lambda \|w\|_2^2\tag{1}\) RidgeRegressor RidgeRegression() RidgeRegression(λ; lambda, fit_intercept, penalize_intercept, scale_penalty_with_samples) Lasso \(J = \frac{1}{n}\sum_{i = 1}^n (f( x_i) - y_i)^2 + \lambda \|w\|_1\tag{2}\) LassoRegressor LassoRegression() LassoRegression(λ; lambda, fit_intercept, penalize_intercept, scale_penalty_with_samples) Elastic-Net \(\smash{\min_{w}}\sum_{i=1}^m(y_i-\sum_{j=1}^dx_{ij}w_j)^2 + \lambda\sum_{j=1}^d|w_j|+\lambda \sum_{j=1}^dw_j^2 \tag{3}\) ElasticNetRegression ElasticNetRegression() ElasticNetRegression(λ) ElasticNetRegression(λ, γ; lambda, gamma, fit_intercept, penalize_intercept, scale_penalty_with_samples) 说明 其实可以不用管 fit_intercept penalize_intercept 我也不知道这两个是干什么的，就先别管他们了 总之，只用设置 lambda 就行了 实例 波士顿房价预测 数据准备 竞赛数据来自 https://www.]]></description>
+</item>
+<item>
+    <title>Julia 微积分简要介绍</title>
+    <link>http://example.org/posts/2022/07/julia-calculus/</link>
+    <pubDate>Sat, 02 Jul 2022 14:32:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/posts/2022/07/julia-calculus/</guid>
+    <description><![CDATA[介绍 JuliaMath 下有一个微积分包，闲得没事看看文档，给大家简要整理了一下 derivative 求导 second_derivative 求二阶导 然而关于积分，文档里说 The Calculus package no longer provides routines for univariate numerical integration. Use QuadGK.jl instead. 他说单变量的积分在这个包中不再支持，可以去使用 QuadGK.jl 包中 我又尝试了下 Calculus 包中的 integrate 函数 f((x, y)) = sin(x) + cos(y) 我发现，这个错误中的 quadgk 和 QuadGk 中的 quadgk 不是同一个函数，他指的是 Calculus.quadgk 这个函数不存在 另外我去谷歌了一下，发现 Quadgk 不支持多重积分，所以我推荐使用同在 JuliaMath 仓库下的 Cubature.jl 包 既可以做单变量积分，又可以做多变量积分 使用 导数 using Calculus derivative derivative(sin, 0) == cos(0) derivative(sin, 1) == cos(1) derivative(sin, float(pi)) = cos(float(pi)) 多元导数 using Calculus derivative julia&gt; derivative(f, [1, 1]) 2-element Vector{Float64}: 0.]]></description>
+</item>
+<item>
+    <title>Symbolics.jl 简单使用</title>
+    <link>http://example.org/posts/2022/07/symbolics/</link>
+    <pubDate>Sat, 02 Jul 2022 14:31:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/posts/2022/07/symbolics/</guid>
+    <description><![CDATA[Symbolics.jl 简单使用 由于文档太难看懂，我这里简单地介绍下这个包的用法 变量符号 生成变量符号，只需要 @variables x y 这样，我们就有两个符号为 x , y 的变量 变量表达式 用表达式生成符号变量 如同写一个算数表达式 1+1 一样，Julia 为符号变量类型重载了运算符，这里创建一个变量 p, 用其来代表 p = -16x^2 + 100 注意， p 也是一个符号变量 用函数生成符号变量 或者我们还可以这样声明 p f(x) = -16x^2 + 100 p = f(x) 替换表达式 写好了表达式还不够，有时候我们将其中一个函数看作另一个函数的参数，比如 f(g(x)) substitude(p, x =&gt; x^2) 得到结果为 -16x^4 + 100 如果是多元函数，替换的部分用字典来替代 简化/展开表达式 简化表达式，使用 simplify 函数，但是这个包里没有提供单独的 展开 函数，还好 simplify 有一个 expand 参数，为 true 时展开表达式，来看一个例子 @variables a b c x quad = a*x^2 + b*x + c quad + quad^2 - quad^3 simpify(quad, expand=true) # julia&gt; simplify(ans,expand=true) # c + b*x + c^2 + (a + b^2)*(x^2) + (a^2)*(x^4) + 2a*c*(x^2) + 2b*c*x + 2a*b*(x^3) - (c^3) - (a^3)*(x^6) - (b^3)*(x^3) - 3a*(c^2)*(x^2) - 3a*(b^2)*(x^4) - 3b*x*(c^2) - 3c*(b^2)*(x^2) - 3c*(a^2)*(x^4) - 3b*(a^2)*(x^5) - 6a*b*c*(x^3) 求导表达式 与求导相关的函数是 Differential ，中文意思 微分 @variables t D = Differential(t) 声明一个变量符号 t, 再声明一个变量 D 代表有关 t 的微分 接着，声明有关 t 的表达式，调用 D(z) 得到导数表达式 z = t + t^2 D(z) 然而求导部分是惰性的，怕消耗太多时间，需要调用 expand_derivatives 来获取表达式 expand_derivatives(D(z)) # 1 + 2t 生成 Julia 函数 表达式可以看作函数的简化版本，比如 p = -16x^2 + 100 我们直接调用 p(1) 是会报错的，我们需要根据他来生成一个函数调用 f_expr = build_function(p, x) f_func = eval(f_expr) f_func(1) # 84 build_function 需要一个表达式，和其参数变量表 如果是 f(x, y) ，应该输入 build_function(f, x, y) 如果是 f([x, y]) , 应该输入 build_function(f, [x, y]) build_function 返回的是 Julia 函数的 Expr 类型, eval 他即可获得函数 疑问 怎么没有积分啊 这个包里确实没有写积分的函数，不过我已经提了个 Issue 给作者 https://github.]]></description>
+</item>
+<item>
     <title>MLJ中 线性模型 在回归预测中的简单使用</title>
-    <link>http://example.org/post/2022/07/linear_model/</link>
+    <link>http://example.org/posts/2022/07/linear_model/</link>
     <pubDate>Sat, 02 Jul 2022 01:54:00 &#43;0800</pubDate>
     <author>Author</author>
-    <guid>http://example.org/post/2022/07/linear_model/</guid>
+    <guid>http://example.org/posts/2022/07/linear_model/</guid>
     <description><![CDATA[开始之前 我想向大家介绍一下一些线性模型的用法，以及他们对数据的拟合程度 在我开始学习 MLJ 时，我对他们的拟合能力有所怀疑，经常遇到欠拟合的情况，经过一次简单的测试后，才慢慢了解如何使用模型，处理特征 这里将这个测试介绍给各位 数据准备 我们模拟对函数 f(x) = x^2 + 2x 的拟合，在理想的预测结果 standardy 上加上一点噪音，形成训练用测试结果 coly 接下来依次定义 f(x) standardy coly f(x) = x^2 + 2x colx = DataFrame(x1=-10:10) coly = f.(colx.x1) + rand(-2:2, length(colx.x1)) standardy = f.(colx.x1) 再绘制下图像 plot(colx.x1, standardy, label=&#34;standarty&#34;, color=:blue) plot!(colx.x1, coly, label=&#34;coly&#34;, color=:red) 模型介绍 拟合数据我们使用 Ridge 回归，他在损失函数上添加了 L2 正则化 \begin{array}{cl} {\min \limits_{w, b}} &amp; {\dfrac{1}{n}\sum_{i = 1}^n (w^{\top} x_i + b - y_i)^2} \\ {\text{s.t.}} &amp;{\|w\|_2^2 \le t} \end{array}]]></description>
 </item>
 <item>
     <title>Titanic 生存预测，使用Logistic分类</title>
-    <link>http://example.org/post/2022/07/titanic/</link>
+    <link>http://example.org/posts/2022/07/titanic/</link>
     <pubDate>Sat, 02 Jul 2022 01:53:00 &#43;0800</pubDate>
     <author>Author</author>
-    <guid>http://example.org/post/2022/07/titanic/</guid>
+    <guid>http://example.org/posts/2022/07/titanic/</guid>
     <description><![CDATA[项目介绍 最近终于去学习 Julia 了，重温了下没做完的 Titanic 项目，打算做完 那就先导入必要的库吧 using MLJ, DataFrames, StableRNGs, CSV, Plots plotly() 还要从 Kaggle 上下载好数据集 train.csv 与 test.csv ， 并用 CSV 模块加载 origin_data = CSV.read(&#34;data/train.csv&#34;, DataFrame) 到提交的时候，数据表中的字段 PassengerId(Integer) 与 Survived(Integer) 数据探索 字段含义 我从网上查到这些字段的含义，有些字段的类型虽然是 Float ，但也是 1.0, 2.0之类的，比如 Age 字段名称 字段含义 字段类型 PassengerId 乘客ID Int Survived 是否存活 Int Pclass 乘客等级(1/2/3等舱位) Int Name 乘客姓名 String Sex 性别 String Age 年龄 Float SibSp 堂兄弟/妹个数 Float Parch 父母与小孩个数 Float Ticket 船票信息 String Fare 票价 Float Cabin 客舱 String Embarked 登船港口 String 字段科学类型 这个数据集使用分类预测，先要统一好各个字段的科学类型，不然一些 model 对字段不起作用 这里需要每个输入的数据类型是 Continuous, 而输出类型为 Multiclass 使用 schema 查看情况 schema(origin_data) 描述数据 看看这个数据有多少缺斤少两的 describe(origin_data) 数据处理 探索完数据后，接下来可以 填充缺失的数据 扔掉不用的数据 生成新的字段，或者优化数据 对 train.]]></description>
 </item>
 </channel>

@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>MLJFlux 简单使用 - My New Hugo Site</title><meta name="Description" content="This is my cool site"><meta property="og:title" content="MLJFlux 简单使用" />
+<meta property="og:description" content="介绍 MLJFlux 就是 MLJ 框架对 Flux 的封装，由于我学不会 Flux ，所以我就退而求其次，学别人装好的工具 同学们可以参照这个 PlayGround 来学习 MLJFlux 其中 features 表示特征 hidden layers 表示隐藏层 learning rate 设置学习率 activation 设置每个神经元的激活函数 regularzation 设置正则化方法 regularzation rate 设置正则化惩罚力度 但在 MLJ 和 MLJFlux 中，你是找不到任何有关学习率的参数设置的，因为已经有方法可以不设置学习率了，具体参考这篇文章 在 MLJFlux 中，有以下几种模型 model type prediction type scitype(x) &lt;: _ scitype(y) &lt;: _ NeuralNetworkRegressor Deterministic Tale{Continuous} with n_in columns AbstractVectir{&lt;:Continuous} n_out = 1 MultitargetNeuralNetworkRegressor Deterministic Table{Continuous} with n_in columns &lt;: Table(Continuous) with n_out columns NeuralNetworkClassifier Probabilistic &lt;:Table(Continuous) with n_in columns AbstractVector{&lt;:Finite} with n_out classes ImageClassifier Probabilistic AbstractVector(&lt;:Image{W,H}) with n_in = (W, H) AbstractVector{&lt;:Finite} with n_out classes 他们的参数有 builder : Default = MLJFlux." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/posts/2022/07/mljflux/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-07-02T14:33:00+08:00" />
+<meta property="article:modified_time" content="2022-07-02T14:46:05+08:00" /><meta property="og:site_name" content="My cool site" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="MLJFlux 简单使用"/>
+<meta name="twitter:description" content="介绍 MLJFlux 就是 MLJ 框架对 Flux 的封装，由于我学不会 Flux ，所以我就退而求其次，学别人装好的工具 同学们可以参照这个 PlayGround 来学习 MLJFlux 其中 features 表示特征 hidden layers 表示隐藏层 learning rate 设置学习率 activation 设置每个神经元的激活函数 regularzation 设置正则化方法 regularzation rate 设置正则化惩罚力度 但在 MLJ 和 MLJFlux 中，你是找不到任何有关学习率的参数设置的，因为已经有方法可以不设置学习率了，具体参考这篇文章 在 MLJFlux 中，有以下几种模型 model type prediction type scitype(x) &lt;: _ scitype(y) &lt;: _ NeuralNetworkRegressor Deterministic Tale{Continuous} with n_in columns AbstractVectir{&lt;:Continuous} n_out = 1 MultitargetNeuralNetworkRegressor Deterministic Table{Continuous} with n_in columns &lt;: Table(Continuous) with n_out columns NeuralNetworkClassifier Probabilistic &lt;:Table(Continuous) with n_in columns AbstractVector{&lt;:Finite} with n_out classes ImageClassifier Probabilistic AbstractVector(&lt;:Image{W,H}) with n_in = (W, H) AbstractVector{&lt;:Finite} with n_out classes 他们的参数有 builder : Default = MLJFlux."/>
+<meta name="application-name" content="My cool site">
+<meta name="apple-mobile-web-app-title" content="My cool site"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://example.org/posts/2022/07/mljflux/" /><link rel="prev" href="http://example.org/posts/2022/07/julia-regressor/" /><link rel="next" href="http://example.org/posts/2022/07/recycler-view/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "MLJFlux 简单使用",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/example.org\/posts\/2022\/07\/mljflux\/"
+        },"genre": "posts","keywords": "MLJFlux, 神经网络","wordcount":  802 ,
+        "url": "http:\/\/example.org\/posts\/2022\/07\/mljflux\/","datePublished": "2022-07-02T14:33:00+08:00","dateModified": "2022-07-02T14:46:05+08:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "Author"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="My New Hugo Site">My cool site</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="My New Hugo Site">My cool site</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">MLJFlux 简单使用</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Author</a></span>&nbsp;<span class="post-category">included in <a href="/categories/julia/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Julia</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2022-07-02">2022-07-02</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;802 words&nbsp;
+                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;4 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#介绍">介绍</a></li>
+    <li><a href="#实例">实例</a></li>
+    <li><a href="#使用-mljflux-预测波士顿房价">使用 MLJFlux 预测波士顿房价</a>
+      <ul>
+        <li><a href="#准备">准备</a></li>
+        <li><a href="#数据处理">数据处理</a></li>
+        <li><a href="#模型训练">模型训练</a></li>
+        <li><a href="#导出结果">导出结果</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="介绍">介绍</h2>
+<p><a href="https://github.com/FluxML/MLJFlux.jl" target="_blank" rel="noopener noreffer ">MLJFlux</a> 就是 <strong>MLJ</strong> 框架对 <strong>Flux</strong> 的封装，由于我学不会 <strong>Flux</strong> ，所以我就退而求其次，学别人装好的工具 <!-- raw HTML omitted -->
+同学们可以参照这个 <a href="https://playground.tensorflow.org/#activation=relu&amp;regularization=L1&amp;batchSize=10&amp;dataset=circle&amp;regDataset=reg-plane&amp;learningRate=0.03&amp;regularizationRate=0.01&amp;noise=0&amp;networkShape=6,6,6,2&amp;seed=0.28619&amp;showTestData=false&amp;discretize=false&amp;percTrainData=50&amp;x=true&amp;y=true&amp;xTimesY=false&amp;xSquared=false&amp;ySquared=false&amp;cosX=false&amp;sinX=false&amp;cosY=false&amp;sinY=false&amp;collectStats=false&amp;problem=classification&amp;initZero=false&amp;hideText=false%5D%5D" target="_blank" rel="noopener noreffer ">PlayGround</a> 来学习 <strong>MLJFlux</strong> <!-- raw HTML omitted --></p>
+<p><figure><img src="/ox-hugo/2022-06-05_20-39-20_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<p>其中 <!-- raw HTML omitted --></p>
+<ul>
+<li><code>features</code> 表示特征 <!-- raw HTML omitted --></li>
+<li><code>hidden layers</code> 表示隐藏层 <!-- raw HTML omitted --></li>
+<li><code>learning rate</code> 设置学习率 <!-- raw HTML omitted --></li>
+<li><code>activation</code> 设置每个神经元的激活函数 <!-- raw HTML omitted --></li>
+<li><code>regularzation</code> 设置正则化方法 <!-- raw HTML omitted --></li>
+<li><code>regularzation rate</code> 设置正则化惩罚力度 <!-- raw HTML omitted --></li>
+</ul>
+<p>但在 MLJ 和 MLJFlux 中，你是找不到任何有关学习率的参数设置的，因为已经有方法可以不设置学习率了，具体参考<a href="https://blog.csdn.net/u012526436/article/details/90486021" target="_blank" rel="noopener noreffer ">这篇文章</a> <!-- raw HTML omitted -->
+在 MLJFlux 中，有以下几种模型 <!-- raw HTML omitted --></p>
+<table>
+<thead>
+<tr>
+<th>model type</th>
+<th>prediction type</th>
+<th>scitype(x) &lt;: _</th>
+<th>scitype(y) &lt;: _</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NeuralNetworkRegressor</td>
+<td>Deterministic</td>
+<td>Tale{Continuous} with n_in columns</td>
+<td>AbstractVectir{&lt;:Continuous} n_out = 1</td>
+</tr>
+<tr>
+<td>MultitargetNeuralNetworkRegressor</td>
+<td>Deterministic</td>
+<td>Table{Continuous} with n_in columns</td>
+<td>&lt;: Table(Continuous) with n_out columns</td>
+</tr>
+<tr>
+<td>NeuralNetworkClassifier</td>
+<td>Probabilistic</td>
+<td>&lt;:Table(Continuous) with n_in columns</td>
+<td>AbstractVector{&lt;:Finite} with n_out classes</td>
+</tr>
+<tr>
+<td>ImageClassifier</td>
+<td>Probabilistic</td>
+<td>AbstractVector(&lt;:Image{W,H}) with n_in = (W, H)</td>
+<td>AbstractVector{&lt;:Finite} with n_out classes</td>
+</tr>
+</tbody>
+</table>
+<p>他们的参数有 <!-- raw HTML omitted --></p>
+<ul>
+<li><code>builder</code> : <code>Default = MLJFlux.Linear(σ=Flux.relu) (regressors) or MLJFlux.Short(n_hidden=0, dropout=0.5, σ=Flux.σ) (classifiers)</code> <!-- raw HTML omitted --></li>
+<li><code>optimiser</code> : <code>The optimiser to use for training. Default = Flux.ADAM()</code> <!-- raw HTML omitted --></li>
+<li><code>loss</code> : <code>The loss function used for training. Default = Flux.mse (regressors) and Flux.crossentropy (classifiers)</code> <!-- raw HTML omitted --></li>
+<li><code>n_epochs</code> : <code>Number of epochs to train for. Default = 10</code> <!-- raw HTML omitted --></li>
+<li><code>batch_size</code> : <code>The batch_size for the data. Default = 1</code> <!-- raw HTML omitted --></li>
+<li><code>lambda</code> : <code>The regularization strength. Default = 0. Range = [0, ∞)</code> <!-- raw HTML omitted --></li>
+<li><code>alpha</code>: <code>The L2/L1 mix of regularization. Default = 0. Range = [0, 1]</code> <!-- raw HTML omitted --></li>
+<li><code>rng</code>: <code>The random number generator (RNG) passed to builders, for weight intitialization, for example. Can be any AbstractRNG or the seed (integer) for a MersenneTwister that is reset on every cold restart of model (machine) training. Default = GLOBAL_RNG.</code> <!-- raw HTML omitted --></li>
+<li><code>acceleration</code>: <code>Use CUDALibs() for training on GPU; default is CPU1().</code> <!-- raw HTML omitted --></li>
+<li><code>optimiser_changes_trigger_retraining</code> : <code>True if fitting an associated machine should trigger retraining from scratch whenever the optimiser changes. Default = false</code> <!-- raw HTML omitted --></li>
+</ul>
+<p>来调几个用的上的参数来说吧， <!-- raw HTML omitted --></p>
+<ul>
+<li><code>builder</code> 那个 <code>hidden layer</code> 的表示 <!-- raw HTML omitted --></li>
+<li><code>optimiser</code> 代表优化器，<a href="https://fluxml.ai/Flux.jl/stable/training/optimisers/" target="_blank" rel="noopener noreffer ">具体文档</a>在这里 <!-- raw HTML omitted --></li>
+<li><code>loss</code> 表示损失函数 <!-- raw HTML omitted --></li>
+<li><code>n_epochs</code> 表示训练次数 <!-- raw HTML omitted --></li>
+<li><code>batch_size</code> 表示每次拿几个数据一起处理 <!-- raw HTML omitted --></li>
+<li><code>lambda</code> 表示正则化惩罚力度 <!-- raw HTML omitted --></li>
+<li><code>alpha</code> 表示 l2/l1 混合的比例 ？ <!-- raw HTML omitted --></li>
+</ul>
+<h2 id="实例">实例</h2>
+<p>对照上图，以分类问题为例，我们需要新建一个 builder 结构来表示隐藏层， <!-- raw HTML omitted --></p>
+<ul>
+<li>隐藏层有4层 <!-- raw HTML omitted --></li>
+<li>每一层分别有6，6，6，2个神经元 <!-- raw HTML omitted --></li>
+<li>每个神经元的激活函数是 ReLu <!-- raw HTML omitted --></li>
+<li>正则化方法是l1 <!-- raw HTML omitted --></li>
+<li>正则化惩罚力度是 0.01 <!-- raw HTML omitted --></li>
+</ul>
+<p>由此，创建一个 builder <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">mutable struct</span> <span class="kt">NetworkBuilder</span> <span class="o">&lt;:</span> <span class="kt">MLJFlux</span><span class="o">.</span><span class="n">Builder</span>
+</span></span><span class="line"><span class="cl">  <span class="n">n1</span><span class="o">::</span><span class="kt">Int</span> <span class="c"># 第一层神经元数</span>
+</span></span><span class="line"><span class="cl">  <span class="n">n2</span><span class="o">::</span><span class="kt">Int</span> <span class="c"># 第二层神经元数</span>
+</span></span><span class="line"><span class="cl">  <span class="n">n3</span><span class="o">::</span><span class="kt">Int</span> <span class="c"># 第三层神经元数</span>
+</span></span><span class="line"><span class="cl">  <span class="n">n4</span><span class="o">::</span><span class="kt">Int</span> <span class="c"># 第四层神经元数</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span></code></pre></div><p>再为其重载 <code>MLJFlux.build</code> 方法 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">function</span> <span class="n">MLJFlux</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">model</span><span class="o">::</span><span class="kt">NetworkBuilder</span><span class="p">,</span> <span class="n">rng</span><span class="p">,</span> <span class="n">nin</span><span class="p">,</span> <span class="n">nout</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">init</span> <span class="o">=</span> <span class="n">Flux</span><span class="o">.</span><span class="n">glorot_uniform</span><span class="p">(</span><span class="n">rng</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">Chain</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Dense</span><span class="p">(</span><span class="n">nin</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">n1</span><span class="p">,</span> <span class="n">relu</span><span class="p">,</span> <span class="n">init</span> <span class="o">=</span> <span class="n">init</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Dense</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">n1</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">n2</span><span class="p">,</span> <span class="n">relu</span><span class="p">,</span> <span class="n">init</span> <span class="o">=</span> <span class="n">init</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Dense</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">n2</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">n3</span><span class="p">,</span> <span class="n">relu</span><span class="p">,</span> <span class="n">init</span> <span class="o">=</span> <span class="n">init</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Dense</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">n3</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">n4</span><span class="p">,</span> <span class="n">relu</span><span class="p">,</span> <span class="n">init</span> <span class="o">=</span> <span class="n">init</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Dense</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">n4</span><span class="p">,</span> <span class="n">nout</span><span class="p">,</span> <span class="n">relu</span><span class="p">,</span> <span class="n">init</span> <span class="o">=</span> <span class="n">init</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span></code></pre></div><p>其中 <!-- raw HTML omitted --></p>
+<ul>
+<li><code>rng</code> 表示随机数生成器，大概是这个意思 <!-- raw HTML omitted --></li>
+<li><code>nin</code> 表示输入的特征个数 <!-- raw HTML omitted --></li>
+<li><code>nout</code> 表示输出的结果个数 <!-- raw HTML omitted --></li>
+</ul>
+<p>当然，这些不用我们设置，我们只是提供一个方法实现 <!-- raw HTML omitted --></p>
+<p>接下来就可以定义模型了 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">classifier</span> <span class="o">=</span> <span class="n">NeuralNetworkClassifier</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="n">builder</span> <span class="o">=</span> <span class="n">NetworkBuilder</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">  <span class="n">finaliser</span> <span class="o">=</span> <span class="n">softmax</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="n">epochs</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="n">lambda</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.01</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span></code></pre></div><p>他的训练次数是 <code>epochs</code> 而不是 <code>n_epochs</code> ，不知道是不是文档写错了，大家按照这个来就好了 <!-- raw HTML omitted -->
+定义完模型，就像 MLJ 模型那样调用就好了 <!-- raw HTML omitted --></p>
+<h2 id="使用-mljflux-预测波士顿房价">使用 MLJFlux 预测波士顿房价</h2>
+<p><figure><img src="/ox-hugo/2022-06-05_21-05-32_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<h3 id="准备">准备</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">using</span> <span class="n">MLJFlux</span>
+</span></span><span class="line"><span class="cl"><span class="k">using</span> <span class="n">MLJ</span>
+</span></span><span class="line"><span class="cl"><span class="k">using</span> <span class="n">DataFrames</span><span class="o">:</span> <span class="n">DataFrame</span>
+</span></span><span class="line"><span class="cl"><span class="k">using</span> <span class="n">Statistics</span>
+</span></span><span class="line"><span class="cl"><span class="k">using</span> <span class="n">Flux</span>
+</span></span><span class="line"><span class="cl"><span class="k">using</span> <span class="n">CSV</span>
+</span></span><span class="line"><span class="cl"><span class="k">using</span> <span class="n">StableRNGs</span>
+</span></span><span class="line"><span class="cl"><span class="k">using</span> <span class="n">Plots</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">import</span> <span class="n">Random</span><span class="o">.</span><span class="n">seed!</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">seed!</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">rng</span> <span class="o">=</span> <span class="n">StableRNG</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">plotly</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">originData</span> <span class="o">=</span> <span class="n">CSV</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&#34;data/titanic/train.csv&#34;</span><span class="p">,</span> <span class="n">DataFrame</span><span class="p">)</span>
+</span></span></code></pre></div><h3 id="数据处理">数据处理</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">typeTransformModel!</span><span class="p">(</span><span class="n">dataframe</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">)</span> <span class="o">=</span> <span class="k">begin</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="k">in</span><span class="p">(</span><span class="s">&#34;Survived&#34;</span><span class="p">,</span> <span class="n">names</span><span class="p">(</span><span class="n">dataframe</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">coerce!</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="ss">:Survived</span> <span class="o">=&gt;</span> <span class="n">Multiclass</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">coerce!</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">Count</span> <span class="o">=&gt;</span> <span class="n">Continuous</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">coerce!</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">Textual</span> <span class="o">=&gt;</span> <span class="n">Multiclass</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">dataframe</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">fillMissingModel</span> <span class="o">=</span> <span class="n">FillImputer</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="n">features</span><span class="o">=</span><span class="p">[</span><span class="ss">:Age</span><span class="p">,</span> <span class="ss">:Embarked</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">  <span class="n">continuous_fill</span> <span class="o">=</span> <span class="n">e</span> <span class="o">-&gt;</span> <span class="n">skipmissing</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">mode</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="n">finite_fill</span> <span class="o">=</span> <span class="n">e</span> <span class="o">-&gt;</span> <span class="n">skipmissing</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">mode</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">newFeatureModel!</span><span class="p">(</span><span class="n">dataframe</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">)</span> <span class="o">=</span> <span class="k">begin</span>
+</span></span><span class="line"><span class="cl">  <span class="c"># MODULE FeatureA 聚集 Age, Sex --&gt; 12岁以下儿童以及妇女，12岁以上男性</span>
+</span></span><span class="line"><span class="cl">  <span class="n">feature_filter_a</span><span class="p">(</span><span class="n">age</span><span class="p">,</span> <span class="n">sex</span><span class="p">)</span> <span class="o">=</span> <span class="n">age</span> <span class="o">&gt;=</span> <span class="mi">12</span> <span class="o">&amp;&amp;</span> <span class="n">sex</span> <span class="o">==</span> <span class="s">&#34;male&#34;</span> <span class="o">?</span> <span class="s">&#34;A&#34;</span> <span class="o">:</span> <span class="s">&#34;B&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:FeatureA</span><span class="p">]</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">feature_filter_a</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:Age</span><span class="p">],</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:Sex</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c"># MODULE FeatureB 聚集 SibSp, Parch ---&gt; 家庭人员数量</span>
+</span></span><span class="line"><span class="cl">  <span class="n">family_size</span><span class="p">(</span><span class="n">number</span><span class="p">)</span> <span class="o">=</span> <span class="k">begin</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">number</span> <span class="o">==</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">    <span class="k">elseif</span> <span class="n">number</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="o">&amp;&amp;</span> <span class="n">number</span> <span class="o">&lt;=</span> <span class="mi">4</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">    <span class="k">else</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="mi">2</span>
+</span></span><span class="line"><span class="cl">    <span class="k">end</span>
+</span></span><span class="line"><span class="cl">  <span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:FeatureB</span><span class="p">]</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">family_size</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:Parch</span><span class="p">]</span> <span class="o">.+</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:SibSp</span><span class="p">]</span> <span class="o">.+</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c"># MODULE FeatureC log(Fare + 1), encode(Pclass) -&gt; 1, 2, 3  </span>
+</span></span><span class="line"><span class="cl">  <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:Fare</span><span class="p">]</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">floor</span><span class="p">,</span> <span class="n">log</span><span class="o">.</span><span class="p">(</span><span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:Fare</span><span class="p">]</span> <span class="o">.+</span> <span class="mi">1</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c"># TODO don&#39;t forget to coerce scitype</span>
+</span></span><span class="line"><span class="cl">  <span class="n">coerce!</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="ss">:FeatureA</span> <span class="o">=&gt;</span> <span class="n">Multiclass</span><span class="p">,</span> <span class="ss">:FeatureB</span> <span class="o">=&gt;</span> <span class="n">Continuous</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">dataframe</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">encodeModel</span> <span class="o">=</span> <span class="n">OneHotEncoder</span><span class="p">(</span><span class="n">features</span><span class="o">=</span><span class="p">[</span><span class="ss">:Embarked</span><span class="p">,</span> <span class="ss">:FeatureA</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="n">dropUnusedModel</span> <span class="o">=</span> <span class="n">FeatureSelector</span><span class="p">(</span><span class="n">features</span> <span class="o">=</span> <span class="p">[</span><span class="ss">:Age</span><span class="p">,</span> <span class="ss">:Sex</span><span class="p">,</span> <span class="ss">:SibSp</span><span class="p">,</span> <span class="ss">:Parch</span><span class="p">,</span> <span class="ss">:Cabin</span><span class="p">,</span> <span class="ss">:PassengerId</span><span class="p">,</span> <span class="ss">:Name</span><span class="p">,</span> <span class="ss">:Ticket</span><span class="p">],</span> <span class="n">ignore</span><span class="o">=</span><span class="nb">true</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">transformModel</span> <span class="o">=</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="n">typeTransformModel!</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="n">fillMissingModel</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="n">newFeatureModel!</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="n">encodeModel</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="n">dropUnusedModel</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">transformMachine</span> <span class="o">=</span> <span class="n">machine</span><span class="p">(</span><span class="n">transformModel</span><span class="p">,</span> <span class="n">originData</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">fit!</span><span class="p">(</span><span class="n">transformMachine</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">outputData</span> <span class="o">=</span> <span class="n">MLJ</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">transformMachine</span><span class="p">,</span> <span class="n">originData</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">originSample</span> <span class="o">=</span> <span class="n">CSV</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&#34;data/titanic/test.csv&#34;</span><span class="p">,</span> <span class="n">DataFrame</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c"># generic typeTransformModel, ignore</span>
+</span></span><span class="line"><span class="cl"><span class="n">fillMissingModel</span> <span class="o">=</span> <span class="n">FillImputer</span><span class="p">(</span><span class="n">features</span><span class="o">=</span><span class="p">[</span><span class="ss">:Age</span><span class="p">,</span> <span class="ss">:Fare</span><span class="p">],</span> <span class="n">continuous_fill</span> <span class="o">=</span> <span class="n">e</span> <span class="o">-&gt;</span> <span class="n">skipmissing</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">mode</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># generic new feature generate</span>
+</span></span><span class="line"><span class="cl"><span class="c"># generic encode model</span>
+</span></span><span class="line"><span class="cl"><span class="c"># generic drop unused</span>
+</span></span><span class="line"><span class="cl"><span class="n">transformSampleModel</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="n">typeTransformModel!</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="n">fillMissingModel</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="n">newFeatureModel!</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="n">encodeModel</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="n">dropUnusedModel</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">transformSampleMachine</span> <span class="o">=</span> <span class="n">machine</span><span class="p">(</span><span class="n">transformSampleModel</span><span class="p">,</span> <span class="n">originSample</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">fit!</span><span class="p">(</span><span class="n">transformSampleMachine</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">outputSample</span> <span class="o">=</span> <span class="n">MLJ</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">transformSampleMachine</span><span class="p">,</span> <span class="n">originSample</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Y</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="n">outputData</span><span class="p">,</span> <span class="n">colname</span> <span class="o">-&gt;</span> <span class="n">colname</span> <span class="o">==</span> <span class="ss">:Survived</span><span class="p">,</span> <span class="n">colname</span> <span class="o">-&gt;</span> <span class="nb">true</span><span class="p">)</span>
+</span></span></code></pre></div><h3 id="模型训练">模型训练</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">rng</span> <span class="o">=</span> <span class="n">StableRNG</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">trainRow</span><span class="p">,</span> <span class="n">testRow</span> <span class="o">=</span> <span class="n">partition</span><span class="p">(</span><span class="n">eachindex</span><span class="p">(</span><span class="n">Y</span><span class="p">),</span> <span class="mf">0.7</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="n">rng</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">mutable struct</span> <span class="kt">NetworkBuilder</span> <span class="o">&lt;:</span> <span class="kt">MLJFlux</span><span class="o">.</span><span class="n">Builder</span>
+</span></span><span class="line"><span class="cl">  <span class="n">n1</span><span class="o">::</span><span class="kt">Int</span>
+</span></span><span class="line"><span class="cl">  <span class="n">n2</span><span class="o">::</span><span class="kt">Int</span>
+</span></span><span class="line"><span class="cl">  <span class="n">n3</span><span class="o">::</span><span class="kt">Int</span>
+</span></span><span class="line"><span class="cl">  <span class="n">n4</span><span class="o">::</span><span class="kt">Int</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">function</span> <span class="n">MLJFlux</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">model</span><span class="o">::</span><span class="kt">NetworkBuilder</span><span class="p">,</span> <span class="n">rng</span><span class="p">,</span> <span class="n">nin</span><span class="p">,</span> <span class="n">nout</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">init</span> <span class="o">=</span> <span class="n">Flux</span><span class="o">.</span><span class="n">glorot_uniform</span><span class="p">(</span><span class="n">rng</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">Chain</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Dense</span><span class="p">(</span><span class="n">nin</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">n1</span><span class="p">,</span> <span class="n">relu</span><span class="p">,</span> <span class="n">init</span> <span class="o">=</span> <span class="n">init</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Dense</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">n1</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">n2</span><span class="p">,</span> <span class="n">relu</span><span class="p">,</span> <span class="n">init</span> <span class="o">=</span> <span class="n">init</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Dense</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">n2</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">n3</span><span class="p">,</span> <span class="n">relu</span><span class="p">,</span> <span class="n">init</span> <span class="o">=</span> <span class="n">init</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Dense</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">n3</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">n4</span><span class="p">,</span> <span class="n">relu</span><span class="p">,</span> <span class="n">init</span> <span class="o">=</span> <span class="n">init</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Dense</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">n4</span><span class="p">,</span> <span class="n">nout</span><span class="p">,</span> <span class="n">relu</span><span class="p">,</span> <span class="n">init</span> <span class="o">=</span> <span class="n">init</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">classifier</span> <span class="o">=</span> <span class="n">NeuralNetworkClassifier</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="n">builder</span> <span class="o">=</span> <span class="n">NetworkBuilder</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">  <span class="n">finaliser</span> <span class="o">=</span> <span class="n">softmax</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="n">epochs</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="n">lambda</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.4</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">mach</span> <span class="o">=</span> <span class="n">machine</span><span class="p">(</span><span class="n">classifier</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">fit!</span><span class="p">(</span><span class="n">mach</span><span class="p">,</span> <span class="n">rows</span> <span class="o">=</span> <span class="n">trainRow</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">measure</span> <span class="o">=</span> <span class="n">evaluate!</span><span class="p">(</span><span class="n">mach</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		    <span class="n">resampling</span> <span class="o">=</span> <span class="n">CV</span><span class="p">(</span><span class="n">nfolds</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span> <span class="n">rng</span> <span class="o">=</span> <span class="n">rng</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">		    <span class="n">measure</span> <span class="o">=</span> <span class="n">cross_entropy</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		    <span class="n">rows</span> <span class="o">=</span> <span class="n">testRow</span><span class="p">)</span>
+</span></span></code></pre></div><h3 id="导出结果">导出结果</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">outputPredict</span> <span class="o">=</span> <span class="n">mode</span><span class="o">.</span><span class="p">(</span><span class="n">predict</span><span class="p">(</span><span class="n">mach</span><span class="p">,</span> <span class="n">outputSample</span><span class="p">))</span> <span class="o">|&gt;</span> <span class="n">nums</span> <span class="o">-&gt;</span> <span class="n">convert</span><span class="p">(</span><span class="kt">Vector</span><span class="p">{</span><span class="kt">Int</span><span class="p">},</span> <span class="n">nums</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">output_frame</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">output_frame</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:PassengerId</span><span class="p">]</span> <span class="o">=</span> <span class="n">convert</span><span class="p">(</span><span class="kt">Vector</span><span class="p">{</span><span class="kt">Int</span><span class="p">},</span> <span class="n">originSample</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:PassengerId</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="n">output_frame</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:Survived</span><span class="p">]</span> <span class="o">=</span> <span class="n">outputPredict</span>
+</span></span><span class="line"><span class="cl"><span class="n">CSV</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#34;data/titanic/predict.csv&#34;</span><span class="p">,</span> <span class="n">output_frame</span><span class="p">)</span>
+</span></span></code></pre></div></div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2022-07-02</span>
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="http://example.org/posts/2022/07/mljflux/" data-title="MLJFlux 简单使用" data-hashtags="MLJFlux,神经网络"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="http://example.org/posts/2022/07/mljflux/" data-hashtag="MLJFlux"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="http://example.org/posts/2022/07/mljflux/" data-title="MLJFlux 简单使用"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="http://example.org/posts/2022/07/mljflux/" data-title="MLJFlux 简单使用"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.0.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="http://example.org/posts/2022/07/mljflux/" data-title="MLJFlux 简单使用"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw" aria-hidden="true"></i>&nbsp;<a href="/tags/mljflux/">MLJFlux</a>,&nbsp;<a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">神经网络</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/2022/07/julia-regressor/" class="prev" rel="prev" title="有监督回归"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>有监督回归</a>
+            <a href="/posts/2022/07/recycler-view/" class="next" rel="next" title="RecyclerView 简单使用">RecyclerView 简单使用<i class="fas fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.101.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

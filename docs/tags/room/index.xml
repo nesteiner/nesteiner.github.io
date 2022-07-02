@@ -1,0 +1,15 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Room - Tag - My New Hugo Site</title>
+        <link>http://example.org/tags/room/</link>
+        <description>Room - Tag - My New Hugo Site</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sat, 02 Jul 2022 14:38:00 &#43;0800</lastBuildDate><atom:link href="http://example.org/tags/room/" rel="self" type="application/rss+xml" /><item>
+    <title>Android Room 简单使用</title>
+    <link>http://example.org/posts/2022/07/android-room/</link>
+    <pubDate>Sat, 02 Jul 2022 14:38:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/posts/2022/07/android-room/</guid>
+    <description><![CDATA[Android Room 简单使用 说明 这次没有用内置的 SQLite 库，而是直接使用了 Room ，原因之一是 SQLite 在创建数据库的时候出错了，排查不到哪一步出错 二是这个 Room 与 Flutter 中的 floor 框架非常相似，可以无缝迁移 添加依赖 在 src/build.gradle 中 dependencies { def room_version = &#34;2.4.2&#34; implementation &#34;androidx.room:room-runtime:$room_version&#34; annotationProcessor &#34;androidx.room:room-compiler:$room_version&#34; } 配置类 Room 包含三个主要组件 数据库类 数据实体 数据访问对象(DAO) 他们的定义如下 数据实体 @Entity public class User { @PrimaryKey public int uid; @ColumnInfo(name = &#34;first_name&#34;) public String firstName; @ColumnInfo(name = &#34;last_name&#34;) public String lastName; } 数据访问对象 @Dao public interface UserDao { @Query(&#34;SELECT * FROM user&#34;) List&lt;User&gt; getAll(); @Query(&#34;SELECT * FROM user WHERE uid IN (:userIds)&#34;) List&lt;User&gt; loadAllByIds(int[] userIds); @Query(&#34;SELECT * FROM user WHERE first_name LIKE :first AND &#34; + &#34;last_name LIKE :last LIMIT 1&#34;) User findByName(String first, String last); @Insert void insertAll(User.]]></description>
+</item>
+</channel>
+</rss>

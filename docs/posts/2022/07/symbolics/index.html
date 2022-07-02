@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>Symbolics.jl 简单使用 - My New Hugo Site</title><meta name="Description" content="This is my cool site"><meta property="og:title" content="Symbolics.jl 简单使用" />
+<meta property="og:description" content="Symbolics.jl 简单使用 由于文档太难看懂，我这里简单地介绍下这个包的用法 变量符号 生成变量符号，只需要 @variables x y 这样，我们就有两个符号为 x , y 的变量 变量表达式 用表达式生成符号变量 如同写一个算数表达式 1&#43;1 一样，Julia 为符号变量类型重载了运算符，这里创建一个变量 p, 用其来代表 p = -16x^2 &#43; 100 注意， p 也是一个符号变量 用函数生成符号变量 或者我们还可以这样声明 p f(x) = -16x^2 &#43; 100 p = f(x) 替换表达式 写好了表达式还不够，有时候我们将其中一个函数看作另一个函数的参数，比如 f(g(x)) substitude(p, x =&gt; x^2) 得到结果为 -16x^4 &#43; 100 如果是多元函数，替换的部分用字典来替代 简化/展开表达式 简化表达式，使用 simplify 函数，但是这个包里没有提供单独的 展开 函数，还好 simplify 有一个 expand 参数，为 true 时展开表达式，来看一个例子 @variables a b c x quad = a*x^2 &#43; b*x &#43; c quad &#43; quad^2 - quad^3 simpify(quad, expand=true) # julia&gt; simplify(ans,expand=true) # c &#43; b*x &#43; c^2 &#43; (a &#43; b^2)*(x^2) &#43; (a^2)*(x^4) &#43; 2a*c*(x^2) &#43; 2b*c*x &#43; 2a*b*(x^3) - (c^3) - (a^3)*(x^6) - (b^3)*(x^3) - 3a*(c^2)*(x^2) - 3a*(b^2)*(x^4) - 3b*x*(c^2) - 3c*(b^2)*(x^2) - 3c*(a^2)*(x^4) - 3b*(a^2)*(x^5) - 6a*b*c*(x^3) 求导表达式 与求导相关的函数是 Differential ，中文意思 微分 @variables t D = Differential(t) 声明一个变量符号 t, 再声明一个变量 D 代表有关 t 的微分 接着，声明有关 t 的表达式，调用 D(z) 得到导数表达式 z = t &#43; t^2 D(z) 然而求导部分是惰性的，怕消耗太多时间，需要调用 expand_derivatives 来获取表达式 expand_derivatives(D(z)) # 1 &#43; 2t 生成 Julia 函数 表达式可以看作函数的简化版本，比如 p = -16x^2 &#43; 100 我们直接调用 p(1) 是会报错的，我们需要根据他来生成一个函数调用 f_expr = build_function(p, x) f_func = eval(f_expr) f_func(1) # 84 build_function 需要一个表达式，和其参数变量表 如果是 f(x, y) ，应该输入 build_function(f, x, y) 如果是 f([x, y]) , 应该输入 build_function(f, [x, y]) build_function 返回的是 Julia 函数的 Expr 类型, eval 他即可获得函数 疑问 怎么没有积分啊 这个包里确实没有写积分的函数，不过我已经提了个 Issue 给作者 https://github." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/posts/2022/07/symbolics/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-07-02T14:31:00+08:00" />
+<meta property="article:modified_time" content="2022-07-02T14:45:20+08:00" /><meta property="og:site_name" content="My cool site" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Symbolics.jl 简单使用"/>
+<meta name="twitter:description" content="Symbolics.jl 简单使用 由于文档太难看懂，我这里简单地介绍下这个包的用法 变量符号 生成变量符号，只需要 @variables x y 这样，我们就有两个符号为 x , y 的变量 变量表达式 用表达式生成符号变量 如同写一个算数表达式 1&#43;1 一样，Julia 为符号变量类型重载了运算符，这里创建一个变量 p, 用其来代表 p = -16x^2 &#43; 100 注意， p 也是一个符号变量 用函数生成符号变量 或者我们还可以这样声明 p f(x) = -16x^2 &#43; 100 p = f(x) 替换表达式 写好了表达式还不够，有时候我们将其中一个函数看作另一个函数的参数，比如 f(g(x)) substitude(p, x =&gt; x^2) 得到结果为 -16x^4 &#43; 100 如果是多元函数，替换的部分用字典来替代 简化/展开表达式 简化表达式，使用 simplify 函数，但是这个包里没有提供单独的 展开 函数，还好 simplify 有一个 expand 参数，为 true 时展开表达式，来看一个例子 @variables a b c x quad = a*x^2 &#43; b*x &#43; c quad &#43; quad^2 - quad^3 simpify(quad, expand=true) # julia&gt; simplify(ans,expand=true) # c &#43; b*x &#43; c^2 &#43; (a &#43; b^2)*(x^2) &#43; (a^2)*(x^4) &#43; 2a*c*(x^2) &#43; 2b*c*x &#43; 2a*b*(x^3) - (c^3) - (a^3)*(x^6) - (b^3)*(x^3) - 3a*(c^2)*(x^2) - 3a*(b^2)*(x^4) - 3b*x*(c^2) - 3c*(b^2)*(x^2) - 3c*(a^2)*(x^4) - 3b*(a^2)*(x^5) - 6a*b*c*(x^3) 求导表达式 与求导相关的函数是 Differential ，中文意思 微分 @variables t D = Differential(t) 声明一个变量符号 t, 再声明一个变量 D 代表有关 t 的微分 接着，声明有关 t 的表达式，调用 D(z) 得到导数表达式 z = t &#43; t^2 D(z) 然而求导部分是惰性的，怕消耗太多时间，需要调用 expand_derivatives 来获取表达式 expand_derivatives(D(z)) # 1 &#43; 2t 生成 Julia 函数 表达式可以看作函数的简化版本，比如 p = -16x^2 &#43; 100 我们直接调用 p(1) 是会报错的，我们需要根据他来生成一个函数调用 f_expr = build_function(p, x) f_func = eval(f_expr) f_func(1) # 84 build_function 需要一个表达式，和其参数变量表 如果是 f(x, y) ，应该输入 build_function(f, x, y) 如果是 f([x, y]) , 应该输入 build_function(f, [x, y]) build_function 返回的是 Julia 函数的 Expr 类型, eval 他即可获得函数 疑问 怎么没有积分啊 这个包里确实没有写积分的函数，不过我已经提了个 Issue 给作者 https://github."/>
+<meta name="application-name" content="My cool site">
+<meta name="apple-mobile-web-app-title" content="My cool site"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://example.org/posts/2022/07/symbolics/" /><link rel="prev" href="http://example.org/posts/2022/07/parse-logic/" /><link rel="next" href="http://example.org/posts/2022/07/scrapy-spider/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Symbolics.jl 简单使用",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/example.org\/posts\/2022\/07\/symbolics\/"
+        },"genre": "posts","keywords": "Symbolics","wordcount":  214 ,
+        "url": "http:\/\/example.org\/posts\/2022\/07\/symbolics\/","datePublished": "2022-07-02T14:31:00+08:00","dateModified": "2022-07-02T14:45:20+08:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "Author"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="My New Hugo Site">My cool site</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="My New Hugo Site">My cool site</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Symbolics.jl 简单使用</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Author</a></span>&nbsp;<span class="post-category">included in <a href="/categories/julia/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Julia</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2022-07-02">2022-07-02</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;214 words&nbsp;
+                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;2 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#symbolics-dot-jl-简单使用">Symbolics.jl 简单使用</a>
+      <ul>
+        <li><a href="#变量符号">变量符号</a></li>
+        <li><a href="#变量表达式">变量表达式</a></li>
+        <li><a href="#生成-julia-函数">生成 Julia 函数</a></li>
+      </ul>
+    </li>
+    <li><a href="#疑问">疑问</a>
+      <ul>
+        <li><a href="#怎么没有积分啊">怎么没有积分啊</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="symbolics-dot-jl-简单使用">Symbolics.jl 简单使用</h2>
+<p>由于文档太难看懂，我这里简单地介绍下这个包的用法 <!-- raw HTML omitted -->
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/ox-hugo/Symbolics.png"
+        data-srcset="/ox-hugo/Symbolics.png, /ox-hugo/Symbolics.png 1.5x, /ox-hugo/Symbolics.png 2x"
+        data-sizes="auto"
+        alt="/ox-hugo/Symbolics.png"
+        title="/ox-hugo/Symbolics.png" /> <!-- raw HTML omitted --></p>
+<h3 id="变量符号">变量符号</h3>
+<p>生成变量符号，只需要 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="nd">@variables</span> <span class="n">x</span> <span class="n">y</span>
+</span></span></code></pre></div><p>这样，我们就有两个符号为 <code>x</code> , <code>y</code> 的变量 <!-- raw HTML omitted --></p>
+<h3 id="变量表达式">变量表达式</h3>
+<h4 id="用表达式生成符号变量">用表达式生成符号变量</h4>
+<p>如同写一个算数表达式 <code>1+1</code> 一样，Julia 为符号变量类型重载了运算符，这里创建一个变量 <code>p</code>, <!-- raw HTML omitted -->
+用其来代表 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">p</span> <span class="o">=</span> <span class="o">-</span><span class="mi">16</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">100</span>
+</span></span></code></pre></div><p>注意， <code>p</code> 也是一个符号变量 <!-- raw HTML omitted --></p>
+<h4 id="用函数生成符号变量">用函数生成符号变量</h4>
+<p>或者我们还可以这样声明 <code>p</code> <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="o">-</span><span class="mi">16</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">100</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</span></span></code></pre></div><h4 id="替换表达式">替换表达式</h4>
+<p>写好了表达式还不够，有时候我们将其中一个函数看作另一个函数的参数，比如 <code>f(g(x))</code> <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">substitude</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">x</span> <span class="o">=&gt;</span> <span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="p">)</span>
+</span></span></code></pre></div><p>得到结果为 <code>-16x^4 + 100</code> <!-- raw HTML omitted -->
+如果是多元函数，替换的部分用字典来替代 <!-- raw HTML omitted --></p>
+<h4 id="简化-展开表达式">简化/展开表达式</h4>
+<p>简化表达式，使用 <code>simplify</code> 函数，但是这个包里没有提供单独的 <strong>展开</strong> 函数，还好 <code>simplify</code> <!-- raw HTML omitted -->
+有一个 <code>expand</code> 参数，为 <code>true</code> 时展开表达式，来看一个例子 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl">  <span class="nd">@variables</span> <span class="n">a</span> <span class="n">b</span> <span class="n">c</span> <span class="n">x</span>
+</span></span><span class="line"><span class="cl">  <span class="n">quad</span> <span class="o">=</span> <span class="n">a</span><span class="o">*</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="n">b</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="n">c</span>
+</span></span><span class="line"><span class="cl">  <span class="n">quad</span> <span class="o">+</span> <span class="n">quad</span><span class="o">^</span><span class="mi">2</span> <span class="o">-</span> <span class="n">quad</span><span class="o">^</span><span class="mi">3</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">simpify</span><span class="p">(</span><span class="n">quad</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="nb">true</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c"># julia&gt; simplify(ans,expand=true)</span>
+</span></span><span class="line"><span class="cl"><span class="c"># c + b*x + c^2 + (a + b^2)*(x^2) + (a^2)*(x^4) + 2a*c*(x^2) + 2b*c*x + 2a*b*(x^3) - (c^3) - (a^3)*(x^6) - (b^3)*(x^3) - 3a*(c^2)*(x^2) - 3a*(b^2)*(x^4) - 3b*x*(c^2) - 3c*(b^2)*(x^2) - 3c*(a^2)*(x^4) - 3b*(a^2)*(x^5) - 6a*b*c*(x^3)</span>
+</span></span></code></pre></div><h4 id="求导表达式">求导表达式</h4>
+<p>与求导相关的函数是 <code>Differential</code> ，中文意思 <strong>微分</strong> <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="nd">@variables</span> <span class="n">t</span>
+</span></span><span class="line"><span class="cl"><span class="n">D</span> <span class="o">=</span> <span class="n">Differential</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+</span></span></code></pre></div><p>声明一个变量符号 <code>t</code>, 再声明一个变量 <code>D</code> 代表有关 <code>t</code> 的微分 <!-- raw HTML omitted -->
+接着，声明有关 <code>t</code> 的表达式，调用 <code>D(z)</code> 得到导数表达式 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">z</span> <span class="o">=</span> <span class="n">t</span> <span class="o">+</span> <span class="n">t</span><span class="o">^</span><span class="mi">2</span>
+</span></span><span class="line"><span class="cl"><span class="n">D</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+</span></span></code></pre></div><p>然而求导部分是惰性的，怕消耗太多时间，需要调用 <code>expand_derivatives</code> 来获取表达式 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">expand_derivatives</span><span class="p">(</span><span class="n">D</span><span class="p">(</span><span class="n">z</span><span class="p">))</span> <span class="c"># 1 + 2t</span>
+</span></span></code></pre></div><h3 id="生成-julia-函数">生成 Julia 函数</h3>
+<p>表达式可以看作函数的简化版本，比如 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">p</span> <span class="o">=</span> <span class="o">-</span><span class="mi">16</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">100</span>
+</span></span></code></pre></div><p>我们直接调用 <code>p(1)</code> 是会报错的，我们需要根据他来生成一个函数调用 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">f_expr</span> <span class="o">=</span> <span class="n">build_function</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">f_func</span> <span class="o">=</span> <span class="n">eval</span><span class="p">(</span><span class="n">f_expr</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">f_func</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c"># 84</span>
+</span></span></code></pre></div><ol>
+<li><code>build_function</code> 需要一个表达式，和其参数变量表 <!-- raw HTML omitted --></li>
+<li>如果是 <code>f(x, y)</code> ，应该输入 <code>build_function(f, x, y)</code> <!-- raw HTML omitted --></li>
+<li>如果是 <code>f([x, y])</code> , 应该输入 <code>build_function(f, [x, y])</code> <!-- raw HTML omitted --></li>
+<li><code>build_function</code> 返回的是 Julia 函数的 <code>Expr</code> 类型, <code>eval</code> 他即可获得函数 <!-- raw HTML omitted --></li>
+</ol>
+<h2 id="疑问">疑问</h2>
+<h3 id="怎么没有积分啊">怎么没有积分啊</h3>
+<p>这个包里确实没有写积分的函数，不过我已经提了个 <strong>Issue</strong> 给作者 <!-- raw HTML omitted -->
+<a href="https://github.com/JuliaSymbolics/Symbolics.jl/issues/532" target="_blank" rel="noopener noreffer ">https://github.com/JuliaSymbolics/Symbolics.jl/issues/532</a> <!-- raw HTML omitted --></p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/ox-hugo/2022-02-19_16-52-00_screenshot.png"
+        data-srcset="/ox-hugo/2022-02-19_16-52-00_screenshot.png, /ox-hugo/2022-02-19_16-52-00_screenshot.png 1.5x, /ox-hugo/2022-02-19_16-52-00_screenshot.png 2x"
+        data-sizes="auto"
+        alt="/ox-hugo/2022-02-19_16-52-00_screenshot.png"
+        title="/ox-hugo/2022-02-19_16-52-00_screenshot.png" /> <!-- raw HTML omitted -->
+我都已经给他跪了，不信他不理我 <!-- raw HTML omitted --></p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2022-07-02</span>
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="http://example.org/posts/2022/07/symbolics/" data-title="Symbolics.jl 简单使用" data-hashtags="Symbolics"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="http://example.org/posts/2022/07/symbolics/" data-hashtag="Symbolics"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="http://example.org/posts/2022/07/symbolics/" data-title="Symbolics.jl 简单使用"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="http://example.org/posts/2022/07/symbolics/" data-title="Symbolics.jl 简单使用"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.0.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="http://example.org/posts/2022/07/symbolics/" data-title="Symbolics.jl 简单使用"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw" aria-hidden="true"></i>&nbsp;<a href="/tags/symbolics/">Symbolics</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/2022/07/parse-logic/" class="prev" rel="prev" title="计算真值表"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>计算真值表</a>
+            <a href="/posts/2022/07/scrapy-spider/" class="next" rel="next" title="Scrapy 爬虫的简单使用">Scrapy 爬虫的简单使用<i class="fas fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.101.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

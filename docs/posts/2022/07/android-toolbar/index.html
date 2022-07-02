@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>Android ToolBar 简单使用 - My New Hugo Site</title><meta name="Description" content="This is my cool site"><meta property="og:title" content="Android ToolBar 简单使用" />
+<meta property="og:description" content="Android ToolBar 简单使用 介绍 按照效果图，从左到右分别是 导航栏图标 App Logo 标题 子标题 自定义控件 (Clock) ActionMenu 接下来我们制作这个页面 activity 布局文件 在 layout/activity_toolbar.xml 中 &lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34;?&gt; &lt;LinearLayout xmlns:android=&#34;http://schemas.android.com/apk/res/android&#34; android:layout_width=&#34;match_parent&#34; android:layout_height=&#34;match_parent&#34; android:orientation=&#34;vertical&#34;&gt; &lt;android.support.v7.widget.Toolbar android:id=&#34;@&#43;id/toolbar&#34; android:layout_width=&#34;match_parent&#34; android:layout_height=&#34;wrap_content&#34; android:background=&#34;@color/color_0176da&#34;&gt; &lt;!--自定义控件--&gt; &lt;TextView android:layout_width=&#34;wrap_content&#34; android:layout_height=&#34;wrap_content&#34; android:text=&#34;Clock&#34; /&gt; &lt;/android.support.v7.widget.Toolbar&gt; &lt;/LinearLayout&gt; menu 菜单文件 在 menu/toolbar_menu.xml 中，这里记得新建 menu 资源文件夹 &lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34;?&gt; &lt;menu xmlns:android=&#34;http://schemas.android.com/apk/res/android&#34; xmlns:app=&#34;http://schemas.android.com/apk/res-auto&#34;&gt; &lt;item android:id=&#34;@id/action_search&#34; android:icon=&#34;@mipmap/ic_search&#34; android:title=&#34;@string/menu_search&#34; app:showAsAction=&#34;ifRoom&#34; /&gt; &lt;item android:id=&#34;@id/action_notification&#34; android:icon=&#34;@mipmap/ic_notifications&#34; android:title=&#34;@string/menu_notifications&#34; app:showAsAction=&#34;ifRoom&#34; /&gt; &lt;item android:id=&#34;@&#43;id/action_item1&#34; android:title=&#34;@string/item_01&#34; app:showAsAction=&#34;never&#34; /&gt; &lt;item android:id=&#34;@&#43;id/action_item2&#34; android:title=&#34;@string/item_02&#34; app:showAsAction=&#34;never&#34; /&gt; &lt;/menu&gt; 这里我们通过设置 showAsAction 来确定 menu item 的位置 ifRoom 如果工具栏由剩余空间，那么显示在工具栏中 never 显示在菜单弹出框中 设置 activity 的 ToolbarActivity 在 ToolbarActivity." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/posts/2022/07/android-toolbar/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-07-02T14:38:00+08:00" />
+<meta property="article:modified_time" content="2022-07-02T14:47:50+08:00" /><meta property="og:site_name" content="My cool site" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Android ToolBar 简单使用"/>
+<meta name="twitter:description" content="Android ToolBar 简单使用 介绍 按照效果图，从左到右分别是 导航栏图标 App Logo 标题 子标题 自定义控件 (Clock) ActionMenu 接下来我们制作这个页面 activity 布局文件 在 layout/activity_toolbar.xml 中 &lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34;?&gt; &lt;LinearLayout xmlns:android=&#34;http://schemas.android.com/apk/res/android&#34; android:layout_width=&#34;match_parent&#34; android:layout_height=&#34;match_parent&#34; android:orientation=&#34;vertical&#34;&gt; &lt;android.support.v7.widget.Toolbar android:id=&#34;@&#43;id/toolbar&#34; android:layout_width=&#34;match_parent&#34; android:layout_height=&#34;wrap_content&#34; android:background=&#34;@color/color_0176da&#34;&gt; &lt;!--自定义控件--&gt; &lt;TextView android:layout_width=&#34;wrap_content&#34; android:layout_height=&#34;wrap_content&#34; android:text=&#34;Clock&#34; /&gt; &lt;/android.support.v7.widget.Toolbar&gt; &lt;/LinearLayout&gt; menu 菜单文件 在 menu/toolbar_menu.xml 中，这里记得新建 menu 资源文件夹 &lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34;?&gt; &lt;menu xmlns:android=&#34;http://schemas.android.com/apk/res/android&#34; xmlns:app=&#34;http://schemas.android.com/apk/res-auto&#34;&gt; &lt;item android:id=&#34;@id/action_search&#34; android:icon=&#34;@mipmap/ic_search&#34; android:title=&#34;@string/menu_search&#34; app:showAsAction=&#34;ifRoom&#34; /&gt; &lt;item android:id=&#34;@id/action_notification&#34; android:icon=&#34;@mipmap/ic_notifications&#34; android:title=&#34;@string/menu_notifications&#34; app:showAsAction=&#34;ifRoom&#34; /&gt; &lt;item android:id=&#34;@&#43;id/action_item1&#34; android:title=&#34;@string/item_01&#34; app:showAsAction=&#34;never&#34; /&gt; &lt;item android:id=&#34;@&#43;id/action_item2&#34; android:title=&#34;@string/item_02&#34; app:showAsAction=&#34;never&#34; /&gt; &lt;/menu&gt; 这里我们通过设置 showAsAction 来确定 menu item 的位置 ifRoom 如果工具栏由剩余空间，那么显示在工具栏中 never 显示在菜单弹出框中 设置 activity 的 ToolbarActivity 在 ToolbarActivity."/>
+<meta name="application-name" content="My cool site">
+<meta name="apple-mobile-web-app-title" content="My cool site"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://example.org/posts/2022/07/android-toolbar/" /><link rel="prev" href="http://example.org/posts/2022/07/android-theme/" /><link rel="next" href="http://example.org/posts/2022/07/android-room/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Android ToolBar 简单使用",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/example.org\/posts\/2022\/07\/android-toolbar\/"
+        },"genre": "posts","keywords": "Toolbar","wordcount":  236 ,
+        "url": "http:\/\/example.org\/posts\/2022\/07\/android-toolbar\/","datePublished": "2022-07-02T14:38:00+08:00","dateModified": "2022-07-02T14:47:50+08:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "Author"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="My New Hugo Site">My cool site</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="My New Hugo Site">My cool site</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Android ToolBar 简单使用</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Author</a></span>&nbsp;<span class="post-category">included in <a href="/categories/android/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Android</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2022-07-02">2022-07-02</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;236 words&nbsp;
+                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;2 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#android-toolbar-简单使用">Android ToolBar 简单使用</a>
+      <ul>
+        <li><a href="#介绍">介绍</a></li>
+        <li><a href="#activity-布局文件">activity 布局文件</a></li>
+        <li><a href="#menu-菜单文件">menu 菜单文件</a></li>
+        <li><a href="#设置-activity-的-toolbaractivity">设置 activity 的 ToolbarActivity</a></li>
+        <li><a href="#补充">补充</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="android-toolbar-简单使用">Android ToolBar 简单使用</h2>
+<h3 id="介绍">介绍</h3>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="https://upload-images.jianshu.io/upload_images/912181-0f2cde151fdc03db.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/391/format/webp"
+        data-srcset="https://upload-images.jianshu.io/upload_images/912181-0f2cde151fdc03db.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/391/format/webp, https://upload-images.jianshu.io/upload_images/912181-0f2cde151fdc03db.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/391/format/webp 1.5x, https://upload-images.jianshu.io/upload_images/912181-0f2cde151fdc03db.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/391/format/webp 2x"
+        data-sizes="auto"
+        alt="https://upload-images.jianshu.io/upload_images/912181-0f2cde151fdc03db.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/391/format/webp"
+        title="https://upload-images.jianshu.io/upload_images/912181-0f2cde151fdc03db.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/391/format/webp" /> <!-- raw HTML omitted -->
+按照效果图，从左到右分别是 <!-- raw HTML omitted --></p>
+<ul>
+<li>导航栏图标 <!-- raw HTML omitted --></li>
+<li>App Logo <!-- raw HTML omitted --></li>
+<li>标题 <!-- raw HTML omitted --></li>
+<li>子标题 <!-- raw HTML omitted --></li>
+<li>自定义控件 (Clock) <!-- raw HTML omitted --></li>
+<li>ActionMenu <!-- raw HTML omitted --></li>
+</ul>
+<p>接下来我们制作这个页面 <!-- raw HTML omitted --></p>
+<h3 id="activity-布局文件">activity 布局文件</h3>
+<p>在 <code>layout/activity_toolbar.xml</code> 中 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34;?&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;LinearLayout</span> <span class="na">xmlns:android=</span><span class="s">&#34;http://schemas.android.com/apk/res/android&#34;</span>
+</span></span><span class="line"><span class="cl">	      <span class="na">android:layout_width=</span><span class="s">&#34;match_parent&#34;</span>
+</span></span><span class="line"><span class="cl">	      <span class="na">android:layout_height=</span><span class="s">&#34;match_parent&#34;</span>
+</span></span><span class="line"><span class="cl">	      <span class="na">android:orientation=</span><span class="s">&#34;vertical&#34;</span><span class="nt">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;android.support.v7.widget.Toolbar</span>
+</span></span><span class="line"><span class="cl">      <span class="na">android:id=</span><span class="s">&#34;@+id/toolbar&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="na">android:layout_width=</span><span class="s">&#34;match_parent&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="na">android:layout_height=</span><span class="s">&#34;wrap_content&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="na">android:background=</span><span class="s">&#34;@color/color_0176da&#34;</span><span class="nt">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c">&lt;!--自定义控件--&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;TextView</span>
+</span></span><span class="line"><span class="cl">	<span class="na">android:layout_width=</span><span class="s">&#34;wrap_content&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="na">android:layout_height=</span><span class="s">&#34;wrap_content&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="na">android:text=</span><span class="s">&#34;Clock&#34;</span> <span class="nt">/&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;/android.support.v7.widget.Toolbar&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/LinearLayout&gt;</span>
+</span></span></code></pre></div><h3 id="menu-菜单文件">menu 菜单文件</h3>
+<p>在 <code>menu/toolbar_menu.xml</code> 中，这里记得新建 <code>menu</code> 资源文件夹 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34;?&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;menu</span> <span class="na">xmlns:android=</span><span class="s">&#34;http://schemas.android.com/apk/res/android&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="na">xmlns:app=</span><span class="s">&#34;http://schemas.android.com/apk/res-auto&#34;</span><span class="nt">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;item</span>
+</span></span><span class="line"><span class="cl">      <span class="na">android:id=</span><span class="s">&#34;@id/action_search&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="na">android:icon=</span><span class="s">&#34;@mipmap/ic_search&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="na">android:title=</span><span class="s">&#34;@string/menu_search&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="na">app:showAsAction=</span><span class="s">&#34;ifRoom&#34;</span> <span class="nt">/&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;item</span>
+</span></span><span class="line"><span class="cl">      <span class="na">android:id=</span><span class="s">&#34;@id/action_notification&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="na">android:icon=</span><span class="s">&#34;@mipmap/ic_notifications&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="na">android:title=</span><span class="s">&#34;@string/menu_notifications&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="na">app:showAsAction=</span><span class="s">&#34;ifRoom&#34;</span> <span class="nt">/&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;item</span>
+</span></span><span class="line"><span class="cl">      <span class="na">android:id=</span><span class="s">&#34;@+id/action_item1&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="na">android:title=</span><span class="s">&#34;@string/item_01&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="na">app:showAsAction=</span><span class="s">&#34;never&#34;</span> <span class="nt">/&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;item</span>
+</span></span><span class="line"><span class="cl">      <span class="na">android:id=</span><span class="s">&#34;@+id/action_item2&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="na">android:title=</span><span class="s">&#34;@string/item_02&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="na">app:showAsAction=</span><span class="s">&#34;never&#34;</span> <span class="nt">/&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/menu&gt;</span>
+</span></span></code></pre></div><p>这里我们通过设置 <code>showAsAction</code> 来确定 <code>menu item</code> 的位置 <!-- raw HTML omitted --></p>
+<ul>
+<li><code>ifRoom</code> 如果工具栏由剩余空间，那么显示在工具栏中 <!-- raw HTML omitted --></li>
+<li><code>never</code> 显示在菜单弹出框中 <!-- raw HTML omitted --></li>
+</ul>
+<h3 id="设置-activity-的-toolbaractivity">设置 activity 的 ToolbarActivity</h3>
+<p>在 <code>ToolbarActivity.java</code> 中 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * Toolbar的基本使用
+</span></span></span><span class="line"><span class="cl"><span class="cm"> */</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ToolBarActivity</span> <span class="kd">extends</span> <span class="n">AppCompatActivity</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onCreate</span><span class="o">(</span><span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">super</span><span class="o">.</span><span class="na">onCreate</span><span class="o">(</span><span class="n">savedInstanceState</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">setContentView</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">activity_toolbar</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="n">Toolbar</span> <span class="n">toolbar</span> <span class="o">=</span> <span class="o">(</span><span class="n">Toolbar</span><span class="o">)</span> <span class="n">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">toolbar</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="n">toolbar</span><span class="o">.</span><span class="na">setNavigationIcon</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">mipmap</span><span class="o">.</span><span class="na">ic_drawer_home</span><span class="o">);</span><span class="c1">//设置导航栏图标
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">toolbar</span><span class="o">.</span><span class="na">setLogo</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">mipmap</span><span class="o">.</span><span class="na">ic_launcher</span><span class="o">);</span><span class="c1">//设置app logo
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">toolbar</span><span class="o">.</span><span class="na">setTitle</span><span class="o">(</span><span class="s">&#34;Title&#34;</span><span class="o">);</span><span class="c1">//设置主标题
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">toolbar</span><span class="o">.</span><span class="na">setSubtitle</span><span class="o">(</span><span class="s">&#34;Subtitle&#34;</span><span class="o">);</span><span class="c1">//设置子标题
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">	<span class="n">toolbar</span><span class="o">.</span><span class="na">inflateMenu</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">menu</span><span class="o">.</span><span class="na">toolbar_menu</span><span class="o">);</span><span class="c1">//设置右上角的填充菜单
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">toolbar</span><span class="o">.</span><span class="na">setOnMenuItemClickListener</span><span class="o">(</span><span class="k">new</span> <span class="n">Toolbar</span><span class="o">.</span><span class="na">OnMenuItemClickListener</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">		<span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">onMenuItemClick</span><span class="o">(</span><span class="n">MenuItem</span> <span class="n">item</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">		    <span class="kt">int</span> <span class="n">menuItemId</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="na">getItemId</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">		    <span class="k">if</span> <span class="o">(</span><span class="n">menuItemId</span> <span class="o">==</span> <span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">action_search</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">Toast</span><span class="o">.</span><span class="na">makeText</span><span class="o">(</span><span class="n">ToolBarActivity</span><span class="o">.</span><span class="na">this</span> <span class="o">,</span> <span class="n">R</span><span class="o">.</span><span class="na">string</span><span class="o">.</span><span class="na">menu_search</span> <span class="o">,</span> <span class="n">Toast</span><span class="o">.</span><span class="na">LENGTH_SHORT</span><span class="o">).</span><span class="na">show</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">menuItemId</span> <span class="o">==</span> <span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">action_notification</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">Toast</span><span class="o">.</span><span class="na">makeText</span><span class="o">(</span><span class="n">ToolBarActivity</span><span class="o">.</span><span class="na">this</span> <span class="o">,</span> <span class="n">R</span><span class="o">.</span><span class="na">string</span><span class="o">.</span><span class="na">menu_notifications</span> <span class="o">,</span> <span class="n">Toast</span><span class="o">.</span><span class="na">LENGTH_SHORT</span><span class="o">).</span><span class="na">show</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">menuItemId</span> <span class="o">==</span> <span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">action_item1</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">Toast</span><span class="o">.</span><span class="na">makeText</span><span class="o">(</span><span class="n">ToolBarActivity</span><span class="o">.</span><span class="na">this</span> <span class="o">,</span> <span class="n">R</span><span class="o">.</span><span class="na">string</span><span class="o">.</span><span class="na">item_01</span> <span class="o">,</span> <span class="n">Toast</span><span class="o">.</span><span class="na">LENGTH_SHORT</span><span class="o">).</span><span class="na">show</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">menuItemId</span> <span class="o">==</span> <span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">action_item2</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">Toast</span><span class="o">.</span><span class="na">makeText</span><span class="o">(</span><span class="n">ToolBarActivity</span><span class="o">.</span><span class="na">this</span> <span class="o">,</span> <span class="n">R</span><span class="o">.</span><span class="na">string</span><span class="o">.</span><span class="na">item_02</span> <span class="o">,</span> <span class="n">Toast</span><span class="o">.</span><span class="na">LENGTH_SHORT</span><span class="o">).</span><span class="na">show</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">		    <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">		<span class="o">}</span>
+</span></span><span class="line"><span class="cl">	    <span class="o">});</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></div><p>在这里，我们 <!-- raw HTML omitted --></p>
+<ol>
+<li>设置 <code>ToolBar</code> 的属性 <!-- raw HTML omitted -->
+<ul>
+<li><code>setNavigationicon</code> <!-- raw HTML omitted --></li>
+<li><code>setLogo</code> <!-- raw HTML omitted --></li>
+<li><code>setTitle</code> <!-- raw HTML omitted --></li>
+<li><code>setSubtitle</code> <!-- raw HTML omitted --></li>
+</ul>
+</li>
+<li>渲染菜单选项 <!-- raw HTML omitted -->
+<ul>
+<li><code>inflateMenu</code> <!-- raw HTML omitted --></li>
+</ul>
+</li>
+<li>设置点击事件 <!-- raw HTML omitted -->
+<ul>
+<li><code>setOnMenuitemClickListener</code> <!-- raw HTML omitted --></li>
+</ul>
+</li>
+</ol>
+<h3 id="补充">补充</h3>
+<h4 id="在-xml-布局中设置-toolbar-的属性">在 xml 布局中设置 toolbar 的属性</h4>
+<p>这里需要自定义一个命名空间 <code>toolbar</code> ，而不是使用 <code>android</code> <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34;?&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;LinearLayout</span> <span class="na">xmlns:android=</span><span class="s">&#34;http://schemas.android.com/apk/res/android&#34;</span>
+</span></span><span class="line"><span class="cl">	      <span class="na">xmlns:toolbar=</span><span class="s">&#34;http://schemas.android.com/apk/res-auto&#34;</span>
+</span></span><span class="line"><span class="cl">	      <span class="na">android:layout_width=</span><span class="s">&#34;match_parent&#34;</span>
+</span></span><span class="line"><span class="cl">	      <span class="na">android:layout_height=</span><span class="s">&#34;match_parent&#34;</span>
+</span></span><span class="line"><span class="cl">	      <span class="na">android:orientation=</span><span class="s">&#34;vertical&#34;</span><span class="nt">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;android.support.v7.widget.Toolbar</span>
+</span></span><span class="line"><span class="cl">      <span class="na">android:id=</span><span class="s">&#34;@+id/toolbar&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="na">android:layout_width=</span><span class="s">&#34;match_parent&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="na">android:layout_height=</span><span class="s">&#34;wrap_content&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="na">android:background=</span><span class="s">&#34;@color/color_0176da&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="na">toolbar:navigationIcon=</span><span class="s">&#34;@mipmap/ic_drawer_home&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="na">toolbar:logo=</span><span class="s">&#34;@mipmap/ic_launcher&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="na">toolbar:subtitle=</span><span class="s">&#34;456&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="na">toolbar:title=</span><span class="s">&#34;123&#34;</span><span class="nt">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c">&lt;!--自定义控件--&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;TextView</span>
+</span></span><span class="line"><span class="cl">	<span class="na">android:layout_width=</span><span class="s">&#34;wrap_content&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="na">android:layout_height=</span><span class="s">&#34;wrap_content&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="na">android:text=</span><span class="s">&#34;Clock&#34;</span> <span class="nt">/&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;/android.support.v7.widget.Toolbar&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/LinearLayout&gt;</span>
+</span></span></code></pre></div></div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2022-07-02</span>
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="http://example.org/posts/2022/07/android-toolbar/" data-title="Android ToolBar 简单使用" data-hashtags="Toolbar"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="http://example.org/posts/2022/07/android-toolbar/" data-hashtag="Toolbar"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="http://example.org/posts/2022/07/android-toolbar/" data-title="Android ToolBar 简单使用"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="http://example.org/posts/2022/07/android-toolbar/" data-title="Android ToolBar 简单使用"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.0.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="http://example.org/posts/2022/07/android-toolbar/" data-title="Android ToolBar 简单使用"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw" aria-hidden="true"></i>&nbsp;<a href="/tags/toolbar/">Toolbar</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/2022/07/android-theme/" class="prev" rel="prev" title="Android 样式与主题"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>Android 样式与主题</a>
+            <a href="/posts/2022/07/android-room/" class="next" rel="next" title="Android Room 简单使用">Android Room 简单使用<i class="fas fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.101.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

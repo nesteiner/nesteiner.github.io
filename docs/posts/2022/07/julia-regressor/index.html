@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>有监督回归 - My New Hugo Site</title><meta name="Description" content="This is my cool site"><meta property="og:title" content="有监督回归" />
+<meta property="og:description" content="算法介绍 这里简要介绍下各算法和他们之间的关系，详细理解请百度一下 基本算法 最小二乘法是众多机器学习算法中极为重要的一种基础算法 单纯的最小二乘法对于包含噪声的学习过程经常有过拟合的弱点，这往往是由于学习模型对于训练样本而言过于复杂 l2 约束 由此，引入带有约束条件的最小二乘法 &mdash;- Ridge 回归 带有约束条件的最小二乘法和交叉验证法的组合，在实际应用中是非常有效的回归方法 然而，当参数特别多的时候，求解各参数以及学习得到的函数的输出值的过程，都需要耗费大量的时间 l1 约束 由此，引入可以吧大部分参数都置为0的稀疏学习算法 因为大部分参数都变成了0，所以就可以快速地求解各参数以及学习得到的函数的输出值 l1 &#43; l2 约束 虽然 l1 约束的最小二乘学习法是非常有用的学习方法，但是在实际应用中，经常会遇到些许限制 在 Lasso 回归求解路径中，对于 N×P 的设计矩阵来说，最多只能选出 min(N,p) 个变量 当 p&gt;N 的时候，最多只能选出N个预测变量．因此，对于 p∼N 的情况，Lasso方法不能够很好的选出真实的模型． 如果预测变量具有群组效应，则用Lasso回 归时，只能选出其中的一个预测变量 对于通常的 N&gt;P 的情形，如果预测变量中 存在很强的共线性，Lasso的预测表现受控于岭回归 基于以上几点Lasso回归的局限性，Zou和 Hastie在2005年提出了弹性网回归方法，回归系 数表达式为 \(\hat \beta^{ridge} =\mathop{\arg\min}_{\beta} \{\sum \limits _{i=1}^{N}(y_i-\beta_0-\sum\limits_{j=1}^px_{ij}\beta_j)^2&#43;\lambda\sum \limits_{j=1}^{p}|\beta_{j}|&#43;\lambda\sum \limits_{j=1}^{p}\beta_{j}^2\}\) MLJLinearModels 使用 Ridge \(J = \frac{1}{n}\sum_{i = 1}^n (f( x_i) - y_i)^2 &#43; \lambda \|w\|_2^2\tag{1}\) RidgeRegressor RidgeRegression() RidgeRegression(λ; lambda, fit_intercept, penalize_intercept, scale_penalty_with_samples) Lasso \(J = \frac{1}{n}\sum_{i = 1}^n (f( x_i) - y_i)^2 &#43; \lambda \|w\|_1\tag{2}\) LassoRegressor LassoRegression() LassoRegression(λ; lambda, fit_intercept, penalize_intercept, scale_penalty_with_samples) Elastic-Net \(\smash{\min_{w}}\sum_{i=1}^m(y_i-\sum_{j=1}^dx_{ij}w_j)^2 &#43; \lambda\sum_{j=1}^d|w_j|&#43;\lambda \sum_{j=1}^dw_j^2 \tag{3}\) ElasticNetRegression ElasticNetRegression() ElasticNetRegression(λ) ElasticNetRegression(λ, γ; lambda, gamma, fit_intercept, penalize_intercept, scale_penalty_with_samples) 说明 其实可以不用管 fit_intercept penalize_intercept 我也不知道这两个是干什么的，就先别管他们了 总之，只用设置 lambda 就行了 实例 波士顿房价预测 数据准备 竞赛数据来自 https://www." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/posts/2022/07/julia-regressor/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-07-02T14:33:00+08:00" />
+<meta property="article:modified_time" content="2022-07-02T14:46:20+08:00" /><meta property="og:site_name" content="My cool site" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="有监督回归"/>
+<meta name="twitter:description" content="算法介绍 这里简要介绍下各算法和他们之间的关系，详细理解请百度一下 基本算法 最小二乘法是众多机器学习算法中极为重要的一种基础算法 单纯的最小二乘法对于包含噪声的学习过程经常有过拟合的弱点，这往往是由于学习模型对于训练样本而言过于复杂 l2 约束 由此，引入带有约束条件的最小二乘法 &mdash;- Ridge 回归 带有约束条件的最小二乘法和交叉验证法的组合，在实际应用中是非常有效的回归方法 然而，当参数特别多的时候，求解各参数以及学习得到的函数的输出值的过程，都需要耗费大量的时间 l1 约束 由此，引入可以吧大部分参数都置为0的稀疏学习算法 因为大部分参数都变成了0，所以就可以快速地求解各参数以及学习得到的函数的输出值 l1 &#43; l2 约束 虽然 l1 约束的最小二乘学习法是非常有用的学习方法，但是在实际应用中，经常会遇到些许限制 在 Lasso 回归求解路径中，对于 N×P 的设计矩阵来说，最多只能选出 min(N,p) 个变量 当 p&gt;N 的时候，最多只能选出N个预测变量．因此，对于 p∼N 的情况，Lasso方法不能够很好的选出真实的模型． 如果预测变量具有群组效应，则用Lasso回 归时，只能选出其中的一个预测变量 对于通常的 N&gt;P 的情形，如果预测变量中 存在很强的共线性，Lasso的预测表现受控于岭回归 基于以上几点Lasso回归的局限性，Zou和 Hastie在2005年提出了弹性网回归方法，回归系 数表达式为 \(\hat \beta^{ridge} =\mathop{\arg\min}_{\beta} \{\sum \limits _{i=1}^{N}(y_i-\beta_0-\sum\limits_{j=1}^px_{ij}\beta_j)^2&#43;\lambda\sum \limits_{j=1}^{p}|\beta_{j}|&#43;\lambda\sum \limits_{j=1}^{p}\beta_{j}^2\}\) MLJLinearModels 使用 Ridge \(J = \frac{1}{n}\sum_{i = 1}^n (f( x_i) - y_i)^2 &#43; \lambda \|w\|_2^2\tag{1}\) RidgeRegressor RidgeRegression() RidgeRegression(λ; lambda, fit_intercept, penalize_intercept, scale_penalty_with_samples) Lasso \(J = \frac{1}{n}\sum_{i = 1}^n (f( x_i) - y_i)^2 &#43; \lambda \|w\|_1\tag{2}\) LassoRegressor LassoRegression() LassoRegression(λ; lambda, fit_intercept, penalize_intercept, scale_penalty_with_samples) Elastic-Net \(\smash{\min_{w}}\sum_{i=1}^m(y_i-\sum_{j=1}^dx_{ij}w_j)^2 &#43; \lambda\sum_{j=1}^d|w_j|&#43;\lambda \sum_{j=1}^dw_j^2 \tag{3}\) ElasticNetRegression ElasticNetRegression() ElasticNetRegression(λ) ElasticNetRegression(λ, γ; lambda, gamma, fit_intercept, penalize_intercept, scale_penalty_with_samples) 说明 其实可以不用管 fit_intercept penalize_intercept 我也不知道这两个是干什么的，就先别管他们了 总之，只用设置 lambda 就行了 实例 波士顿房价预测 数据准备 竞赛数据来自 https://www."/>
+<meta name="application-name" content="My cool site">
+<meta name="apple-mobile-web-app-title" content="My cool site"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://example.org/posts/2022/07/julia-regressor/" /><link rel="prev" href="http://example.org/posts/2022/07/julia-calculus/" /><link rel="next" href="http://example.org/posts/2022/07/mljflux/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "有监督回归",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/example.org\/posts\/2022\/07\/julia-regressor\/"
+        },"genre": "posts","keywords": "有监督回归","wordcount":  1038 ,
+        "url": "http:\/\/example.org\/posts\/2022\/07\/julia-regressor\/","datePublished": "2022-07-02T14:33:00+08:00","dateModified": "2022-07-02T14:46:20+08:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "Author"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="My New Hugo Site">My cool site</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="My New Hugo Site">My cool site</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">有监督回归</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Author</a></span>&nbsp;<span class="post-category">included in <a href="/categories/julia/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Julia</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2022-07-02">2022-07-02</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;1038 words&nbsp;
+                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;5 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#算法介绍">算法介绍</a>
+      <ul>
+        <li><a href="#基本算法">基本算法</a></li>
+        <li><a href="#l2-约束">l2 约束</a></li>
+        <li><a href="#l1-约束">l1 约束</a></li>
+        <li><a href="#l1-plus-l2-约束">l1 + l2 约束</a></li>
+      </ul>
+    </li>
+    <li><a href="#mljlinearmodels-使用">MLJLinearModels 使用</a>
+      <ul>
+        <li><a href="#ridge">Ridge</a></li>
+        <li><a href="#lasso">Lasso</a></li>
+        <li><a href="#elastic-net">Elastic-Net</a></li>
+        <li><a href="#说明">说明</a></li>
+      </ul>
+    </li>
+    <li><a href="#实例-波士顿房价预测">实例 波士顿房价预测</a>
+      <ul>
+        <li><a href="#数据准备">数据准备</a></li>
+        <li><a href="#观察各项主要特征与房价售价的关系">观察各项主要特征与房价售价的关系</a></li>
+        <li><a href="#更加科学的分析数据">更加科学的分析数据</a></li>
+        <li><a href="#开始模拟数据">开始模拟数据</a></li>
+        <li><a href="#检验测试集数据">检验测试集数据</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="算法介绍">算法介绍</h2>
+<p>这里简要介绍下各算法和他们之间的关系，详细理解请百度一下 <!-- raw HTML omitted --></p>
+<h3 id="基本算法">基本算法</h3>
+<p>最小二乘法是众多机器学习算法中极为重要的一种基础算法 <!-- raw HTML omitted --></p>
+<p>单纯的最小二乘法对于包含噪声的学习过程经常有过拟合的弱点，这往往是由于学习模型对于训练样本而言过于复杂 <!-- raw HTML omitted --></p>
+<h3 id="l2-约束">l2 约束</h3>
+<p>由此，引入带有约束条件的最小二乘法 &mdash;- Ridge 回归 <!-- raw HTML omitted --></p>
+<p>带有约束条件的最小二乘法和交叉验证法的组合，在实际应用中是非常有效的回归方法 <!-- raw HTML omitted -->
+然而，当参数特别多的时候，求解各参数以及学习得到的函数的输出值的过程，都需要耗费大量的时间 <!-- raw HTML omitted --></p>
+<h3 id="l1-约束">l1 约束</h3>
+<p>由此，引入可以吧大部分参数都置为0的稀疏学习算法 <!-- raw HTML omitted -->
+因为大部分参数都变成了0，所以就可以快速地求解各参数以及学习得到的函数的输出值 <!-- raw HTML omitted --></p>
+<h3 id="l1-plus-l2-约束">l1 + l2 约束</h3>
+<p>虽然 l1 约束的最小二乘学习法是非常有用的学习方法，但是在实际应用中，经常会遇到些许限制 <!-- raw HTML omitted --></p>
+<ul>
+<li>在 Lasso 回归求解路径中，对于 N×P 的设计矩阵来说，最多只能选出 min(N,p) 个变量 <!-- raw HTML omitted -->
+当 p&gt;N 的时候，最多只能选出N个预测变量．因此，对于 p∼N 的情况，Lasso方法不能够很好的选出真实的模型． <!-- raw HTML omitted --></li>
+<li>如果预测变量具有群组效应，则用Lasso回 归时，只能选出其中的一个预测变量 <!-- raw HTML omitted --></li>
+<li>对于通常的 N&gt;P 的情形，如果预测变量中 存在很强的共线性，Lasso的预测表现受控于岭回归 <!-- raw HTML omitted --></li>
+</ul>
+<p>基于以上几点Lasso回归的局限性，Zou和 Hastie在2005年提出了弹性网回归方法，回归系 数表达式为 <!-- raw HTML omitted --></p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<p>\(\hat \beta^{ridge} =\mathop{\arg\min}_{\beta}  \{\sum \limits _{i=1}^{N}(y_i-\beta_0-\sum\limits_{j=1}^px_{ij}\beta_j)^2+\lambda\sum \limits_{j=1}^{p}|\beta_{j}|+\lambda\sum \limits_{j=1}^{p}\beta_{j}^2\}\) <!-- raw HTML omitted --></p>
+<!-- raw HTML omitted -->
+<h2 id="mljlinearmodels-使用">MLJLinearModels 使用</h2>
+<h3 id="ridge">Ridge</h3>
+<p>\(J = \frac{1}{n}\sum_{i = 1}^n (f( x_i) - y_i)^2 + \lambda \|w\|_2^2\tag{1}\) <!-- raw HTML omitted --></p>
+<p><strong>RidgeRegressor</strong> <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">RidgeRegression</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">RidgeRegression</span><span class="p">(</span><span class="n">λ</span><span class="p">;</span> <span class="n">lambda</span><span class="p">,</span> <span class="n">fit_intercept</span><span class="p">,</span> <span class="n">penalize_intercept</span><span class="p">,</span> <span class="n">scale_penalty_with_samples</span><span class="p">)</span>
+</span></span></code></pre></div><h3 id="lasso">Lasso</h3>
+<p>\(J = \frac{1}{n}\sum_{i = 1}^n (f( x_i) - y_i)^2 + \lambda \|w\|_1\tag{2}\) <!-- raw HTML omitted --></p>
+<p><strong>LassoRegressor</strong> <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">LassoRegression</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">LassoRegression</span><span class="p">(</span><span class="n">λ</span><span class="p">;</span> <span class="n">lambda</span><span class="p">,</span> <span class="n">fit_intercept</span><span class="p">,</span> <span class="n">penalize_intercept</span><span class="p">,</span> <span class="n">scale_penalty_with_samples</span><span class="p">)</span>
+</span></span></code></pre></div><h3 id="elastic-net">Elastic-Net</h3>
+<p>\(\smash{\min_{w}}\sum_{i=1}^m(y_i-\sum_{j=1}^dx_{ij}w_j)^2 + \lambda\sum_{j=1}^d|w_j|+\lambda \sum_{j=1}^dw_j^2 \tag{3}\) <!-- raw HTML omitted -->
+<strong>ElasticNetRegression</strong> <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">ElasticNetRegression</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">ElasticNetRegression</span><span class="p">(</span><span class="n">λ</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">ElasticNetRegression</span><span class="p">(</span><span class="n">λ</span><span class="p">,</span> <span class="n">γ</span><span class="p">;</span> <span class="n">lambda</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">fit_intercept</span><span class="p">,</span> <span class="n">penalize_intercept</span><span class="p">,</span> <span class="n">scale_penalty_with_samples</span><span class="p">)</span>
+</span></span></code></pre></div><h3 id="说明">说明</h3>
+<p>其实可以不用管 <!-- raw HTML omitted --></p>
+<ul>
+<li><code>fit_intercept</code> <!-- raw HTML omitted --></li>
+<li><code>penalize_intercept</code> <!-- raw HTML omitted --></li>
+</ul>
+<p>我也不知道这两个是干什么的，就先别管他们了 <!-- raw HTML omitted -->
+总之，只用设置 <code>lambda</code> 就行了 <!-- raw HTML omitted --></p>
+<h2 id="实例-波士顿房价预测">实例 波士顿房价预测</h2>
+<h3 id="数据准备">数据准备</h3>
+<p>竞赛数据来自 <a href="https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques/overview" target="_blank" rel="noopener noreffer ">https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques/overview</a> <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">using</span> <span class="n">MLJ</span><span class="p">,</span> <span class="n">CSV</span><span class="p">,</span> <span class="n">StableRNGs</span><span class="p">,</span> <span class="n">MLJLinearModels</span><span class="p">,</span> <span class="n">Plots</span>
+</span></span><span class="line"><span class="cl"><span class="k">import</span> <span class="n">DataFrames</span><span class="o">:</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">select</span><span class="p">,</span> <span class="n">describe</span>
+</span></span><span class="line"><span class="cl"><span class="k">using</span> <span class="n">Statistics</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">dataTrain</span> <span class="o">=</span> <span class="n">CSV</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&#34;data/train.csv&#34;</span><span class="p">,</span> <span class="n">DataFrame</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">dataTest</span> <span class="o">=</span> <span class="n">CSV</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&#34;data/test.csv&#34;</span><span class="p">,</span> <span class="n">DataFrame</span><span class="p">)</span>
+</span></span></code></pre></div><h3 id="观察各项主要特征与房价售价的关系">观察各项主要特征与房价售价的关系</h3>
+<h4 id="存疑-分析-saleprice">[存疑]分析 SalePrice</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">julia</span><span class="o">&gt;</span> <span class="n">describe</span><span class="p">(</span><span class="n">dataTrain</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:SalePrice</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="n">Summary</span> <span class="n">Stats</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl"><span class="n">Length</span><span class="o">:</span>         <span class="mi">1460</span>
+</span></span><span class="line"><span class="cl"><span class="kt">Missing</span> <span class="n">Count</span><span class="o">:</span>  <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="n">Mean</span><span class="o">:</span>           <span class="mf">180921.195890</span>
+</span></span><span class="line"><span class="cl"><span class="n">Minimum</span><span class="o">:</span>        <span class="mf">34900.000000</span>
+</span></span><span class="line"><span class="cl"><span class="mi">1</span><span class="n">st</span> <span class="n">Quartile</span><span class="o">:</span>   <span class="mf">129975.000000</span>
+</span></span><span class="line"><span class="cl"><span class="n">Median</span><span class="o">:</span>         <span class="mf">163000.000000</span>
+</span></span><span class="line"><span class="cl"><span class="mi">3</span><span class="n">rd</span> <span class="n">Quartile</span><span class="o">:</span>   <span class="mf">214000.000000</span>
+</span></span><span class="line"><span class="cl"><span class="n">Maximum</span><span class="o">:</span>        <span class="mf">755000.000000</span>
+</span></span><span class="line"><span class="cl"><span class="kt">Type</span><span class="o">:</span>           <span class="kt">Int64</span>
+</span></span></code></pre></div><p>通过上面的结果可以知道 <strong>SalePrice</strong> 没有无效或者其他非数值的数据，下面通过图示化来进一步展示 <strong>SalePrice</strong> <!-- raw HTML omitted --></p>
+<p><figure><img src="/ox-hugo/2022-05-05_19-56-37_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<p>这里需要一个 <code>distplot</code> 函数来绘制图像 <!-- raw HTML omitted --></p>
+<ol>
+<li>得到数组的 <strong>distribution</strong> <!-- raw HTML omitted --></li>
+<li>画出这个分布 <!-- raw HTML omitted --></li>
+</ol>
+<p>然而我还不会这个东西，放一放 <!-- raw HTML omitted --></p>
+<h4 id="分析特征数据">分析特征数据</h4>
+<p>入选特征 <!-- raw HTML omitted --></p>
+<table>
+<thead>
+<tr>
+<th>变量名</th>
+<th>数据类型</th>
+<th>注释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LotArea</td>
+<td>Continuous</td>
+<td>地皮面积</td>
+</tr>
+<tr>
+<td>GrLiveArea</td>
+<td>Continuous</td>
+<td>生活面积</td>
+</tr>
+<tr>
+<td>TotalBsmtSF</td>
+<td>Continuous</td>
+<td>地下室总面积</td>
+</tr>
+<tr>
+<td>MiscVal</td>
+<td>Continuous</td>
+<td>其他资产</td>
+</tr>
+<tr>
+<td>GarageCars</td>
+<td>Count</td>
+<td>容纳车辆</td>
+</tr>
+<tr>
+<td>GarageArea</td>
+<td>Continuous</td>
+<td>车库面积</td>
+</tr>
+<tr>
+<td>YearBuilt</td>
+<td>Multiclass</td>
+<td>建造年份</td>
+</tr>
+<tr>
+<td>CentralAir</td>
+<td>Multiclass</td>
+<td>中央空调</td>
+</tr>
+<tr>
+<td>OverallQual</td>
+<td>Multiclass</td>
+<td>总体评价</td>
+</tr>
+<tr>
+<td>Neighborhood</td>
+<td>Multiclass</td>
+<td>地段</td>
+</tr>
+</tbody>
+</table>
+<h4 id="验证主要特征是否满足要求">验证主要特征是否满足要求</h4>
+<!-- raw HTML omitted -->
+<ul>
+<li>
+<p>类别型特征</p>
+<!-- raw HTML omitted -->
+<ul>
+<li>
+<p>CentralAir 中央空调</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">using</span> <span class="n">StatsPlots</span>
+</span></span><span class="line"><span class="cl"><span class="k">let</span> <span class="n">column</span> <span class="o">=</span> <span class="ss">:CentralAir</span>
+</span></span><span class="line"><span class="cl">    <span class="n">columnY</span> <span class="o">=</span> <span class="n">dataTrain</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:SalePrice</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">columnX</span> <span class="o">=</span> <span class="n">dataTrain</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="n">column</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">boxplot</span><span class="p">(</span><span class="n">columnX</span><span class="p">,</span> <span class="n">columnY</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span></code></pre></div><pre><code>![](/ox-hugo/2022-05-03_22-25-14_screenshot.png) &lt;br/&gt;
+</code></pre>
+<p>可以很明显的看到有中央空调的房价明显更高。 <!-- raw HTML omitted --></p>
+</li>
+</ul>
+<!-- raw HTML omitted -->
+<ul>
+<li>
+<p>OverallQual 总体评价</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">let</span> <span class="n">column</span> <span class="o">=</span> <span class="ss">:OverallQual</span>
+</span></span><span class="line"><span class="cl">    <span class="n">columnY</span> <span class="o">=</span> <span class="n">dataTrain</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:SalePrice</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">columnX</span> <span class="o">=</span> <span class="n">dataTrain</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="n">column</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">boxplot</span><span class="p">(</span><span class="n">columnX</span><span class="p">,</span> <span class="n">columnY</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-05-03_22-27-36_screenshot.png"/>
+        </figure>
+ <!-- raw HTML omitted --></p>
+</li>
+</ul>
+<!-- raw HTML omitted -->
+<ul>
+<li>
+<p>YearBuilt 建造年份</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">let</span> <span class="n">column</span> <span class="o">=</span> <span class="ss">:YearBuilt</span>
+</span></span><span class="line"><span class="cl">    <span class="n">columnY</span> <span class="o">=</span> <span class="n">dataTrain</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:SalePrice</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">columnX</span> <span class="o">=</span> <span class="n">dataTrain</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="n">column</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">boxplot</span><span class="p">(</span><span class="n">columnX</span><span class="p">,</span> <span class="n">columnY</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">2600</span><span class="p">,</span> <span class="mi">1200</span><span class="p">))</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-05-03_22-32-02_screenshot.png"/>
+        </figure>
+ <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">let</span> <span class="n">column</span> <span class="o">=</span> <span class="ss">:YearBuilt</span>
+</span></span><span class="line"><span class="cl">    <span class="n">columnY</span> <span class="o">=</span> <span class="n">dataTrain</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:SalePrice</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">columnX</span> <span class="o">=</span> <span class="n">dataTrain</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="n">column</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">boxplot</span><span class="p">(</span><span class="n">columnX</span><span class="p">,</span> <span class="n">columnY</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">2600</span><span class="p">,</span> <span class="mi">1200</span><span class="p">))</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span><span class="line"><span class="cl">    <span class="n">scatter</span><span class="p">(</span><span class="n">columnX</span><span class="p">,</span> <span class="n">columnY</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">800000</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1500</span><span class="p">,</span> <span class="mi">1000</span><span class="p">))</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-05-03_22-34-34_screenshot.png"/>
+        </figure>
+ <!-- raw HTML omitted --></p>
+<p>最开始我是用了箱线图绘制了房价与建造年份的关系，但是并不十分明显，所以又用点图来显示，可以很明显的看到有线性增长的趋势。 <!-- raw HTML omitted --></p>
+</li>
+</ul>
+<!-- raw HTML omitted -->
+<ul>
+<li>
+<p>Neighborhood 地段</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">let</span> <span class="n">column</span> <span class="o">=</span> <span class="ss">:Neighborhood</span>
+</span></span><span class="line"><span class="cl">    <span class="n">columnY</span> <span class="o">=</span> <span class="n">dataTrain</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:SalePrice</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">columnX</span> <span class="o">=</span> <span class="n">dataTrain</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="n">column</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">boxplot</span><span class="p">(</span><span class="n">columnX</span><span class="p">,</span> <span class="n">columnY</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1300</span><span class="p">,</span> <span class="mi">600</span><span class="p">))</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-05-03_22-36-46_screenshot.png"/>
+        </figure>
+ <!-- raw HTML omitted --></p>
+<p>这个该怎么分析呢。。。。。。待定 <!-- raw HTML omitted --></p>
+</li>
+</ul>
+</li>
+</ul>
+<!-- raw HTML omitted -->
+<ul>
+<li>
+<p>数值型特征</p>
+<!-- raw HTML omitted -->
+<ul>
+<li>
+<p>LotArea 地表面积</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">let</span> <span class="n">column</span> <span class="o">=</span> <span class="ss">:LotArea</span>
+</span></span><span class="line"><span class="cl">    <span class="n">columnY</span> <span class="o">=</span> <span class="n">dataTrain</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:SalePrice</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">columnX</span> <span class="o">=</span> <span class="n">dataTrain</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="n">column</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">scatter</span><span class="p">(</span><span class="n">columnX</span><span class="p">,</span> <span class="n">columnY</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-05-03_22-39-31_screenshot.png"/>
+        </figure>
+ <!-- raw HTML omitted --></p>
+<p>好像该特征并没有什么差别，所以不予考虑 <!-- raw HTML omitted --></p>
+</li>
+</ul>
+<!-- raw HTML omitted -->
+<ul>
+<li>
+<p>GrLivArea 生活面积</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">let</span> <span class="n">column</span> <span class="o">=</span> <span class="ss">:GrLivArea</span>
+</span></span><span class="line"><span class="cl">    <span class="n">columnY</span> <span class="o">=</span> <span class="n">dataTrain</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:SalePrice</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">columnX</span> <span class="o">=</span> <span class="n">dataTrain</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="n">column</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">scatter</span><span class="p">(</span><span class="n">columnX</span><span class="p">,</span> <span class="n">columnY</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-05-03_22-41-17_screenshot.png"/>
+        </figure>
+ <!-- raw HTML omitted --></p>
+</li>
+</ul>
+<!-- raw HTML omitted -->
+<ul>
+<li>
+<p>TotalBsmtSF 地下室总面积</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">let</span> <span class="n">column</span> <span class="o">=</span> <span class="ss">:TotalBsmtSF</span>
+</span></span><span class="line"><span class="cl">    <span class="n">columnY</span> <span class="o">=</span> <span class="n">dataTrain</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:SalePrice</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">columnX</span> <span class="o">=</span> <span class="n">dataTrain</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="n">column</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">scatter</span><span class="p">(</span><span class="n">columnX</span><span class="p">,</span> <span class="n">columnY</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-05-03_22-43-16_screenshot.png"/>
+        </figure>
+ <!-- raw HTML omitted --></p>
+</li>
+</ul>
+<!-- raw HTML omitted -->
+<ul>
+<li>
+<p>MiscVal</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">let</span> <span class="n">column</span> <span class="o">=</span> <span class="ss">:MiscVal</span>
+</span></span><span class="line"><span class="cl">    <span class="n">columnY</span> <span class="o">=</span> <span class="n">dataTrain</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:SalePrice</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">columnX</span> <span class="o">=</span> <span class="n">dataTrain</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="n">column</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">scatter</span><span class="p">(</span><span class="n">columnX</span><span class="p">,</span> <span class="n">columnY</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-05-03_22-44-30_screenshot.png"/>
+        </figure>
+ <!-- raw HTML omitted --></p>
+</li>
+</ul>
+<!-- raw HTML omitted -->
+<ul>
+<li>
+<p>GarageArea/GarageCars 车库</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">let</span> <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="ss">:GarageArea</span><span class="p">,</span> <span class="ss">:GarageCars</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">columnY</span> <span class="o">=</span> <span class="n">dataTrain</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:SalePrice</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">columnXs</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">column</span> <span class="o">-&gt;</span> <span class="n">dataTrain</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="n">column</span><span class="p">],</span> <span class="n">columns</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">columnX</span> <span class="k">in</span> <span class="n">columnXs</span>
+</span></span><span class="line"><span class="cl">	<span class="n">scatter</span><span class="p">(</span><span class="n">columnX</span><span class="p">,</span> <span class="n">columnY</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span><span class="line"><span class="cl">    <span class="k">end</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-05-03_22-53-30_screenshot.png"/>
+        </figure>
+ <!-- raw HTML omitted --></p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/ox-hugo/2022-05-03_22-54-01_screenshot.png"
+        data-srcset="/ox-hugo/2022-05-03_22-54-01_screenshot.png, /ox-hugo/2022-05-03_22-54-01_screenshot.png 1.5x, /ox-hugo/2022-05-03_22-54-01_screenshot.png 2x"
+        data-sizes="auto"
+        alt="/ox-hugo/2022-05-03_22-54-01_screenshot.png"
+        title="/ox-hugo/2022-05-03_22-54-01_screenshot.png" /> <!-- raw HTML omitted -->
+由上面点图可以看出房价与车库面积和容纳车辆数呈现线性关系，所以入选主要特征 <!-- raw HTML omitted --></p>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="主要特征">主要特征</h4>
+<p>总结起来，最后 <!-- raw HTML omitted --></p>
+<table>
+<thead>
+<tr>
+<th>变量名</th>
+<th>数据类型</th>
+<th>注释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GrLiveArea</td>
+<td>Continuous</td>
+<td>生活面积</td>
+</tr>
+<tr>
+<td>TotalBsmtSF</td>
+<td>Continuous</td>
+<td>地下室总面积</td>
+</tr>
+<tr>
+<td>GarageCars</td>
+<td>Count</td>
+<td>容纳车辆</td>
+</tr>
+<tr>
+<td>GarageArea</td>
+<td>Continuous</td>
+<td>车库面积</td>
+</tr>
+<tr>
+<td>YearBuilt</td>
+<td>Multiclass</td>
+<td>建造年份</td>
+</tr>
+<tr>
+<td>CentralAir</td>
+<td>Multiclass</td>
+<td>中央空调</td>
+</tr>
+<tr>
+<td>OverallQual</td>
+<td>Multiclass</td>
+<td>总体评价</td>
+</tr>
+<tr>
+<td>Neighborhood</td>
+<td>Multiclass</td>
+<td>地段</td>
+</tr>
+</tbody>
+</table>
+<h3 id="更加科学的分析数据">更加科学的分析数据</h3>
+<p>上面的分析可以说非常主观，所以说多多少少还是会不放心，会担心自己选择的特征会不会多了或者少了， <!-- raw HTML omitted -->
+又或者选了一些没有太大作用的特征，所以接下来需要进行更加科学的分析 <!-- raw HTML omitted -->
+为了做到更加科学，我们需要作如下工作： <!-- raw HTML omitted --></p>
+<ul>
+<li>得到各个特征之间的关系矩阵 &ndash; correlation matrix <!-- raw HTML omitted --></li>
+<li>SalePrice 的关系矩阵 <!-- raw HTML omitted --></li>
+<li>绘制出最相关的特征之间的关系图 <!-- raw HTML omitted --></li>
+</ul>
+<h4 id="关系矩阵">关系矩阵</h4>
+<p>教程中有局限性， <strong>关系矩阵只涉及到数值型数据</strong> ，这里我们也这样做，因为他的特征数有80多个，我懒得弄 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">let</span> <span class="n">_schema</span> <span class="o">=</span> <span class="n">schema</span><span class="p">(</span><span class="n">dataTrain</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">_names</span> <span class="o">=</span> <span class="n">_schema</span><span class="o">.</span><span class="n">names</span>
+</span></span><span class="line"><span class="cl">    <span class="n">_scitypes</span> <span class="o">=</span> <span class="n">_schema</span><span class="o">.</span><span class="n">scitypes</span>
+</span></span><span class="line"><span class="cl">    <span class="n">indexs</span> <span class="o">=</span> <span class="n">collect</span><span class="p">(</span><span class="n">map</span><span class="p">(</span><span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">==</span> <span class="n">Count</span> <span class="o">||</span> <span class="n">x</span> <span class="o">==</span> <span class="n">Continuous</span><span class="p">,</span> <span class="n">_scitypes</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">columns</span> <span class="o">=</span> <span class="n">_names</span><span class="p">[</span><span class="n">indexs</span><span class="p">]</span> <span class="o">|&gt;</span> <span class="n">collect</span>
+</span></span><span class="line"><span class="cl">    <span class="n">_data</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">dataTrain</span><span class="p">,</span> <span class="n">columns</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">_corr</span> <span class="o">=</span> <span class="n">cor</span><span class="p">(</span><span class="kt">Matrix</span><span class="p">(</span><span class="n">_data</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">labels</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">heatmap</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">_corr</span><span class="p">,</span> <span class="n">xrotation</span> <span class="o">=</span> <span class="o">-</span><span class="mi">90</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="n">figureSize</span><span class="p">,</span> <span class="n">xticks</span> <span class="o">=</span> <span class="ss">:all</span><span class="p">,</span> <span class="n">yticks</span> <span class="o">=</span> <span class="ss">:all</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span></code></pre></div><p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/ox-hugo/2022-05-04_21-11-07_screenshot.png"
+        data-srcset="/ox-hugo/2022-05-04_21-11-07_screenshot.png, /ox-hugo/2022-05-04_21-11-07_screenshot.png 1.5x, /ox-hugo/2022-05-04_21-11-07_screenshot.png 2x"
+        data-sizes="auto"
+        alt="/ox-hugo/2022-05-04_21-11-07_screenshot.png"
+        title="/ox-hugo/2022-05-04_21-11-07_screenshot.png" /> <!-- raw HTML omitted -->
+像素块越亮表示两者之间相关性越强，我们可以很清楚地看到与“SalePrice”相关性很强的有 <!-- raw HTML omitted --></p>
+<ul>
+<li><code>OverallQual</code> 总评价 <!-- raw HTML omitted --></li>
+<li><code>YearBuilt</code> 建造年份 <!-- raw HTML omitted --></li>
+<li><code>ToatlBsmtSF</code> 地下室面积 <!-- raw HTML omitted --></li>
+<li><code>1stFlrSF</code> 一楼面积 <!-- raw HTML omitted --></li>
+<li><code>GrLiveArea</code> 生活区面积 <!-- raw HTML omitted --></li>
+<li><code>FullBath</code> 浴室？what。。。到底什么意思，知道的麻烦说一下 <!-- raw HTML omitted --></li>
+<li><code>TotRmsAbvGrd</code> 总房间数（不包括浴室） <!-- raw HTML omitted --></li>
+<li><code>GarageCars</code> 车库可容纳车辆数 <!-- raw HTML omitted --></li>
+<li><code>GarageArea</code> 车库面积 <!-- raw HTML omitted --></li>
+</ul>
+<h4 id="存疑-房价关系矩阵">[存疑]房价关系矩阵</h4>
+<p>这里显示相关性最大的10个特征 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">k</span>  <span class="o">=</span> <span class="mi">10</span> <span class="c1"># 关系矩阵中将显示10个特征</span>
+</span></span><span class="line"><span class="cl"><span class="n">cols</span> <span class="o">=</span> <span class="n">corrmat</span><span class="o">.</span><span class="n">nlargest</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="s1">&#39;SalePrice&#39;</span><span class="p">)[</span><span class="s1">&#39;SalePrice&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span>
+</span></span><span class="line"><span class="cl"><span class="n">cm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">data_train</span><span class="p">[</span><span class="n">cols</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">font_scale</span><span class="o">=</span><span class="mf">1.25</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">hm</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">cm</span><span class="p">,</span> <span class="n">cbar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">annot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> \
+</span></span><span class="line"><span class="cl">		 <span class="n">square</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;.2f&#39;</span><span class="p">,</span> <span class="n">annot_kws</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">},</span> <span class="n">yticklabels</span><span class="o">=</span><span class="n">cols</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">xticklabels</span><span class="o">=</span><span class="n">cols</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</span></span></code></pre></div><p>我不知道这个代码是怎么运行的，他是怎么画出这个热力图的 <!-- raw HTML omitted --></p>
+<p><figure><img src="/ox-hugo/2022-05-05_18-23-15_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<p><strong>重点是 <code>corrmat.nlargestk</code> 是怎么得出 10x10 的矩阵</strong> <!-- raw HTML omitted --></p>
+<p>我只做到这里 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">let</span> <span class="n">_schema</span> <span class="o">=</span> <span class="n">schema</span><span class="p">(</span><span class="n">dataTrain</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">_names</span> <span class="o">=</span> <span class="n">_schema</span><span class="o">.</span><span class="n">names</span>
+</span></span><span class="line"><span class="cl">    <span class="n">_scitypes</span> <span class="o">=</span> <span class="n">_schema</span><span class="o">.</span><span class="n">scitypes</span>
+</span></span><span class="line"><span class="cl">    <span class="n">indexs</span> <span class="o">=</span> <span class="n">collect</span><span class="p">(</span><span class="n">map</span><span class="p">(</span><span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">==</span> <span class="n">Count</span> <span class="o">||</span> <span class="n">x</span> <span class="o">==</span> <span class="n">Continuous</span><span class="p">,</span> <span class="n">_scitypes</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">columns</span> <span class="o">=</span> <span class="n">_names</span><span class="p">[</span><span class="n">indexs</span><span class="p">]</span> <span class="o">|&gt;</span> <span class="n">collect</span>
+</span></span><span class="line"><span class="cl">    <span class="n">labels</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">_data</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">dataTrain</span><span class="p">,</span> <span class="n">columns</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">_corr</span> <span class="o">=</span> <span class="n">cor</span><span class="p">(</span><span class="kt">Matrix</span><span class="p">(</span><span class="n">_data</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">_dataframe</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">_corr</span><span class="p">,</span> <span class="n">columns</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">nlarget</span> <span class="o">=</span> <span class="n">_dataframe</span><span class="p">[</span><span class="n">partialsortperm</span><span class="p">(</span><span class="n">_dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:SalePrice</span><span class="p">],</span> <span class="mi">1</span><span class="o">:</span><span class="mi">10</span><span class="p">,</span> <span class="n">rev</span><span class="o">=</span><span class="nb">true</span><span class="p">),</span> <span class="o">:</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">heatmap</span><span class="p">(</span><span class="kt">Matrix</span><span class="p">(</span><span class="n">nlarget</span><span class="p">),</span> <span class="n">xrotation</span> <span class="o">=</span> <span class="o">-</span><span class="mi">90</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="n">figureSize</span><span class="p">,</span> <span class="n">xticks</span> <span class="o">=</span> <span class="ss">:all</span><span class="p">,</span> <span class="n">yticks</span> <span class="o">=</span> <span class="ss">:all</span><span class="p">,</span> <span class="n">aspect_ratio</span> <span class="o">=</span> <span class="ss">:equal</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">nrow</span><span class="p">,</span> <span class="n">ncol</span> <span class="o">=</span> <span class="n">size</span><span class="p">(</span><span class="n">_corr</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">fontsize</span> <span class="o">=</span> <span class="mi">15</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">fn</span><span class="p">(</span><span class="n">tuple</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="n">tuple</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">tuple</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">text</span><span class="p">(</span><span class="n">round</span><span class="p">(</span><span class="n">_corr</span><span class="p">[</span><span class="n">tuple</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">tuple</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span> <span class="n">digits</span> <span class="o">=</span> <span class="mi">2</span><span class="p">),</span> <span class="n">fontsize</span><span class="p">,</span> <span class="ss">:white</span><span class="p">,</span> <span class="ss">:center</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ann</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">Iterators</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="mi">1</span><span class="o">:</span><span class="n">nrow</span><span class="p">,</span> <span class="mi">1</span><span class="o">:</span><span class="n">ncol</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">collect</span> <span class="o">|&gt;</span> <span class="n">vec</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">annotate!</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="n">linecolor</span> <span class="o">=</span> <span class="ss">:white</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-05-05_18-58-23_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<p>疑点如下 <!-- raw HTML omitted --></p>
+<ol>
+<li>如何获取 <code>Dataframe</code> 最大的 10x10 切片 <!-- raw HTML omitted --></li>
+<li><code>Dataframe</code> 的字段名也要根据数据排序进行修改吧？ <!-- raw HTML omitted --></li>
+</ol>
+<h4 id="存疑-绘制关系点图">[存疑]绘制关系点图</h4>
+<p>目前找到一个 <code>PairPlots</code> 包，我还要研究一下 <!-- raw HTML omitted --></p>
+<h3 id="开始模拟数据">开始模拟数据</h3>
+<h4 id="处理数据">处理数据</h4>
+<ol>
+<li>
+<p>首先我们选取特征 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="ss">:OverallQual</span><span class="p">,</span> <span class="ss">:GrLivArea</span><span class="p">,</span> <span class="ss">:GarageCars</span><span class="p">,</span> <span class="ss">:TotalBsmtSF</span><span class="p">,</span> <span class="ss">:FullBath</span><span class="p">,</span> <span class="ss">:TotRmsAbvGrd</span><span class="p">,</span> <span class="ss">:YearBuilt</span><span class="p">]</span>
+</span></span></code></pre></div></li>
+<li>
+<p>定义训练集的处理模型 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">trainTransformModel</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">FeatureSelector</span><span class="p">(</span><span class="n">features</span> <span class="o">=</span> <span class="n">columns</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dataframe</span> <span class="o">-&gt;</span> <span class="n">coerce</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">Count</span> <span class="o">=&gt;</span> <span class="n">Continuous</span><span class="p">))</span>
+</span></span></code></pre></div></li>
+<li>
+<p>定义测试集的处理模型 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">processFeature!</span><span class="p">(</span><span class="n">dataframe</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">)</span> <span class="o">=</span> <span class="k">begin</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:GarageCars</span><span class="p">]</span> <span class="o">=</span> <span class="n">replace</span><span class="p">(</span><span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:GarageCars</span><span class="p">],</span> <span class="s">&#34;NA&#34;</span> <span class="o">=&gt;</span> <span class="nb">missing</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:GarageCars</span><span class="p">]</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">x</span> <span class="o">-&gt;</span> <span class="n">ismissing</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">?</span> <span class="n">x</span> <span class="o">:</span> <span class="n">parse</span><span class="p">(</span><span class="kt">Float64</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:GarageCars</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:TotalBsmtSF</span><span class="p">]</span> <span class="o">=</span> <span class="n">replace</span><span class="p">(</span><span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:TotalBsmtSF</span><span class="p">],</span> <span class="s">&#34;NA&#34;</span> <span class="o">=&gt;</span> <span class="nb">missing</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:TotalBsmtSF</span><span class="p">]</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">x</span> <span class="o">-&gt;</span> <span class="n">ismissing</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">?</span> <span class="n">x</span> <span class="o">:</span> <span class="n">parse</span><span class="p">(</span><span class="kt">Float64</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:TotalBsmtSF</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">coerce!</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">Count</span> <span class="o">=&gt;</span> <span class="n">Continuous</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">dataframe</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">testTransformModel</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">FeatureSelector</span><span class="p">(</span><span class="n">features</span> <span class="o">=</span> <span class="n">columns</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">    <span class="n">processFeature!</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">FillImputer</span><span class="p">(</span><span class="n">features</span> <span class="o">=</span> <span class="n">columns</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">    <span class="c"># Standardizer(features = columns)</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span></code></pre></div></li>
+<li>
+<p>处理原始数据，产出数据集 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">trainTransformMach</span> <span class="o">=</span> <span class="n">machine</span><span class="p">(</span><span class="n">trainTransformModel</span><span class="p">,</span> <span class="n">dataTrain</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">testTransformMach</span> <span class="o">=</span> <span class="n">machine</span><span class="p">(</span><span class="n">testTransformModel</span><span class="p">,</span> <span class="n">dataTest</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">fit!</span><span class="p">(</span><span class="n">trainTransformMach</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">fit!</span><span class="p">(</span><span class="n">testTransformMach</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">transformedDataTrain</span> <span class="o">=</span> <span class="n">transform</span><span class="p">(</span><span class="n">trainTransformMach</span><span class="p">,</span> <span class="n">dataTrain</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">transformedDataTest</span> <span class="o">=</span> <span class="n">transform</span><span class="p">(</span><span class="n">testTransformMach</span><span class="p">,</span> <span class="n">dataTest</span><span class="p">)</span>
+</span></span></code></pre></div></li>
+<li>
+<p>拿出训练用数据 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">X</span> <span class="o">=</span> <span class="n">transformedDataTrain</span>
+</span></span><span class="line"><span class="cl"><span class="n">y</span> <span class="o">=</span> <span class="n">coerce</span><span class="p">(</span><span class="n">dataTrain</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:SalePrice</span><span class="p">],</span> <span class="n">Continuous</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">train</span><span class="p">,</span> <span class="n">test</span> <span class="o">=</span> <span class="n">partition</span><span class="p">(</span><span class="n">eachindex</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="mf">0.8</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="n">rng</span><span class="p">)</span>
+</span></span></code></pre></div></li>
+</ol>
+<h4 id="模型训练">模型训练</h4>
+<p>这里我们使用 <strong>Ridge</strong> 模型来检验 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">rng</span> <span class="o">=</span> <span class="n">StableRNG</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">cv</span> <span class="o">=</span> <span class="n">CV</span><span class="p">(</span><span class="n">nfolds</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span> <span class="n">rng</span> <span class="o">=</span> <span class="n">rng</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">tuning</span> <span class="o">=</span> <span class="n">Grid</span><span class="p">(</span><span class="n">resolution</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">rng</span> <span class="o">=</span> <span class="n">rng</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># MODULE try Ridge</span>
+</span></span><span class="line"><span class="cl"><span class="n">ridge</span> <span class="o">=</span> <span class="n">RidgeRegressor</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">rangeLambda</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">ridge</span><span class="p">,</span> <span class="ss">:lambda</span><span class="p">,</span> <span class="n">lower</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">upper</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="ss">:log</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">tunedModel</span> <span class="o">=</span> <span class="n">TunedModel</span><span class="p">(</span><span class="n">model</span> <span class="o">=</span> <span class="n">ridge</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="n">range</span> <span class="o">=</span> <span class="p">[</span><span class="n">rangeLambda</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">			<span class="n">measure</span> <span class="o">=</span> <span class="n">rms</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="n">resampling</span> <span class="o">=</span> <span class="n">cv</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="n">tuning</span> <span class="o">=</span> <span class="n">tuning</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">tunedMach</span> <span class="o">=</span> <span class="n">machine</span><span class="p">(</span><span class="n">tunedModel</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">fit!</span><span class="p">(</span><span class="n">tunedMach</span><span class="p">,</span> <span class="n">rows</span> <span class="o">=</span> <span class="n">train</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">evaluate!</span><span class="p">(</span><span class="n">tunedMach</span><span class="p">,</span> <span class="n">resampling</span> <span class="o">=</span> <span class="n">cv</span><span class="p">,</span> <span class="n">measure</span> <span class="o">=</span> <span class="p">[</span><span class="n">rms</span><span class="p">,</span> <span class="n">l1</span><span class="p">],</span> <span class="n">rows</span> <span class="o">=</span> <span class="n">test</span><span class="p">)</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-05-05_19-24-51_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<h4 id="补充-lightgbm-模型训练">补充: lightGBM 模型训练</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">LGBMRegressor</span> <span class="o">=</span> <span class="nd">@load</span> <span class="n">LGBMRegressor</span>
+</span></span><span class="line"><span class="cl"><span class="n">lgb</span> <span class="o">=</span> <span class="n">LGBMRegressor</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">lgbm</span> <span class="o">=</span> <span class="n">machine</span><span class="p">(</span><span class="n">lgb</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">boostRange</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">lgb</span><span class="p">,</span> <span class="ss">:num_iterations</span><span class="p">,</span> <span class="n">lower</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">upper</span> <span class="o">=</span> <span class="mi">500</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">rangeLeaf</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">lgb</span><span class="p">,</span> <span class="ss">:min_data_in_leaf</span><span class="p">,</span> <span class="n">lower</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">upper</span> <span class="o">=</span> <span class="mi">50</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">rangeIteration</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">lgb</span><span class="p">,</span> <span class="ss">:num_iterations</span><span class="p">,</span> <span class="n">lower</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span> <span class="n">upper</span> <span class="o">=</span> <span class="mi">100</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">rangeMinData</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">lgb</span><span class="p">,</span> <span class="ss">:min_data_in_leaf</span><span class="p">,</span> <span class="n">lower</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">upper</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">rangeLearningRate</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">lgb</span><span class="p">,</span> <span class="ss">:learning_rate</span><span class="p">,</span> <span class="n">lower</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">upper</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">tunedModel</span> <span class="o">=</span> <span class="n">TunedModel</span><span class="p">(</span><span class="n">model</span> <span class="o">=</span> <span class="n">lgb</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="n">tuning</span> <span class="o">=</span> <span class="n">Grid</span><span class="p">(</span><span class="n">resolution</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">rng</span> <span class="o">=</span> <span class="n">rng</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">			<span class="n">resampling</span> <span class="o">=</span> <span class="n">cv</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="n">ranges</span> <span class="o">=</span> <span class="p">[</span><span class="n">rangeIteration</span><span class="p">,</span> <span class="n">rangeMinData</span><span class="p">,</span> <span class="n">rangeLearningRate</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">			<span class="n">measure</span> <span class="o">=</span> <span class="n">rms</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">tunedMachine</span> <span class="o">=</span> <span class="n">machine</span><span class="p">(</span><span class="n">tunedModel</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">fit!</span><span class="p">(</span><span class="n">tunedMachine</span><span class="p">,</span> <span class="n">rows</span> <span class="o">=</span> <span class="n">train</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">evaluate!</span><span class="p">(</span><span class="n">tunedMach</span><span class="p">,</span> <span class="n">resampling</span> <span class="o">=</span> <span class="n">cv</span><span class="p">,</span> <span class="n">measure</span> <span class="o">=</span> <span class="p">[</span><span class="n">rms</span><span class="p">,</span> <span class="n">l1</span><span class="p">],</span> <span class="n">rows</span> <span class="o">=</span> <span class="n">test</span><span class="p">)</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-05-05_19-29-43_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<h3 id="检验测试集数据">检验测试集数据</h3>
+<p>这里我们用 <strong>lightGBM</strong> 产出的数据来提交，不得不说，这个模型老牛逼了 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">predictions</span> <span class="o">=</span> <span class="n">predict</span><span class="p">(</span><span class="n">tunedMachine</span><span class="p">,</span> <span class="n">transformedDataTest</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">output</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">Id</span><span class="o">=</span><span class="n">dataTest</span><span class="o">.</span><span class="n">Id</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">output</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:SalePrice</span><span class="p">]</span> <span class="o">=</span> <span class="n">predictions</span>
+</span></span><span class="line"><span class="cl"><span class="n">CSV</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#34;data/submission.csv&#34;</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+</span></span></code></pre></div><p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/ox-hugo/2022-05-05_19-31-25_screenshot.png"
+        data-srcset="/ox-hugo/2022-05-05_19-31-25_screenshot.png, /ox-hugo/2022-05-05_19-31-25_screenshot.png 1.5x, /ox-hugo/2022-05-05_19-31-25_screenshot.png 2x"
+        data-sizes="auto"
+        alt="/ox-hugo/2022-05-05_19-31-25_screenshot.png"
+        title="/ox-hugo/2022-05-05_19-31-25_screenshot.png" /> <!-- raw HTML omitted -->
+哟系</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2022-07-02</span>
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="http://example.org/posts/2022/07/julia-regressor/" data-title="有监督回归" data-hashtags="有监督回归"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="http://example.org/posts/2022/07/julia-regressor/" data-hashtag="有监督回归"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="http://example.org/posts/2022/07/julia-regressor/" data-title="有监督回归"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="http://example.org/posts/2022/07/julia-regressor/" data-title="有监督回归"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.0.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="http://example.org/posts/2022/07/julia-regressor/" data-title="有监督回归"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw" aria-hidden="true"></i>&nbsp;<a href="/tags/%E6%9C%89%E7%9B%91%E7%9D%A3%E5%9B%9E%E5%BD%92/">有监督回归</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/2022/07/julia-calculus/" class="prev" rel="prev" title="Julia 微积分简要介绍"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>Julia 微积分简要介绍</a>
+            <a href="/posts/2022/07/mljflux/" class="next" rel="next" title="MLJFlux 简单使用">MLJFlux 简单使用<i class="fas fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.101.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

@@ -1,0 +1,15 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>样式与主题 - Tag - My New Hugo Site</title>
+        <link>http://example.org/tags/%E6%A0%B7%E5%BC%8F%E4%B8%8E%E4%B8%BB%E9%A2%98/</link>
+        <description>样式与主题 - Tag - My New Hugo Site</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sat, 02 Jul 2022 14:37:00 &#43;0800</lastBuildDate><atom:link href="http://example.org/tags/%E6%A0%B7%E5%BC%8F%E4%B8%8E%E4%B8%BB%E9%A2%98/" rel="self" type="application/rss+xml" /><item>
+    <title>Android 样式与主题</title>
+    <link>http://example.org/posts/2022/07/android-theme/</link>
+    <pubDate>Sat, 02 Jul 2022 14:37:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/posts/2022/07/android-theme/</guid>
+    <description><![CDATA[Android 样式与主题 设置样式 假设我们给一个按钮设置样式，在 res/values/style.xml 中 &lt;style name=&#34;BeatBoxButton&#34;&gt; &lt;item name=&#34;android:background&#34;&gt;@color/dark_blue&lt;/item&gt; &lt;/style&gt; 在需要设置的按钮布局中 &lt;Button style=&#34;@style/BeatBoxButton&#34;/&gt; 这样就完成了样式的设置 继承样式 样式支持继承，我们来继承上面的样式，创建一个新的样式 &lt;style name=&#34;BeatBoxButton.Strong&#34;&gt; &lt;item name=&#34;android:textStyle&#34;&gt;bold&lt;/item&gt; &lt;/style&gt; 也可以使用 &lt;style name=&#34;StrongBeatBoxButton&#34; parent=&#34;@style/BeatBoxButton&#34;&gt; &lt;item name=&#34;android:textStyle&#34;&gt;bold&lt;/item&gt; &lt;/style&gt; 使用主题 主题也是一种样式，他必须继承自 Theme 下的主题，这里定义一个 style &lt;style name=&#34;BoxButtonTheme&#34; parent=&#34;Theme.MaterialComponents.DayNight.DarkActionBar&#34;&gt; &lt;item name=&#34;android:background&#34;&gt;@color/black&lt;/item&gt; &lt;item name=&#34;android:textColor&#34;&gt;@color/white&lt;/item&gt; &lt;item name=&#34;android:textStyle&#34;&gt;bold&lt;/item&gt; &lt;/style&gt; 在 AndroidManifest.xml 中，在 activity 标签添加 &lt;activity android:name=&#34;.MainActivity&#34; android:theme=&#34;@style/BoxButtonTheme&#34;&gt; 这样以后，在 .MainActivity 下的所有控件都会使用 BoxButtontheme 主题中定义的样式 同理，在 application 标签添加主题，旗下的 activity 都会使用该主题 ]]></description>
+</item>
+</channel>
+</rss>
