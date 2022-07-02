@@ -1,0 +1,63 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Tags - Tag - My New Hugo Site</title>
+        <link>http://example.org/tags/</link>
+        <description>Tags - Tag - My New Hugo Site</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sat, 02 Jul 2022 01:54:00 &#43;0800</lastBuildDate><atom:link href="http://example.org/tags/" rel="self" type="application/rss+xml" /><item>
+    <title>C&#43;&#43;</title>
+    <link>http://example.org/tags/c&#43;&#43;/</link>
+    <pubDate>Sat, 02 Jul 2022 01:54:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/tags/c&#43;&#43;/</guid>
+    <description><![CDATA[]]></description>
+</item>
+<item>
+    <title>Julia</title>
+    <link>http://example.org/tags/julia/</link>
+    <pubDate>Sat, 02 Jul 2022 01:54:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/tags/julia/</guid>
+    <description><![CDATA[]]></description>
+</item>
+<item>
+    <title>数据分析</title>
+    <link>http://example.org/tags/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/</link>
+    <pubDate>Sat, 02 Jul 2022 01:54:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/tags/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/</guid>
+    <description><![CDATA[]]></description>
+</item>
+<item>
+    <title>编辑器</title>
+    <link>http://example.org/tags/%E7%BC%96%E8%BE%91%E5%99%A8/</link>
+    <pubDate>Sat, 02 Jul 2022 01:54:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/tags/%E7%BC%96%E8%BE%91%E5%99%A8/</guid>
+    <description><![CDATA[]]></description>
+</item>
+<item>
+    <title>Flutter数据库</title>
+    <link>http://example.org/tags/flutter%E6%95%B0%E6%8D%AE%E5%BA%93/</link>
+    <pubDate>Sat, 02 Jul 2022 01:44:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/tags/flutter%E6%95%B0%E6%8D%AE%E5%BA%93/</guid>
+    <description><![CDATA[]]></description>
+</item>
+<item>
+    <title>Flutter</title>
+    <link>http://example.org/tags/flutter/</link>
+    <pubDate>Sat, 02 Jul 2022 01:43:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/tags/flutter/</guid>
+    <description><![CDATA[]]></description>
+</item>
+<item>
+    <title>Flutter路由</title>
+    <link>http://example.org/tags/flutter%E8%B7%AF%E7%94%B1/</link>
+    <pubDate>Sat, 02 Jul 2022 01:43:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/tags/flutter%E8%B7%AF%E7%94%B1/</guid>
+    <description><![CDATA[]]></description>
+</item>
+</channel>
+</rss>

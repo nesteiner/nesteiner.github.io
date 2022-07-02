@@ -1,0 +1,153 @@
+#+OPTIONS: author:nil ^:{}
+#+HUGO_BASE_DIR: ../../ChiniBlogs
+#+HUGO_SECTION: posts/2022/07
+#+HUGO_CUSTOM_FRONT_MATTER: :toc true
+#+HUGO_AUTO_SET_LASTMOD: t
+#+HUGO_DRAFT: false
+#+DATE: [2022-07-02 Sat 01:43]
+#+HUGO_TAGS: Flutter路由
+#+HUGO_CATEGORIES: Flutter
+
+
+
+
+#+title: Flutter 中的Router
+* 用你的应用来演示 路由用法
+在这个演示里定义两个界面，HomePage 与 NextPage ，并从 HomePage 传递参数到 NextPage 中
+接下来演示匿名路由和命名路由的情况
+
+这是 *HomePage*
+#+DOWNLOADED: screenshot @ 2021-06-13 14:36:32
+[[file:./images/用你的应用来演示_路由用法/2021-06-13_14-36-32_screenshot.png]]
+
+点击文字按钮后，跳转到 NextPage
+
+#+DOWNLOADED: screenshot @ 2021-06-13 14:37:33
+[[file:./images/用你的应用来演示_路由用法/2021-06-13_14-37-33_screenshot.png]]
+
+
+** 1. 匿名路由跳转
+首先是 HomePage
+#+begin_src dart
+    class HomePage extends StatelessWidget {
+
+      Widget buildBody(BuildContext context) {
+        var fnpress = (String message) {
+          return () {
+            Navigator.push(context, MaterialPageRoute(builder: (builder) => NextPage(message: message)));
+          };
+        };
+
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              TextButton(onPressed: fnpress('Hello World'), child: Text('goto the next page with status 1')),
+              TextButton(onPressed: fnpress('Fuck You'), child: Text('goto the next page with status 2'))
+            ],
+          ),
+        );
+      }
+
+      @override
+      Widget build(BuildContext context) {
+        // TODO: implement build
+        return Scaffold(
+          appBar: AppBar(title: Text('Home Page'),),
+          body: buildBody(context),
+        );
+      }
+    }
+
+#+end_src
+在跳转时通过构造函数来传递参数，其中 NextPage 为
+#+begin_src dart
+  class NextPage extends StatelessWidget {
+    String message;
+    NextPage({required this.message}): super();
+
+    Widget buildBody(BuildContext context) {
+      return Center(
+        child: Text('the message from HomePage is' + message, style: TextStyle(color: Colors.red, fontSize: 40),),
+      );
+    }
+    @override
+    Widget build(BuildContext context) {
+      // TODO: implement build
+      return Scaffold(
+        appBar: AppBar(title: Text('Next Page',)),
+        body: buildBody(context),
+      );
+    }
+  }
+#+end_src
+** 2. 命名路由跳转
+命名路由需要在入口程序 App 中注册路由表，
+
+#+begin_src dart
+  class App extends StatelessWidget {
+    @override
+    Widget build(BuildContext context) {
+      // TODO: implement build
+      return MaterialApp(
+        title: 'Flutter Router Demo',
+        home: HomePage(),
+        routes: {
+          "Home": (ctx) => HomePage(),
+          "Next": (ctx) => NextPage(),
+        },
+      );
+    }
+  }
+#+end_src
+在 HomePage 中跳转与传递参数方式已经改变
+
+#+begin_src dart
+// in HomePage class, 
+  Widget buildBody(BuildContext context) {
+    var fnpress = (String message) {
+      return () {
+        Navigator.pushNamed(context, "Next", arguments: message);
+      };
+    };
+  }
+
+#+end_src
+参数的传递不通过构造方法， NextPage 接收参数的方式变为了
+#+begin_src dart
+  Widget buildBody(BuildContext context) {
+    var message = ModalRoute.of(context)!.settings.arguments as String;
+
+    return Center(
+      child: Text('the message from HomePage is ' + message, style: TextStyle(color: Colors.red, fontSize: 40),),
+    );
+  }
+
+#+end_src
+
+
+* 与 HTML 类比
+类比 html 中的路由跳转，路由是从一个页面地址跳转到另一个页面地址，而不变的对象是浏览器的标签页
+在 这个程序 中，页面地址可以看作 Scaffold ，而标签页看作 MaterialApp
+接下来是如何跳转的问题，在 html 中使用 <a> 标签跳转，flutter 则是 _Navigator.push(context, MaterialPageRoute)_
+还有就是跳转时如何传递参数，html 可以通过添加查询参数，
+flutter 则有两种情况，在非命名的路由中，只需修改 MaterialPageRoute 的 builder 方法，传递数据至组件的构造方法中即可
+#+begin_src dart
+  Navigator.push(context, MaterialPageRoute(builder: (ctx) {
+    return NextPage(
+      data: "Home Page Data",
+    );
+  }));
+#+end_src
+
+而在命名路由中，可以通过专门的参数 argument 来传递
+#+begin_src dart
+  Navigator.pushNamed(context, "NextPage", arguments: "传值");
+#+end_src
+
+到目标路由后，通过
+#+begin_src dart
+  ModalRoute.of(context)!.settings.arguments as 'type you want';
+#+end_src
+来接收参数，同时要注意 *null safety*

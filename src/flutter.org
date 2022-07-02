@@ -1,0 +1,145 @@
+#+title: Flutter Counter
+* 如何写一个 Flutter 应用
+  我们从一个计数器讲起， 首先建立 *Counter* 类
+  #+begin_src dart
+    class Counter extends StatelessWidget {
+      Counter(): super();
+      @override
+      Widget build(BuildContext context) {
+	      // TODO: implement build
+	      return MaterialApp(
+		title: 'Flutter Counter',
+		theme: ThemeData(primarySwatch: Colors.blue),
+		home: CounterHomePage(title: 'Flutter Counter Home Page'),
+	      );
+      }
+    }
+  #+end_src
+  
+  在内部定义了构造方法，并且重构了 __build__ 方法
+  其中  __build__ 方法返回了一个 __MaterialApp__ ，这就是 __Flutter__ 提供的根组件，接下来只需提供一个 __Widget__ ，将其赋值给 __home__ 作为主页程序即可
+  再来看看赋值 __home__ 的组件 __CounterHomePage__ 是怎么写的
+
+  #+begin_src dart
+    class CounterHomePage extends StatefulWidget {
+      CounterHomePage({this.title = 'Hello World'}): super();
+      String title;
+
+      @override
+      CounterHomePageState createState() => CounterHomePageState();
+    }
+  #+end_src
+
+  这个类继承自 __StatefulWidget__ ，与 __Counter__ 类继承的 __StatelessWidget__ 成对比， _Counter_ 是无状态的组件，  _CounterHomePage_ 是有状态的组件
+  其中重写了 _StatefulWidget_ 的 _createState_ 方法，返回值是用来管理其状态的 _CounterHomePageState_
+
+  #+begin_src dart
+    class CounterHomePageState extends State<CounterHomePage> {
+      int count = 0;
+
+      void incrementCount() {
+	setState(() {
+		  count += 1;
+	});
+      }
+
+      @override
+      Widget build(BuildContext context) {
+	// TODO: implement build
+	return Scaffold(
+	  appBar: AppBar(title: Text(widget.title),),
+	  body: Center(
+		  child: Column(
+		    mainAxisAlignment: MainAxisAlignment.center,
+		    children: <Widget>[
+		      Text('You have pushed the button this many times:'),
+		      Text(count.toString(), style: Theme
+			.of(context)
+			.textTheme
+			.headline4),
+		      TextButton(
+			child: Text('Open new route'),
+			onPressed: () {
+				Navigator.push(context, MaterialPageRoute(builder: (context){
+				      return NewRoute();
+				}));
+		      },)
+		    ]
+		  ),
+	  ),
+	  floatingActionButton: FloatingActionButton(
+		  onPressed: incrementCount,
+		  tooltip: 'Increment',
+		  child: Icon(Icons.add),
+	  ),
+	);
+      }
+    }
+  #+end_src
+
+  其中该类继承自泛型类 _State<CounterHomePage>_ ，与 _CounterHomePage_ 相关联
+  需要改变状态的时候，调用 _setState_ 即可，该函数接收一个闭包。
+  而后， Flutter 框架检测到状态改变，销毁原来 _build_ 的 _CouterHomePageState_ ，而是重新调用 _build_ 来代替
+  在程序中，改变状态通过 _TextButton_ 的 _OnPressed_ 回调来触发
+
+  还有一个程序的入口，主函数没有写
+  #+begin_src dart
+    void main() => runApp(Counter());
+  #+end_src
+
+  至此，我们的第一个计数器应用就搭建完毕了
+  #+DOWNLOADED: screenshot @ 2021-06-12 16:10:49
+  [[file:images/如何写一个_Flutter_应用/2021-06-12_16-10-49_screenshot.png]]
+
+* 什么是 Scaffold 组件
+  在上面的 _CounterHomePageState_ 中，还有个 _Scaffold_ 组件没有讲，这是 _Flutter_ 为我们提供的主页，
+  官网的描述：Material Design布局结构的基本实现， 类提供了用于显示drawer、snackbar和底部sheet的API。
+  可以编辑他的 _appBar_ , _body_ 属性，其中 _body_ 作为主页的主体，随便放个组件进去就行了
+* 如何布局多个组件
+  _Scaffold_ 的 _body_ 只能传递一个组件，想把一堆东西塞进去，可以使用 _Flutter_ 提供的 *布局组件* 该类组件都有一个 _children_ 属性，表示一个 _Widget_ 数组
+  在上面的例子中， _Column_ 就是一个布局组件，按竖直方向布局组件，并赋值 _mainAxisalignment_ 为 _center_ 表示主轴方向垂直对齐
+  -----
+  等等， _Column_ 上面还有个 _Center_ 组件是怎么回事? 他为什么用 _child_ ，而不用 _children_ ?
+  _Center_ 是一个容器组件，只有一个子元素，用 _child_ 表示
+
+  布局类Widget是按照一定的排列方式来对其子Widget进行排列；
+  而容器类Widget一般只是包装其子Widget，对其添加一些修饰（补白或背景色等）、变换(旋转或剪裁等)、或限制(大小等)。
+  注意，Flutter官方并没有对Widget进行官方分类，我们对其分类主要是为了方便讨论和对Widget功能区分的记忆
+
+  除了 _Center_ 外，其他容器类还有
+  1. 填充（Padding）
+  2. 尺寸限制类容器（ConstrainedBox等）
+  3. 装饰容器（DecoratedBox）
+  4. 变换（Transform）
+  5. Container容器
+  6. Scaffold、TabBar、底部导航
+  7. 剪裁（Clip）
+* 如何修饰样式
+  像 _css_ 样式一样， _flutter_ 中样式也可以继承，如果要更改，用 _Theme_ 组件包装一下就可以了
+  其中 _Theme_ 组件
+  #+begin_src dart
+    Theme({Key? key, required ThemeData data, required Widget child})
+  #+end_src
+  最重要的是 [[https://api.flutter.dev/flutter/material/ThemeData-class.html][ThemeData]] 这个结构， child 表示需要修饰的组件
+
+* 对比 html 语法
+  对比 html 的标签语法，比如
+  #+begin_src html
+    <div>
+
+    </div>
+
+    <style>
+      div {
+      padding: 12px;
+      }
+    </style>
+  #+end_src
+
+  可以用 _Padding_ 组件写为
+  #+begin_src dart
+    Padding(
+      padding: EdgeInsets.all(12)
+    );
+  #+end_src
+感觉是把一些属性单独提取出来，做成一个组件，如果需要修饰大量样式，应该用 _Theme_ 组件

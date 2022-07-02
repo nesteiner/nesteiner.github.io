@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>Flutter Counter - My New Hugo Site</title><meta name="Description" content="This is my cool site"><meta property="og:title" content="Flutter Counter" />
+<meta property="og:description" content="如何写一个 Flutter 应用 我们从一个计数器讲起， 首先建立 Counter 类 class Counter extends StatelessWidget { Counter(): super(); @override Widget build(BuildContext context) { // TODO: implement build return MaterialApp( title: &#39;Flutter Counter&#39;, theme: ThemeData(primarySwatch: Colors.blue), home: CounterHomePage(title: &#39;Flutter Counter Home Page&#39;), ); } } 在内部定义了构造方法，并且重构了 build 方法 其中 build 方法返回了一个 MaterialApp ，这就是 Flutter 提供的根组件，接下来只需提供一个 Widget ，将其赋值给 home 作为主页程序即可 再来看看赋值 home 的组件 CounterHomePage 是怎么写的 class CounterHomePage extends StatefulWidget { CounterHomePage({this.title = &#39;Hello World&#39;}): super(); String title; @override CounterHomePageState createState() =&gt; CounterHomePageState(); } 这个类继承自 StatefulWidget ，与 Counter 类继承的 StatelessWidget 成对比， Counter 是无状态的组件， CounterHomePage 是有状态的组件 其中重写了 StatefulWidget 的 createState 方法，返回值是用来管理其状态的 CounterHomePageState class CounterHomePageState extends State&lt;CounterHomePage&gt; { int count = 0; void incrementCount() { setState(() { count &#43;= 1; }); } @override Widget build(BuildContext context) { // TODO: implement build return Scaffold( appBar: AppBar(title: Text(widget." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/post/2022/07/counter/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-07-02T01:42:00+08:00" />
+<meta property="article:modified_time" content="2022-07-02T01:51:48+08:00" /><meta property="og:site_name" content="My cool site" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Flutter Counter"/>
+<meta name="twitter:description" content="如何写一个 Flutter 应用 我们从一个计数器讲起， 首先建立 Counter 类 class Counter extends StatelessWidget { Counter(): super(); @override Widget build(BuildContext context) { // TODO: implement build return MaterialApp( title: &#39;Flutter Counter&#39;, theme: ThemeData(primarySwatch: Colors.blue), home: CounterHomePage(title: &#39;Flutter Counter Home Page&#39;), ); } } 在内部定义了构造方法，并且重构了 build 方法 其中 build 方法返回了一个 MaterialApp ，这就是 Flutter 提供的根组件，接下来只需提供一个 Widget ，将其赋值给 home 作为主页程序即可 再来看看赋值 home 的组件 CounterHomePage 是怎么写的 class CounterHomePage extends StatefulWidget { CounterHomePage({this.title = &#39;Hello World&#39;}): super(); String title; @override CounterHomePageState createState() =&gt; CounterHomePageState(); } 这个类继承自 StatefulWidget ，与 Counter 类继承的 StatelessWidget 成对比， Counter 是无状态的组件， CounterHomePage 是有状态的组件 其中重写了 StatefulWidget 的 createState 方法，返回值是用来管理其状态的 CounterHomePageState class CounterHomePageState extends State&lt;CounterHomePage&gt; { int count = 0; void incrementCount() { setState(() { count &#43;= 1; }); } @override Widget build(BuildContext context) { // TODO: implement build return Scaffold( appBar: AppBar(title: Text(widget."/>
+<meta name="application-name" content="My cool site">
+<meta name="apple-mobile-web-app-title" content="My cool site"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://example.org/post/2022/07/counter/" /><link rel="next" href="http://example.org/post/2022/07/router/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Flutter Counter",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/example.org\/post\/2022\/07\/counter\/"
+        },"genre": "post","keywords": "Flutter","wordcount":  323 ,
+        "url": "http:\/\/example.org\/post\/2022\/07\/counter\/","datePublished": "2022-07-02T01:42:00+08:00","dateModified": "2022-07-02T01:51:48+08:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "Author"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="My New Hugo Site">My cool site</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="My New Hugo Site">My cool site</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><main class="main">
+                <div class="container"><div class="page single special"><h1 class="single-title animate__animated animate__pulse animate__faster">Flutter Counter</h1><div class="content" id="content"><h2 id="如何写一个-flutter-应用">如何写一个 Flutter 应用</h2>
+<p>我们从一个计数器讲起， 首先建立 <strong>Counter</strong> 类 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-dart" data-lang="dart"><span class="line"><span class="cl"><span class="kd">class</span> <span class="nc">Counter</span> <span class="kd">extends</span> <span class="n">StatelessWidget</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Counter</span><span class="p">()</span><span class="o">:</span> <span class="k">super</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="err">@</span><span class="n">override</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Widget</span> <span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span> <span class="n">context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	  <span class="c1">// TODO: implement build
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	  <span class="k">return</span> <span class="n">MaterialApp</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">	    <span class="nl">title:</span> <span class="s1">&#39;Flutter Counter&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	    <span class="nl">theme:</span> <span class="n">ThemeData</span><span class="p">(</span><span class="nl">primarySwatch:</span> <span class="n">Colors</span><span class="p">.</span><span class="n">blue</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">	    <span class="nl">home:</span> <span class="n">CounterHomePage</span><span class="p">(</span><span class="nl">title:</span> <span class="s1">&#39;Flutter Counter Home Page&#39;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">	  <span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>在内部定义了构造方法，并且重构了 <!-- raw HTML omitted --><!-- raw HTML omitted -->build<!-- raw HTML omitted --><!-- raw HTML omitted --> 方法 <!-- raw HTML omitted -->
+其中  <!-- raw HTML omitted --><!-- raw HTML omitted -->build<!-- raw HTML omitted --><!-- raw HTML omitted --> 方法返回了一个 <!-- raw HTML omitted --><!-- raw HTML omitted -->MaterialApp<!-- raw HTML omitted --><!-- raw HTML omitted --> ，这就是 <!-- raw HTML omitted --><!-- raw HTML omitted -->Flutter<!-- raw HTML omitted --><!-- raw HTML omitted --> 提供的根组件，接下来只需提供一个 <!-- raw HTML omitted --><!-- raw HTML omitted -->Widget<!-- raw HTML omitted --><!-- raw HTML omitted --> ，将其赋值给 <!-- raw HTML omitted --><!-- raw HTML omitted -->home<!-- raw HTML omitted --><!-- raw HTML omitted --> 作为主页程序即可 <!-- raw HTML omitted -->
+再来看看赋值 <!-- raw HTML omitted --><!-- raw HTML omitted -->home<!-- raw HTML omitted --><!-- raw HTML omitted --> 的组件 <!-- raw HTML omitted --><!-- raw HTML omitted -->CounterHomePage<!-- raw HTML omitted --><!-- raw HTML omitted --> 是怎么写的 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-dart" data-lang="dart"><span class="line"><span class="cl"><span class="kd">class</span> <span class="nc">CounterHomePage</span> <span class="kd">extends</span> <span class="n">StatefulWidget</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">CounterHomePage</span><span class="p">({</span><span class="k">this</span><span class="p">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Hello World&#39;</span><span class="p">})</span><span class="o">:</span> <span class="k">super</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">String</span> <span class="n">title</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="err">@</span><span class="n">override</span>
+</span></span><span class="line"><span class="cl">  <span class="n">CounterHomePageState</span> <span class="n">createState</span><span class="p">()</span> <span class="o">=&gt;</span> <span class="n">CounterHomePageState</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>这个类继承自 <!-- raw HTML omitted --><!-- raw HTML omitted -->StatefulWidget<!-- raw HTML omitted --><!-- raw HTML omitted --> ，与 <!-- raw HTML omitted --><!-- raw HTML omitted -->Counter<!-- raw HTML omitted --><!-- raw HTML omitted --> 类继承的 <!-- raw HTML omitted --><!-- raw HTML omitted -->StatelessWidget<!-- raw HTML omitted --><!-- raw HTML omitted --> 成对比， <!-- raw HTML omitted -->Counter<!-- raw HTML omitted --> 是无状态的组件，  <!-- raw HTML omitted -->CounterHomePage<!-- raw HTML omitted --> 是有状态的组件 <!-- raw HTML omitted -->
+其中重写了 <!-- raw HTML omitted -->StatefulWidget<!-- raw HTML omitted --> 的 <!-- raw HTML omitted -->createState<!-- raw HTML omitted --> 方法，返回值是用来管理其状态的 <!-- raw HTML omitted -->CounterHomePageState<!-- raw HTML omitted --> <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-dart" data-lang="dart"><span class="line"><span class="cl"><span class="kd">class</span> <span class="nc">CounterHomePageState</span> <span class="kd">extends</span> <span class="n">State</span><span class="o">&lt;</span><span class="n">CounterHomePage</span><span class="o">&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">count</span> <span class="o">=</span> <span class="m">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kt">void</span> <span class="n">incrementCount</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">setState</span><span class="p">(()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	      <span class="n">count</span> <span class="o">+=</span> <span class="m">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">});</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="err">@</span><span class="n">override</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Widget</span> <span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span> <span class="n">context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// TODO: implement build
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">return</span> <span class="n">Scaffold</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">      <span class="nl">appBar:</span> <span class="n">AppBar</span><span class="p">(</span><span class="nl">title:</span> <span class="n">Text</span><span class="p">(</span><span class="n">widget</span><span class="p">.</span><span class="n">title</span><span class="p">),),</span>
+</span></span><span class="line"><span class="cl">      <span class="nl">body:</span> <span class="n">Center</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">	      <span class="nl">child:</span> <span class="n">Column</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">		<span class="nl">mainAxisAlignment:</span> <span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="nl">children:</span> <span class="o">&lt;</span><span class="n">Widget</span><span class="o">&gt;</span><span class="p">[</span>
+</span></span><span class="line"><span class="cl">		  <span class="n">Text</span><span class="p">(</span><span class="s1">&#39;You have pushed the button this many times:&#39;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">		  <span class="n">Text</span><span class="p">(</span><span class="n">count</span><span class="p">.</span><span class="n">toString</span><span class="p">(),</span> <span class="nl">style:</span> <span class="n">Theme</span>
+</span></span><span class="line"><span class="cl">		    <span class="p">.</span><span class="n">of</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		    <span class="p">.</span><span class="n">textTheme</span>
+</span></span><span class="line"><span class="cl">		    <span class="p">.</span><span class="n">headline4</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">		  <span class="n">TextButton</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">		    <span class="nl">child:</span> <span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Open new route&#39;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">		    <span class="nl">onPressed:</span> <span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			    <span class="n">Navigator</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">MaterialPageRoute</span><span class="p">(</span><span class="nl">builder:</span> <span class="p">(</span><span class="n">context</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">				  <span class="k">return</span> <span class="n">NewRoute</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">			    <span class="p">}));</span>
+</span></span><span class="line"><span class="cl">		  <span class="p">},)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">]</span>
+</span></span><span class="line"><span class="cl">	      <span class="p">),</span>
+</span></span><span class="line"><span class="cl">      <span class="p">),</span>
+</span></span><span class="line"><span class="cl">      <span class="nl">floatingActionButton:</span> <span class="n">FloatingActionButton</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">	      <span class="nl">onPressed:</span> <span class="n">incrementCount</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	      <span class="nl">tooltip:</span> <span class="s1">&#39;Increment&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	      <span class="nl">child:</span> <span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">add</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">      <span class="p">),</span>
+</span></span><span class="line"><span class="cl">    <span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>其中该类继承自泛型类 <!-- raw HTML omitted -->State&lt;CounterHomePage&gt;<!-- raw HTML omitted --> ，与 <!-- raw HTML omitted -->CounterHomePage<!-- raw HTML omitted --> 相关联 <!-- raw HTML omitted -->
+需要改变状态的时候，调用 <!-- raw HTML omitted -->setState<!-- raw HTML omitted --> 即可，该函数接收一个闭包。 <!-- raw HTML omitted -->
+而后， Flutter 框架检测到状态改变，销毁原来 <!-- raw HTML omitted -->build<!-- raw HTML omitted --> 的 <!-- raw HTML omitted -->CouterHomePageState<!-- raw HTML omitted --> ，而是重新调用 <!-- raw HTML omitted -->build<!-- raw HTML omitted --> 来代替 <!-- raw HTML omitted -->
+在程序中，改变状态通过 <!-- raw HTML omitted -->TextButton<!-- raw HTML omitted --> 的 <!-- raw HTML omitted -->OnPressed<!-- raw HTML omitted --> 回调来触发 <!-- raw HTML omitted --></p>
+<p>还有一个程序的入口，主函数没有写 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-dart" data-lang="dart"><span class="line"><span class="cl"><span class="kt">void</span> <span class="n">main</span><span class="p">()</span> <span class="o">=&gt;</span> <span class="n">runApp</span><span class="p">(</span><span class="n">Counter</span><span class="p">());</span>
+</span></span></code></pre></div><p>至此，我们的第一个计数器应用就搭建完毕了 <!-- raw HTML omitted --></p>
+<p><figure><img src="/ox-hugo/2021-06-12_16-10-49_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<h2 id="什么是-scaffold-组件">什么是 Scaffold 组件</h2>
+<p>在上面的 <!-- raw HTML omitted -->CounterHomePageState<!-- raw HTML omitted --> 中，还有个 <!-- raw HTML omitted -->Scaffold<!-- raw HTML omitted --> 组件没有讲，这是 <!-- raw HTML omitted -->Flutter<!-- raw HTML omitted --> 为我们提供的主页， <!-- raw HTML omitted -->
+官网的描述：Material Design布局结构的基本实现， 类提供了用于显示drawer、snackbar和底部sheet的API。 <!-- raw HTML omitted -->
+可以编辑他的 <!-- raw HTML omitted -->appBar<!-- raw HTML omitted --> , <!-- raw HTML omitted -->body<!-- raw HTML omitted --> 属性，其中 <!-- raw HTML omitted -->body<!-- raw HTML omitted --> 作为主页的主体，随便放个组件进去就行了 <!-- raw HTML omitted --></p>
+<h2 id="如何布局多个组件">如何布局多个组件</h2>
+<p><!-- raw HTML omitted -->Scaffold<!-- raw HTML omitted --> 的 <!-- raw HTML omitted -->body<!-- raw HTML omitted --> 只能传递一个组件，想把一堆东西塞进去，可以使用 <!-- raw HTML omitted -->Flutter<!-- raw HTML omitted --> 提供的 <strong>布局组件</strong> 该类组件都有一个 <!-- raw HTML omitted -->children<!-- raw HTML omitted --> 属性，表示一个 <!-- raw HTML omitted -->Widget<!-- raw HTML omitted --> 数组 <!-- raw HTML omitted -->
+在上面的例子中， <!-- raw HTML omitted -->Column<!-- raw HTML omitted --> 就是一个布局组件，按竖直方向布局组件，并赋值 <!-- raw HTML omitted -->mainAxisalignment<!-- raw HTML omitted --> 为 <!-- raw HTML omitted -->center<!-- raw HTML omitted --> 表示主轴方向垂直对齐 <!-- raw HTML omitted --></p>
+<hr>
+<p>等等， <!-- raw HTML omitted -->Column<!-- raw HTML omitted --> 上面还有个 <!-- raw HTML omitted -->Center<!-- raw HTML omitted --> 组件是怎么回事? 他为什么用 <!-- raw HTML omitted -->child<!-- raw HTML omitted --> ，而不用 <!-- raw HTML omitted -->children<!-- raw HTML omitted --> ? <!-- raw HTML omitted -->
+<!-- raw HTML omitted -->Center<!-- raw HTML omitted --> 是一个容器组件，只有一个子元素，用 <!-- raw HTML omitted -->child<!-- raw HTML omitted --> 表示 <!-- raw HTML omitted --></p>
+<p>布局类Widget是按照一定的排列方式来对其子Widget进行排列； <!-- raw HTML omitted -->
+而容器类Widget一般只是包装其子Widget，对其添加一些修饰（补白或背景色等）、变换(旋转或剪裁等)、或限制(大小等)。 <!-- raw HTML omitted -->
+注意，Flutter官方并没有对Widget进行官方分类，我们对其分类主要是为了方便讨论和对Widget功能区分的记忆 <!-- raw HTML omitted --></p>
+<p>除了 <!-- raw HTML omitted -->Center<!-- raw HTML omitted --> 外，其他容器类还有 <!-- raw HTML omitted --></p>
+<ol>
+<li>填充（Padding） <!-- raw HTML omitted --></li>
+<li>尺寸限制类容器（ConstrainedBox等） <!-- raw HTML omitted --></li>
+<li>装饰容器（DecoratedBox） <!-- raw HTML omitted --></li>
+<li>变换（Transform） <!-- raw HTML omitted --></li>
+<li>Container容器 <!-- raw HTML omitted --></li>
+<li>Scaffold、TabBar、底部导航 <!-- raw HTML omitted --></li>
+<li>剪裁（Clip） <!-- raw HTML omitted --></li>
+</ol>
+<h2 id="如何修饰样式">如何修饰样式</h2>
+<p>像 <!-- raw HTML omitted -->css<!-- raw HTML omitted --> 样式一样， <!-- raw HTML omitted -->flutter<!-- raw HTML omitted --> 中样式也可以继承，如果要更改，用 <!-- raw HTML omitted -->Theme<!-- raw HTML omitted --> 组件包装一下就可以了 <!-- raw HTML omitted -->
+其中 <!-- raw HTML omitted -->Theme<!-- raw HTML omitted --> 组件 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-dart" data-lang="dart"><span class="line"><span class="cl"><span class="n">Theme</span><span class="p">({</span><span class="n">Key</span><span class="o">?</span> <span class="n">key</span><span class="p">,</span> <span class="kd">required</span> <span class="n">ThemeData</span> <span class="n">data</span><span class="p">,</span> <span class="kd">required</span> <span class="n">Widget</span> <span class="n">child</span><span class="p">})</span>
+</span></span></code></pre></div><p>最重要的是 <a href="https://api.flutter.dev/flutter/material/ThemeData-class.html" target="_blank" rel="noopener noreffer ">ThemeData</a> 这个结构， child 表示需要修饰的组件 <!-- raw HTML omitted --></p>
+<h2 id="对比-html-语法">对比 html 语法</h2>
+<p>对比 html 的标签语法，比如 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">style</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">div</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">padding</span><span class="p">:</span> <span class="mi">12</span><span class="kt">px</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">style</span><span class="p">&gt;</span>
+</span></span></code></pre></div><p>可以用 <!-- raw HTML omitted -->Padding<!-- raw HTML omitted --> 组件写为 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-dart" data-lang="dart"><span class="line"><span class="cl"><span class="n">Padding</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="nl">padding:</span> <span class="n">EdgeInsets</span><span class="p">.</span><span class="n">all</span><span class="p">(</span><span class="m">12</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">);</span>
+</span></span></code></pre></div><p>感觉是把一些属性单独提取出来，做成一个组件，如果需要修饰大量样式，应该用 <!-- raw HTML omitted -->Theme<!-- raw HTML omitted --> 组件 <!-- raw HTML omitted --></p>
+</div></div></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.101.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

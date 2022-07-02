@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>MLJ中 线性模型 在回归预测中的简单使用 - My New Hugo Site</title><meta name="Description" content="This is my cool site"><meta property="og:title" content="MLJ中 线性模型 在回归预测中的简单使用" />
+<meta property="og:description" content="开始之前 我想向大家介绍一下一些线性模型的用法，以及他们对数据的拟合程度 在我开始学习 MLJ 时，我对他们的拟合能力有所怀疑，经常遇到欠拟合的情况，经过一次简单的测试后，才慢慢了解如何使用模型，处理特征 这里将这个测试介绍给各位 数据准备 我们模拟对函数 f(x) = x^2 &#43; 2x 的拟合，在理想的预测结果 standardy 上加上一点噪音，形成训练用测试结果 coly 接下来依次定义 f(x) standardy coly f(x) = x^2 &#43; 2x colx = DataFrame(x1=-10:10) coly = f.(colx.x1) &#43; rand(-2:2, length(colx.x1)) standardy = f.(colx.x1) 再绘制下图像 plot(colx.x1, standardy, label=&#34;standarty&#34;, color=:blue) plot!(colx.x1, coly, label=&#34;coly&#34;, color=:red) 模型介绍 拟合数据我们使用 Ridge 回归，他在损失函数上添加了 L2 正则化 \begin{array}{cl} {\min \limits_{w, b}} &amp; {\dfrac{1}{n}\sum_{i = 1}^n (w^{\top} x_i &#43; b - y_i)^2} \\ {\text{s.t.}} &amp;{\|w\|_2^2 \le t} \end{array}" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/post/2022/07/linear_model/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-07-02T01:54:00+08:00" />
+<meta property="article:modified_time" content="2022-07-02T01:54:27+08:00" /><meta property="og:site_name" content="My cool site" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="MLJ中 线性模型 在回归预测中的简单使用"/>
+<meta name="twitter:description" content="开始之前 我想向大家介绍一下一些线性模型的用法，以及他们对数据的拟合程度 在我开始学习 MLJ 时，我对他们的拟合能力有所怀疑，经常遇到欠拟合的情况，经过一次简单的测试后，才慢慢了解如何使用模型，处理特征 这里将这个测试介绍给各位 数据准备 我们模拟对函数 f(x) = x^2 &#43; 2x 的拟合，在理想的预测结果 standardy 上加上一点噪音，形成训练用测试结果 coly 接下来依次定义 f(x) standardy coly f(x) = x^2 &#43; 2x colx = DataFrame(x1=-10:10) coly = f.(colx.x1) &#43; rand(-2:2, length(colx.x1)) standardy = f.(colx.x1) 再绘制下图像 plot(colx.x1, standardy, label=&#34;standarty&#34;, color=:blue) plot!(colx.x1, coly, label=&#34;coly&#34;, color=:red) 模型介绍 拟合数据我们使用 Ridge 回归，他在损失函数上添加了 L2 正则化 \begin{array}{cl} {\min \limits_{w, b}} &amp; {\dfrac{1}{n}\sum_{i = 1}^n (w^{\top} x_i &#43; b - y_i)^2} \\ {\text{s.t.}} &amp;{\|w\|_2^2 \le t} \end{array}"/>
+<meta name="application-name" content="My cool site">
+<meta name="apple-mobile-web-app-title" content="My cool site"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://example.org/post/2022/07/linear_model/" /><link rel="prev" href="http://example.org/post/2022/07/titanic/" /><link rel="next" href="http://example.org/post/2022/07/cppwork/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "MLJ中 线性模型 在回归预测中的简单使用",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/example.org\/post\/2022\/07\/linear_model\/"
+        },"genre": "post","keywords": "Julia, 数据分析","wordcount":  320 ,
+        "url": "http:\/\/example.org\/post\/2022\/07\/linear_model\/","datePublished": "2022-07-02T01:54:00+08:00","dateModified": "2022-07-02T01:54:27+08:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "Author"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="My New Hugo Site">My cool site</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="My New Hugo Site">My cool site</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><main class="main">
+                <div class="container"><div class="page single special"><h1 class="single-title animate__animated animate__pulse animate__faster">MLJ中 线性模型 在回归预测中的简单使用</h1><div class="content" id="content"><h2 id="开始之前">开始之前</h2>
+<p>我想向大家介绍一下一些线性模型的用法，以及他们对数据的拟合程度 <!-- raw HTML omitted -->
+在我开始学习 MLJ 时，我对他们的拟合能力有所怀疑，经常遇到欠拟合的情况，经过一次简单的测试后，才慢慢了解如何使用模型，处理特征 <!-- raw HTML omitted -->
+这里将这个测试介绍给各位 <!-- raw HTML omitted --></p>
+<h2 id="数据准备">数据准备</h2>
+<p>我们模拟对函数 f(x) = x^2 + 2x 的拟合，在理想的预测结果 standardy 上加上一点噪音，形成训练用测试结果 coly <!-- raw HTML omitted -->
+接下来依次定义 <!-- raw HTML omitted --></p>
+<ul>
+<li>f(x) <!-- raw HTML omitted --></li>
+<li>standardy <!-- raw HTML omitted --></li>
+<li>coly <!-- raw HTML omitted --></li>
+</ul>
+<!-- raw HTML omitted -->
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="n">x</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span><span class="n">x</span>
+</span></span><span class="line"><span class="cl"><span class="n">colx</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">x1</span><span class="o">=-</span><span class="mi">10</span><span class="o">:</span><span class="mi">10</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">coly</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="p">(</span><span class="n">colx</span><span class="o">.</span><span class="n">x1</span><span class="p">)</span> <span class="o">+</span> <span class="n">rand</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="o">:</span><span class="mi">2</span><span class="p">,</span> <span class="n">length</span><span class="p">(</span><span class="n">colx</span><span class="o">.</span><span class="n">x1</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">standardy</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="p">(</span><span class="n">colx</span><span class="o">.</span><span class="n">x1</span><span class="p">)</span>
+</span></span></code></pre></div><p>再绘制下图像 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">plot</span><span class="p">(</span><span class="n">colx</span><span class="o">.</span><span class="n">x1</span><span class="p">,</span> <span class="n">standardy</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&#34;standarty&#34;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="ss">:blue</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">plot!</span><span class="p">(</span><span class="n">colx</span><span class="o">.</span><span class="n">x1</span><span class="p">,</span> <span class="n">coly</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&#34;coly&#34;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="ss">:red</span><span class="p">)</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2021-09-07_00-01-42_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<h2 id="模型介绍">模型介绍</h2>
+<p>拟合数据我们使用 Ridge 回归，他在损失函数上添加了 L2 正则化 <!-- raw HTML omitted --></p>
+<p>\begin{array}{cl}
+{\min \limits_{w, b}} &amp; {\dfrac{1}{n}\sum_{i = 1}^n (w^{\top} x_i + b - y_i)^2}
+\\ {\text{s.t.}} &amp;{\|w\|_2^2 \le t}
+\end{array}</p>
+<p>\tag{6} <!-- raw HTML omitted -->
+在 MLJLinearModels 中，RidgeRegressor 为 <!-- raw HTML omitted --></p>
+<blockquote>
+<p>Ridge regression model with objective function <!-- raw HTML omitted --></p>
+</blockquote>
+<p>其中参数有 <!-- raw HTML omitted --></p>
+<ul>
+<li>lambda (Real): strength of the L2 regularisation. <!-- raw HTML omitted --></li>
+<li><code>fit_intercept</code> (Bool): whether to fit the intercept or not. <!-- raw HTML omitted --></li>
+<li>penalize_intercept (Bool): whether to penalize the intercept. <!-- raw HTML omitted --></li>
+<li>solver: type of solver to use (if nothing the default is used). The solver is Cholesky by default but can be Conjugate-Gradient as well. See ?Analytical for more information. <!-- raw HTML omitted --></li>
+</ul>
+<p>详细介绍以下 fit_intercept 和 penalize_intercept ，去 Slack 问了以下，大致可以理解为 <!-- raw HTML omitted --></p>
+<ul>
+<li><code>fit_intercept</code> 在假设函数上是否添加 偏差(bias) <!-- raw HTML omitted --></li>
+<li><code>penalize_intercept</code> 是否惩罚偏差，修改其数值 <!-- raw HTML omitted --></li>
+</ul>
+<p>接下来模型训练，直接调优得到最优模型，得到输出结果 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">using</span> <span class="n">MLJLinearModels</span><span class="p">,</span> <span class="n">StableRNGs</span>
+</span></span><span class="line"><span class="cl"><span class="n">rng</span> <span class="o">=</span> <span class="n">StableRNG</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">ridge</span> <span class="o">=</span> <span class="n">RidgeRegressor</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">r_lambda</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">ridge</span><span class="p">,</span> <span class="ss">:lambda</span><span class="p">,</span> <span class="n">lower</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">upper</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="ss">:linear</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">tuning</span> <span class="o">=</span> <span class="n">Grid</span><span class="p">(</span><span class="n">resolution</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="n">rng</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">resampling</span> <span class="o">=</span> <span class="n">CV</span><span class="p">(</span><span class="n">nfolds</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="n">rng</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">self_tuning_model</span> <span class="o">=</span> <span class="n">TunedModel</span><span class="p">(</span><span class="n">model</span> <span class="o">=</span> <span class="n">ridge</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			       <span class="n">range</span> <span class="o">=</span> <span class="n">r_lambda</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			       <span class="n">tuning</span> <span class="o">=</span> <span class="n">tuning</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			       <span class="n">resampling</span> <span class="o">=</span> <span class="n">resampling</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			       <span class="n">measure</span> <span class="o">=</span> <span class="n">rms</span>
+</span></span><span class="line"><span class="cl">			       <span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">self_tuning_mach</span> <span class="o">=</span> <span class="n">machine</span><span class="p">(</span><span class="n">self_tuning_model</span><span class="p">,</span> <span class="n">colx</span><span class="p">,</span> <span class="n">coly</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">fit!</span><span class="p">(</span><span class="n">self_tuning_mach</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">best_model</span> <span class="o">=</span> <span class="n">fitted_params</span><span class="p">(</span><span class="n">self_tuning_mach</span><span class="p">)</span><span class="o">.</span><span class="n">best_model</span>
+</span></span><span class="line"><span class="cl"><span class="n">best_mach</span> <span class="o">=</span> <span class="n">machine</span><span class="p">(</span><span class="n">best_model</span><span class="p">,</span> <span class="n">colx</span><span class="p">,</span> <span class="n">coly</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">fit!</span><span class="p">(</span><span class="n">best_mach</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">outputy</span> <span class="o">=</span> <span class="n">predict</span><span class="p">(</span><span class="n">best_mach</span><span class="p">,</span> <span class="n">colx</span><span class="p">)</span>
+</span></span></code></pre></div><p>然后我们通过图像查看拟合程度 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">plot</span><span class="p">(</span><span class="n">colx</span><span class="o">.</span><span class="n">x1</span><span class="p">,</span> <span class="n">standardy</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&#34;standardy&#34;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="ss">:blue</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">plot!</span><span class="p">(</span><span class="n">colx</span><span class="o">.</span><span class="n">x1</span><span class="p">,</span> <span class="n">outputy</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&#34;outputy&#34;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="ss">:red</span><span class="p">)</span>
+</span></span></code></pre></div><p>可以看到，欠拟合了 <!-- raw HTML omitted --></p>
+<p><figure><img src="/ox-hugo/2021-09-07_00-02-54_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<h2 id="添加特征">添加特征</h2>
+<p>应对欠拟合的情况我们可以通过添加特征来解决 <!-- raw HTML omitted -->
+回到上面的问题，由于 f(x) = x^2 + 2x ，提供的数据中只有 x1=x 一个特征，我们尝试再添加一个特征 x2=x^2 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">let</span> <span class="n">g</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="n">x</span><span class="o">^</span><span class="mi">2</span>
+</span></span><span class="line"><span class="cl">  <span class="n">colx</span><span class="o">.</span><span class="n">x2</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="p">(</span><span class="n">colx</span><span class="o">.</span><span class="n">x1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">self_tuning_machine</span> <span class="o">=</span> <span class="n">machine</span><span class="p">(</span><span class="n">self_tuning_model</span><span class="p">,</span> <span class="n">colx</span><span class="p">,</span> <span class="n">coly</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">fit!</span><span class="p">(</span><span class="n">self_tuning_machine</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">best_model</span> <span class="o">=</span> <span class="n">fitted_params</span><span class="p">(</span><span class="n">self_tuning_mach</span><span class="p">)</span><span class="o">.</span><span class="n">best_model</span>
+</span></span><span class="line"><span class="cl">  <span class="n">best_mach</span> <span class="o">=</span> <span class="n">machine</span><span class="p">(</span><span class="n">best_model</span><span class="p">,</span> <span class="n">colx</span><span class="p">,</span> <span class="n">coly</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">fit!</span><span class="p">(</span><span class="n">best_mach</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">outputy</span> <span class="o">=</span> <span class="n">predict</span><span class="p">(</span><span class="n">best_mach</span><span class="p">,</span> <span class="n">colx</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">plot</span><span class="p">(</span><span class="n">colx</span><span class="o">.</span><span class="n">x1</span><span class="p">,</span> <span class="n">standardy</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&#34;standardy&#34;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="ss">:blue</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">plot!</span><span class="p">(</span><span class="n">colx</span><span class="o">.</span><span class="n">x1</span><span class="p">,</span> <span class="n">outputy</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&#34;output&#34;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="ss">:red</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2021-09-07_00-03-32_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<p>可以看到，挺完美 <!-- raw HTML omitted -->
+那我们再添加一个特征 x3=x^3 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">let</span> <span class="n">g</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="n">x</span><span class="o">^</span><span class="mi">3</span>
+</span></span><span class="line"><span class="cl">  <span class="n">colx</span><span class="o">.</span><span class="n">x3</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="p">(</span><span class="n">colx</span><span class="o">.</span><span class="n">x1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">self_tuning_machine</span> <span class="o">=</span> <span class="n">machine</span><span class="p">(</span><span class="n">self_tuning_model</span><span class="p">,</span> <span class="n">colx</span><span class="p">,</span> <span class="n">coly</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">fit!</span><span class="p">(</span><span class="n">self_tuning_machine</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">best_model</span> <span class="o">=</span> <span class="n">fitted_params</span><span class="p">(</span><span class="n">self_tuning_mach</span><span class="p">)</span><span class="o">.</span><span class="n">best_model</span>
+</span></span><span class="line"><span class="cl">  <span class="n">best_mach</span> <span class="o">=</span> <span class="n">machine</span><span class="p">(</span><span class="n">best_model</span><span class="p">,</span> <span class="n">colx</span><span class="p">,</span> <span class="n">coly</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">fit!</span><span class="p">(</span><span class="n">best_mach</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">outputy</span> <span class="o">=</span> <span class="n">predict</span><span class="p">(</span><span class="n">best_mach</span><span class="p">,</span> <span class="n">colx</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">plot</span><span class="p">(</span><span class="n">colx</span><span class="o">.</span><span class="n">x1</span><span class="p">,</span> <span class="n">standardy</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="ss">:blue</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&#34;standard&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">plot!</span><span class="p">(</span><span class="n">colx</span><span class="o">.</span><span class="n">x1</span><span class="p">,</span> <span class="n">outputY</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="ss">:red</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&#34;ouputy&#34;</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2021-09-07_00-04-17_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<h2 id="最后说明">最后说明</h2>
+<p>这次测试没有使用训练集和测试集，相当简陋，只是作为实验</p>
+</div></div></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.101.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

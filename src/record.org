@@ -1,0 +1,91 @@
+#+title: Boost 测试记录
+* 链接函数库
+链接函数库需要为 gcc 添加一定的选项，其中有
+1. -I 添加头文件的地址
+2. -L 添加链接库的地址
+3. -l 指定要链接的库
+
+** 通用标志 CFLAGS
+使用上述选项，将 CFLAGS 设置为
+#+begin_src makefile
+  CFLAGS=-I . -L .
+#+end_src
+表示
+- 编译器查找标准库的头文件地址时，先在 -I 的选项 *.* 中查找头文件
+- 编译器链接程序时，先在 -L 的选项 *.* 中查找库文件
+
+千万别忘了指定要链接的函数库 =-l max=
+
+** 链接动态函数库
+*** 创建动态函数库
+  #+begin_src makefile
+    libmax.so: max.h max.c
+            gcc max.c -fPIC -shared -o libmax.so ${CFLAGS}
+  #+end_src
+  其中
+  - *-fPIC* 代表生成与位置无关的代码， *Position Indepence Code*
+  - *-shared* 表示生成动态函数库
+*** 链接程序
+  #+begin_src makefile
+    a.out: test.c libmax.so
+            gcc test.c -L . -l max ${CFLAGS}
+  #+end_src
+*** 运行测试
+  #+begin_src makefile
+    run: a.out
+            ./a.out
+  #+end_src
+
+  产生错误
+  #+begin_quote
+  error while loading shared libraries: libmyhello.so: cannot open shared object file: No such file or directory
+  #+end+quote
+*** 改进
+  虽然在编译时指定了库的路径，但没有在运行时指定库的路径
+  有两种方法可以解决上述错误
+  1. 添加动态库的加载路径
+     #+begin_src makefile
+       run: a.out
+               export LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH \
+               && ./a.out
+
+     #+end_src
+
+  2. 使用 -Wl, rpath 选项
+     #+begin_src makefile
+       a.out: test.c libmax.so
+               gcc test.c ${CFLAGS} -Wl,-rpath='.' -l max
+       run: a.out
+               ./a.out
+     #+end_src
+** 链接静态函数库
+*** 创建静态函数库
+创建静态函数库需要用到 ar 程序，函数库的后缀名 .a 代表 *archive* ，打包的意思?
+
+*** 运行测试
+#+begin_src makefile
+  a.out: test.c static-max
+          gcc test.c -L . -l max ${CFLAGS}
+  static-run: a.out
+          ./a.out
+#+end_src
+*** 注意
+链接时，编译器优先匹配 *libmax.so* 文件，再是 *libmax.a* ，先要删除 *libmax.so* 才能让测试正确通过
+
+
+* 如何解决依赖地狱
+当我因为软件版本的冲突原因，而不能安装一些软件时，我陷入了依赖地狱
+这是因为我们使用的是全局环境下的库，我们可以参考 Python, Vue 的解决方法，单独创建一个环境提供依赖
+在 Makefile 中，寻找依赖的根据是环境变量 *PATH* ，这个时候我们在 Makefile 文件中指定 *PATH* 变量，
+再次 build ，依赖问题是否能被解决呢
+
+* FIXME 依赖管理
+** 指定链接路径
+try it
+- download the source
+- build it but don't install
+- speciafiy the path to libwine:i386
+- build the wine
+
+** 链接静态函数库
+** autogen 的使用

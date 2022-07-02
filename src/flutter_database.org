@@ -1,0 +1,388 @@
+#+OPTIONS: author:nil ^:{}
+#+HUGO_BASE_DIR: ../../ChiniBlogs
+#+HUGO_SECTION: posts/2022/07
+#+HUGO_CUSTOM_FRONT_MATTER: :toc true
+#+HUGO_AUTO_SET_LASTMOD: t
+#+HUGO_DRAFT: false
+#+DATE: [2022-07-02 Sat 01:44]
+#+HUGO_TAGS: Flutter数据库
+#+HUGO_CATEGORIES: Flutter
+
+
+
+
+#+title: 在 Flutter 中使用数据库
+
+* 在 Flutter 中使用数据库
+** 介绍
+以 sqlite 为例，flutter 在使用数据库时需要引入 sqflite 依赖
+#+begin_src yaml
+  dependencies:
+    flutter:
+      sdk: flutter
+
+    sqflite:
+#+end_src
+导入 =package:sqflite/sqflite.dart= 与 =package:sqflite/sql.dart= 后，可以在 openDatabase 中的 onCreate 参数中设置初始化
+#+begin_src dart
+  openDatabase(
+    'file:///home/steiner/workspace/playground/todolist/todolist.db',
+    onCreate: (database, version) async {
+      await database.execute(
+        'create table if not exists TaskList('
+        'id integer primary key autoincrement,'
+        'name text not null'
+        ');'
+      );
+    },
+
+    version: 1
+  );
+  
+
+#+end_src
+
+其余数据库操作参考 [[https://flutter.cn/docs/cookbook/persistence/sqlite][中文文档]]
+
+** 组件中使用数据库
+由于在 =Dart= 中数据库的操作是异步的，返回值是 =Future= 类型，对 =Future= 使用 =await= 需要在异步函数中进行，
+各个组件的 =build= 方法又是同步的，无法使用 =Future=
+不过 =flutter= 提供了 =FutureBuilder= 组件，为其提供 =futurue= 选项来构造组件
+#+begin_src dart
+  FutureBuilder({
+    this.future,
+    this.initialData,
+    required this.builder,
+  })
+#+end_src
+这里我们只需要用 =future= 与 =builder= 就好了
+其中
+- =future= : =FutureBuilder= 依赖的 =Future= ，通常是一个异步耗时任务。
+- =initialData= : 初始数据，用户设置默认数据。
+- =builder= : =Widget= 构建器; 该构建器会在 =Future= 执行的不同阶段被多次调用，构建器签名如下:
+  =Function (BuildContext context, AsyncSnapshot snapshot)=
+
+组件由 =builder= 返回，所有数据的获取通过 =snapshot.data= ，由于是异步操作，可能会有错误结果， _需要多次调用 future_
+此时可以通过 =snapshot= 的一些属性来判断状态
+- =snapshot.hasError=
+- =snapshot.hasData=
+要查看错误信息，调用 =snapshot.error=
+
+
+来看一个例子
+- 定义一个异步函数，返回数据库对象的 Future 类型
+  #+begin_src dart
+  Future<Database> loadDataBase() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    return openDatabase(
+      'file:///home/steiner/workspace/playground/todolist/todolist.db',
+      onCreate: (database, version) async {
+        await database.execute(
+          'create table if not exists TaskList('
+              'id integer primary key autoincrement,'
+              'name text not null'
+              ');'
+        );
+
+        List<TaskList> listOfTaskList = [
+          TaskList(name: 'Hello', id: 0),
+          TaskList(name: 'World', id: 0),
+          TaskList(name: 'Fuck', id: 0),
+          TaskList(name: 'You', id: 0),
+        ];
+
+        listOfTaskList.forEach((tasklist) async {
+          await database.rawInsert(
+            'insert into ${TaskList.TABLE}'
+                '(name)'
+                'values(?);',
+            [tasklist.name]
+          );
+        });
+
+        await database.execute(
+          'create table ${Task.TABLE} ('
+              'id integer primary key autoincrement,'
+              'name text,'
+              'listid integer,'
+              'isdone boolean,'
+              'foreign key(listid) references ${TaskList.TABLE} (id)'
+              ');'
+        );
+
+        List<Task> listOfTask = [
+          Task(id: 0, name: "task1", isdone: false, listid: 1),
+          Task(id: 0, name: "task2", isdone: false, listid: 1),
+          Task(id: 0, name: "task3", isdone: false, listid: 1),
+          Task(id: 0, name: "task4", isdone: false, listid: 2),
+          Task(id: 0, name: "task5", isdone: false, listid: 2),
+        ];
+
+        listOfTask.forEach((task) async {
+          await database.rawInsert(
+            'insert into ${Task.TABLE}'
+                '(name, isdone, listid)'
+                'values(?, ?, ?);',
+            [task.name, task.isdone, task.listid]
+          );
+        });
+      },
+
+      version: 1
+    );
+  }
+#+end_src
+
+- 在 =HomePage= 组件中定义异步函数 =loadTaskList= ，返回 =List<TaskList>= 类型
+- 使用 =FutureBuilder= ，传入 =future=
+- 在 =builder= 中返回组件
+#+begin_src dart
+  class HomePage extends StatelessWidget {
+
+    Future<List<TaskList>> loadTaskList() async {
+      final database = await loadDataBase();
+      final maps =  await database.query(TaskList.TABLE);
+
+      return List.generate(maps.length, (index) {
+          Map<String, dynamic> record = maps[index];
+          return TaskList(name: record['name'], id: record['id']);
+      });
+    }
+
+    Widget build(BuildContext context) {
+      // TODO: implement build
+      return Scaffold(
+        appBar: AppBar(title: Text('HomePage')),
+        body: FutureBuilder(
+          future: loadTaskList(),
+          builder: (BuildContext context, AsyncSnapshot<List<TaskList>> snapshot) {
+            if(snapshot.hasError) {
+              return Text("fuck, error: ${snapshot.error}");
+            } else if(snapshot.hasData) {
+              List<TaskList> listOfTaskList = snapshot.data!;
+              return Column(
+                children: listOfTaskList.map((tasklist) => buildTaskList(context, tasklist)).toList(),
+              );
+            } else {
+              return Text("there is no data now");
+            }
+          },
+        ),
+      );
+    }
+
+    Widget buildTaskList(BuildContext context, TaskList tasklist) {
+      return OutlineButton(
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(
+              builder: (context) => TaskPage(tasklist: tasklist)
+          ));
+        },
+
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(tasklist.name),
+            Text(tasklist.id.toString()),
+          ],
+        ),
+      );
+    }
+  }
+
+
+#+end_src  
+** 使用 ORM 框架
+在一个测试的目录下，有以下文件
+- =database.dart=
+- =database.g.dart=
+- =main.dart=
+- =task.dart=
+- =task_dao.dart=
+*** 准备工作
+在 =pubspec.yaml= 中需要导入几个依赖
+- =floor=
+- =builder_runner=
+- =floor_generator=
+  
+其中最重要的是 =floor_generator= ，没有他后面的代码生成不会成功
+*** 实体类的定义 =task.dart=
+需要为实体类重载两个方法
+- =operator ===
+- =get hashCode=
+另外 =toString()= 可选
+
+#+begin_src dart
+  import 'package:floor/floor.dart';
+
+  @entity
+  class Task {
+    @PrimaryKey(autoGenerate: true)
+    int? id;
+    final String message;
+
+    Task({
+        this.id,
+        required this.message,
+    })
+
+    @override
+    bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is Task &&
+    runtimeType == other.runtimeType &&
+    id == other.id &&
+    message == other.message;
+
+    @override
+    int get hashCode => id.hashCode ^ message.hashCode;
+
+    @override
+    String toString() {
+      // TODO: implement toString
+      return 'Task{id: $id, message: $message}';
+    }
+
+  }
+#+end_src
+  
+在代码中有
+- =@entity= 声明这个类是实体类
+- =@PrimaryKey= 声明主键
+- =bool operator === 重载
+- =int get hashCode= 重载
+
+其中 =@PrimaryKey(autoGenerate = true)= 表示这个主键是自增序列，
+在构造函数中，主键 =id= 被定义为可以为空，这样不用传入 =id= , =floor= 会自动帮我们补上，按照自增顺序定义 =id=
+
+*** DAO 的定义 =task_dao.dart=
+=task_dao= 可以看作对表 =Task= 的操作接口
+#+begin_src dart
+  @dao
+  abstract class TaskDao {
+    @Query('select * from task where id = :id')
+    Future<Task?> findTaskById(int id) ;
+
+    @Query('select * from task')
+    Future<List<Task>> findAllTask();
+
+    @Query('select * from task')
+    Stream<List<Task>> findAllTasksAsStream();
+
+    @insert
+    Future<void> insertTask(Task task);
+
+    @insert
+    Future<void> insertTasks(List<Task> tasks);
+
+    @update
+    Future<void> updateTask(Task task);
+
+    @update
+    Future<void> updateTasks(List<Task> tasks);
+
+    @delete
+    Future<void> deleteTask(Task task);
+
+    @delete
+    Future<void> deleteTasks(List<Task> tasks);
+  }
+#+end_src
+在代码中，有
+- =abstract class= 抽象类
+- =@dao= 声明类是一个 Data Access Object
+- =@Query= 通过此函数来查询，传入查询语句表示函数的行为
+- =@insert= 通过此函数来插入数据
+- =@update= 通过此函数来更新数据
+- =@delete= 通过此函数来删除数据
+
+其中，插入相同主键的数据，可能会产生冲突，从而程序崩溃
+默认的冲突解决方法是 =abort= ，也可以自己定义方法为 =relpace=
+#+begin_src dart
+  @Insert(onConflict: OnConflictStrategy.replace)
+  Future<void> insert_one(Task task);
+#+end_src
+*** 数据库定义 =database.dart=
+在文件中，
+#+begin_src dart
+  part 'database.g.dart';
+
+  @Database(version: 1, entities: [Task])
+  abstract class FlutterDataBase extends FloorDatabase {
+    TaskDao get taskDao;
+  }
+#+end_src
+
+- =part= 表示 =database.g.dart= 是该文件/模块的一部分？
+- =FlutterDataBase= 是抽象类，继承自 =FloorDatabase=
+- =FlutterDataBase= 中定义了一个 =getter=
+- =@Database= 这个类看作一个数据库
+- 其中 =entities= 表示访问的数据表，通过重载 =get= ，返回 =DAO= 对象来访问数据表
+*** 代码生成
+在 =database.dart= 所在目录下，输入
+=flutter pub run build_runner build=
+会生成 =database.g.dart= 文件
+接下来的数据库操作就会通过这个文件
+
+*注意*
+在 =database.dart= 中需要这样导入 =sqflite=
+#+begin_src dart
+  import 'package:sqflite/sqflite.dart' as sqflite;
+#+end_src
+
+因为 =build_runner= 生成的文件中有 =sqflite.Database= 等类声明
+*** 创建数据库 =main.dart=
+在异步的主函数中，首先确认初始化
+=WidgetsFlutterBinding.ensureInitialized()=
+再通过 =database.g.dart= 中的 =$FloorFlutterDatabase= 来创建数据库，再获取 =DAO= 对象
+#+begin_src dart
+  final database = await $FloorFlutterDataBase
+  .databaseBuilder('file://./flutter_database.db')
+  .build();
+
+  final dao = database.taskDao;
+#+end_src
+
+*注意*
+可以在 =databaseBuilder= 中传入数据库地址
+
+
+
+
+** 在数据库更新时刷新组件
+使用 =FutureBuilder= 构造组件只能用一次 =future= ，这样的话组件不会感知到数据库的更新
+为了解决这个问题，我们将获取数据库数据的结果定义为 =Stream= ，再用 =StreamBuilder= 来构造
+
+首先，是重新定义一个数据库的查询方法，在 =task_dao.dart= 中
+#+begin_src dart
+  @Query('select * from task')
+  Stream<List<Task>> findAllTasksAsStream();
+#+end_src
+
+之后，重新生成代码
+=flutter pub run build_runner build=
+
+再是 =StreamBuilder= 传入 =stream= 与 =builder=
+#+begin_src dart
+  StreamBuilder<List<Task>>(
+    stream: dao.findAllTasksAsStream(),
+    builder: (_, snapshot) {
+      if (!snapshot.hasData) return Container();
+
+      final tasks = snapshot.requireData;
+
+      return ListView.builder(
+        itemCount: tasks.length,
+        itemBuilder: (_, index) {
+          return TaskListCell(
+            task: tasks[index],
+            dao: dao,
+          );
+        },
+      );
+    },
+  ),
+#+end_src
+
+*疑问*
+=snapshot.requireData= 能否使用 =snapshot.data!= 来替代 ?

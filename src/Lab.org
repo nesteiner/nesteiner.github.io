@@ -1,0 +1,1069 @@
+#+title: 学校作业记录
+* 综合课程设计题目
+** 10.1.1 线性表
+这次实践选了三个简单的A级题目，要是没把以前的仓库删了，C级题目就能写了
+*** A1 Josephus 环问题 
+**** 题目描述
+判决 =length= 个犯人的死刑，让犯人站成一个圈，从 =start= 开始暑期，每数到 =distance= 个犯人，就拉出来处决
+然后再从下一个开始数 =distance= 个，数到的人再处决，知道剩下最后一个犯人予以赦免
+**** 分析
+1. =josephus= 环的问题我用循环链表来解决，由于标准库里没有这个数据结构，这里我手动调整下迭代器的位置就够了
+2. 这个程序有终止条件，当 *犯人数量* 为 1 时停止
+**** 函数说明
+=int josephus(int length, int start, int distance)=
+- 传入犯人的数量 =length= ，从第 =start= 开始，间隔为 =distance=
+- 数到第 =distance= 个犯人时,将当前迭代器删除
+- 函数返回存活的犯人编号
+**** 完整代码
+#+begin_src c++
+  int josephus(int length, int start, int distance) {
+    list<int> prisoners;
+
+    for (int i = 1; i <= length; i += 1) {
+      prisoners.push_back(i);
+    }
+
+    list<int>::iterator it = next(prisoners.begin(), start - 1);
+    while (true) {
+      if (prisoners.size() == 1) {
+        break;
+      }
+
+      // list<int>::iterator target = next(it, distance - 1);
+      list<int>::iterator target = it;
+      for (int i = 2; i <= distance; i += 1) {
+        target = next(target);
+        if (target == prisoners.end()) {
+          target = prisoners.begin();
+        }
+      }
+
+      it = next(target);
+      prisoners.erase(target);
+
+      if (it == prisoners.end()) {
+        it = prisoners.begin();
+      }
+    }
+
+    return prisoners.front());
+  }
+
+#+end_src
+
+**** 测试案例
+- 测试代码
+#+begin_src c++
+  int main() {
+    cout << "josephus(3, 2, 3)" << '\t' << josephus(3, 2, 3) << endl;
+    cout << "josephus(4, 2, 3)" << '\t' << josephus(4, 2, 3) << endl;
+    cout << "josephus(5, 2, 3)" << '\t' << josephus(5, 2, 3) << endl;
+    cout << "josephus(6, 2, 3)" << '\t' << josephus(6, 2, 3) << endl;
+    cout << "josephus(7, 2, 3)" << '\t' << josephus(7, 2, 3) << endl;
+    cout << "josephus(8, 2, 3)" << '\t' << josephus(8, 2, 3) << endl;
+    cout << "josephus(9, 2, 3)" << '\t' << josephus(9, 2, 3) << endl;
+    cout << "josephus(10, 2, 3)" << '\t' << josephus(10, 2, 3) << endl;
+
+    return 0;
+  }
+
+#+end_src
+
+- 运行结果
+#+begin_src c++
+  josephus(3, 2, 3)	3
+  josephus(4, 2, 3)	2
+  josephus(5, 2, 3)	5
+  josephus(6, 2, 3)	2
+  josephus(7, 2, 3)	5
+  josephus(8, 2, 3)	8
+  josephus(9, 2, 3)	2
+  josephus(10, 2, 3)	5
+
+#+end_src
+**** 时间复杂度
+=O(n)=
+
+*** A2 合并线性表
+**** 题目描述
+求两个集合的 =union= 操作，分别用顺序存储结构和链式存储结构实现
+**** 分析
+1. 有两个链表 =A= , =B=
+2. 创建链表 =C= 为 =A= 的备份，再从 =B= 中提取不属于 =A= 的元素， 然后插入到 =C=
+**** 函数说明
+1. =list<int> union_list(list<int> & left, list<int> & right)=
+   - 传入链表 =left= 与 =right=
+   - 返回一个链表
+
+2. =vector<int> union_vector(vector<int> & left, vector<int> & right)=
+   - 传入数组 =left= 与 =right=
+   - 返回一个数组
+**** 完整代码
+- 首先是合并链表
+#+begin_src c++
+  list<int> union_list(list<int> & left, list<int> & right) {
+    list<int> result = left;
+    for (int value : right) {
+      auto it = find(result.begin(), result.end(), value);
+      if (it == result.end()) {
+        result.push_back(value);
+      }
+    }
+
+    return result;
+  }
+
+#+end_src
+
+- 接下来合并数组是类似的
+#+begin_src c++
+  vector<int> union_vector(vector<int> & left, vector<int> & right) {
+    vector<int> result = left;
+    for (int value : right) {
+      auto it = find(result.begin(), result.end(), value);
+      if (it == result.end()) {
+        result.push_back(value);
+      }
+    }
+
+    return result;
+  }
+#+end_src
+**** 测试案例
+- 测试代码
+#+begin_src c++
+  int main() {
+    vector<int> nums = {16, 2, 27, 29};
+    vector<int> left = nums;
+    vector<int> right = nums;
+
+    for(int value: union_vector(left, right)) {
+      cout << value << endl;
+    }
+    return 0;
+  }
+
+#+end_src
+
+- 运行结果
+#+begin_src sh
+  16
+  2
+  27
+  29
+#+end_src
+**** 时间复杂度
+设链表 =left= 的长度为 =M=
+设链表 =right= 的长度为 =N=
+时间复杂度为 =O(M*N)=
+*** A3 合并两个有序链表
+**** 问题描述
+=left= 和 =right= 是两个有序表，将他们合并成一个有序表
+**** 分析
+1. 这个程序要参考归并排序，还是很简单的
+2. 这里链表和数组的访问操作有些不同，需要注意
+3. 链表的访问需要使用迭代器，需要对迭代器调用 =next= 跳转到下一个位置
+4. 数组的访问可以通过索引，能够实现随机访问
+5. *这里我一个手滑把归并写出来了，应该没事*
+**** 函数说明
+1. 首先是顶层函数 =merge_sort=
+   =void merge_sort(list<int> &nums, compare comp = less)=
+   #+begin_src c++
+     void merge_sort(list<int> &nums, compare comp = less) {
+       vector<int> temp(nums.size());
+       int left = firstindex(nums);
+       int right = lastindex(nums);
+
+       _merge_sort(nums, left, right, temp, comp);
+     }
+
+   #+end_src
+2. 顶级函数需要 =_merge_sort= 来帮助完成排序 
+   =void _merge_sort(list<int> &nums, int left, int right, vector<int> &temp, compare comp)=
+   #+begin_src c++
+     void _merge_sort(list<int> &nums, int left, int right, vector<int> &temp,
+                      compare comp) {
+       if (left < right) {
+         int middle = (left + right) / 2;
+         _merge_sort(nums, left, middle, temp, comp);
+         _merge_sort(nums, middle + 1, right, temp, comp);
+         _merge_sorted(nums , left, middle, right, temp, comp);
+       }
+     }
+
+   #+end_src
+3. =_merge_sort= 需要 =_merge_sorted= 来帮助排序，这个才是最主要的
+   =void _merge_sorted(list<int> &nums, int left, int middle, int right, vector<int> &temp, compare comp)=
+   
+**** 完整代码
+#+begin_src c++
+  void _merge_sorted(list<int> &nums, int left, int middle, int right,
+                     vector<int> &temp, compare comp) {
+    int _left = left;
+    int _right = middle + 1;
+    int index = 0;
+    auto it = nums.begin();
+
+    while (_left <= middle && _right <= right) {
+      auto left_value = *(next(it, _left));
+      auto right_value = *(next(it, _right));
+
+      if (comp(left_value, right_value)) {
+        temp[index] = left_value;
+        index += 1;
+        _left += 1;
+      } else {
+        temp[index] = right_value;
+        index += 1;
+        _right += 1;
+      }
+    }
+
+    while (_left <= middle) {
+      auto left_value = *(next(it, _left));
+      temp[index] = left_value;
+      index += 1;
+      _left += 1;
+    }
+
+    while (_right <= right) {
+      auto right_value = *(next(it, _right));
+      temp[index] = right_value;
+      index += 1;
+      _right += 1;
+    }
+
+    index = 0;
+    while (left <= right) {
+      auto position = next(it, left);
+      ,*(position) = temp[index];
+
+      left += 1;
+      index += 1;
+    }
+  }
+
+#+end_src
+还是别看代码了，写的有点乱，挑几个重要的说
+1. 与数组的访问 =nums[index]= 不同，链表的访问需要先获取头节点的迭代器 =iter= ，然后调用 =next(iter, index)= 跳转到目标位置，最后解引用获取值
+2. 与数组的修改 =nums[index] = 1= 不同，链表的修改可以通过 =*iter = value= 来实现，类似于修改指针指向的值
+**** 测试案例
+- 测试代码
+#+begin_src c++
+  int main() {
+    list<int> nums = {3, 38, 44, 47, 15, 36, 26, 27, 2, 46, 4, 19, 50, 48, 2};
+    merge_sort(nums);
+
+    for(int num: nums) {
+      cout << num << '\t';
+    }
+
+    cout << endl;
+    return 0;
+  }
+
+#+end_src
+
+- 运行结果
+#+begin_src sh
+  2	2	3	4	15	19	26	27	36	38	44	46	47	48	50	
+#+end_src
+**** 时间复杂度
+- 当使用长度为 =n= 的数组时，时间复杂度为 =O(nlogn)=
+- 当使用长度为 =n= 的链表时，时间复杂度为 =O(n^2logn)=
+
+** 10.1.2 栈与队列
+*** A1 数制转换问题
+**** 题目描述
+对于任意一个非负的十进制整数，打印出与其等值的八进制数
+**** 题目分析
+这里我懒得从键盘输入，直接输入数字，然后返回表示八进制的字符串
+
+***** 定义函数
+=transformBase(number::Int)=
+- 输入一个整数
+- 输出一个字符串，表示其八进制数
+***** 测试案例
+- =transformBase(1348) == "2504"=
+- =transformBase(1234) == "2322"=
+**** 完整代码
+#+begin_src julia
+  function transformBase(number::Int)
+    base = 8
+    stack = createStack(Int)
+
+    N = number
+    div_N = Int(floor(N / base))
+    mod_N = N % base
+    push!(stack, mod_N)
+
+    while div_N != 0
+      N = div_N
+      div_N = Int(floor(N / base))
+      mod_N = N % base
+      push!(stack, mod_N)
+    end
+
+    return reduce(string, stack; init="")
+  end
+#+end_src
+
+**** 测试案例
+#+begin_src julia
+  @test transformBase(1348) == "2504"
+  @test transformBase(1234) == "2322"
+#+end_src
+
+*** A2 回文判断
+**** 题目描述
+判断一个字符串是否为回文串，即是否左右对称
+**** 题目分析
+这个好像反转一下，然后与原字符串中的字符逐个对比就好了
+***** 函数定义
+=isPalindromic(str::String)=
+- 输入一个字符串
+- 输出一个 =bool= 类型，判断字符串是否为回文
+***** 测试案例
+- =isPalindromic("helleh") == true=
+**** 完整代码
+这东西，一个函数式代码就搞定了
+#+begin_src julia
+  function isPalindromic(str::String)
+    return map(==, str, reverse(str)) |>
+      nums -> all(isequal(1), nums)
+  end
+#+end_src
+
+我用 =Clojure= 再写一遍，更清晰一点
+#+begin_src clojure
+  (defn palindromic? [string]
+    (every (fn [x] 
+             (= x 1))
+           (map = string (reverse string))))
+#+end_src
+**** 测试案例
+#+begin_src julia
+  @test isPalindromic("helleh") == true
+#+end_src
+*** A4 破解藏头诗
+**** 题目描述
+输入一首藏头诗，一共四句，每句一行
+输出每句的第一个汉字连接在一起的字符串
+**** 题目分析
+这里需要队列吗，可能我的解决方式不一样吧，我还是不喜欢从终端输入字符串
+同样也可以用函数式来写
+***** 函数定义
+=headPoem(sentences::Vararg{String})=
+其中 =Vararg= 指的是可变参数，
+***** 测试案例
+#+begin_src julia
+  headPoem("我",
+           "最近",
+           "爱上了",
+           "你的闺密") == "我最爱你"
+
+#+end_src
+**** 完整代码
+#+begin_src julia
+  headPoem(sentences::Vararg{String}) =  map(first, sentences) |> chs -> reduce(string, chs; init="")
+#+end_src
+
+这里我用函数式的 =Clojure= 再写一遍吧
+#+begin_src clojure
+  (defn head-poem [& sentences]
+    (reduce str "" 
+            (map first sentences)))
+#+end_src
+**** 测试案例
+#+begin_src julia
+  @test headPoem("我",
+                 "最近",
+                 "爱上了",
+                 "你的闺密") == "我最爱你"
+#+end_src
+*** A5 括号匹配的检验
+**** 题目描述
+输入圆括号和方括号的任意序列，输出 *匹配* 或 *此串括号匹配不合法*
+**** 题目分析
+这个其实挺简单
+将左括号，左中括号一类的符号归为 *left* 类，将对应的符号归为 *right* 类
+遍历每一个符号
+- 每碰到 =left= 类符号，就把符号放到一个栈里
+- 每碰到 =right= 类符号，取栈顶 =top=
+  - 若 =right= 与 =top= 字符相对应，如 =(= 与 =)= ， =[= 与 =]= ，则出栈，进行下一次遍历
+  - 若 =right= 与 =top= 字符不匹配，肯定不匹配，推出遍历
+- 遍历结束后, *return* 栈是否为空栈
+- 注意，遍历前先把第一个符号入栈，否则无法处理 ="]"= 这种开头是 *right* 类符号的情况    
+***** 函数定义
+=matchPatterns(code::String)=
+- 输入字符串序列，只有圆括号和方括号
+- 输出括号是否匹配
+***** 测试案例
+- =matchPatterns("([])()") == true=
+- =matchPatterns("]") == false=
+- =matchPatterns("]()") == false=
+**** 完整代码
+#+begin_src julia
+  function matchPatterns(code::String)
+    stack = createStack(Char)
+    isleft(ch::Char) = ch == '[' || ch == '('
+    isright(ch::Char) = ch == ']' || ch == ')'
+    ismatch(left::Char, right::Char) = begin
+      left == '[' && right == ']' || 
+        left == '(' && right == ')'
+    end
+
+    push!(stack, first(code))
+
+    for ch in code[2:end]
+      if isleft(ch)
+        push!(stack, ch)
+      else
+        if ismatch(first(stack), ch)
+          pop!(stack)
+        else
+          break
+        end
+      end
+    end
+
+    return isempty(stack)
+  end
+
+#+end_src
+**** 测试案例
+#+begin_src julia
+  @test matchPatterns("([])()") == true
+  @test matchPatterns("]") == false
+  @test matchPatterns("]()") == false
+#+end_src
+
+
+** 实验报告3
+*** 1. 查找，二叉树排序测试
+**** 1. 问题描述
+假设每个形式由一个编码与其对应，下表是10个姓氏及其对应的编码
+| 编码 |   50 | 13 |    63 |   8 |   36 |   90 |     5 |   10 | 18 |   70 |
+|------+------+----+-------+-----+------+------+-------+------+----+------|
+| 姓氏 | Wang | Li | Zhang | Liu | Chen | Yang | Huang | Zhao | Wu | Zhou |
+试根据商标的数据设计一个基于二叉排序树的测试程序
+**** 2. 基本要求
+1. 以表中的编码为关键字建立一棵二叉排序树
+2. 以中根遍历形式显示该二叉排序树
+3. 分别查找关键值为63和39对应的姓氏
+4. 删除关键字值为13的节点
+
+**** 解题思路
+1. 假设已经写好了一个二叉搜索树，接下来要为他支持泛型做准备，
+   - 首先是节点类型是泛型
+   - 还要为各节点之间的比较设置一个泛型函数 =compare=
+   - 排序以 *编码* 作为比较对象
+     
+2. 删除二叉树节点有点麻烦，查阅资料后定义函数 =popat!(tree, node)=
+   不过要先找到相对应的二叉树节点 =node= ，其不能为空
+
+3. 中序遍历需要单独设计一个迭代器类型，每次迭代都返回节点而不是节点的值(我乐意)
+   - 返回能够进行中序遍历的类型 =inorder(tree) -> InOrderIterator=
+   - 遍历该类型
+     #+begin_src julia
+       for treenode in inorder(tree)
+         # do some thing with treenode
+       end
+     #+end_src
+
+**** 解题开始
+0. 首先为这种 *编码和姓氏* 对应的数据定义一个类型 =Item= ，并设置函数访问其中数据，显示数据
+   #+begin_src julia
+     Item = Tuple{Int, String}
+     code(item::Item) = item[1]
+     name(item::Item) = item[2]
+     show(item::Item) = print(io, code(item), " ", name(item))
+   #+end_src
+
+1. [第一题] 接下来定义这个数据集合，将其插入到二叉搜索树中，这个二叉树的 =compare= 用来比较 =item= 之间编码的大小
+   #+begin_src julia
+     tree = createBSTree(Item, (left, right) -> code(left) - code(right))
+
+     @testset "create the tree" begin
+       for item in items
+         insert!(tree, item)
+       end
+
+       @info "the tree is " tree
+     end
+
+
+     # ┌ Info: the tree is 
+     # └   tree = (50, "Wang"), (13, "Li"), (63, "Zhang"), (8, "Liu"), (36, "Chen"), (90, "Yang"), (5, "Huang"), (10, "Zhao"), (18, "Wu"), (70, "Zhou"), 
+
+   #+end_src
+
+2. [第二题] 中序遍历该二叉排序树
+   #+begin_src julia
+     @testset "inorder walk the tree" begin
+       @show map(dataof, inorder(tree)) |> collect
+     end
+
+     # map(dataof, inorder(tree)) |> collect = [
+     #   (5, "Huang"),
+     #   (8, "Liu"),
+     #   (10, "Zhao"),
+     #   (13, "Li"),
+     #   (18, "Wu"),
+     #   (36, "Chen"),
+     #   (50, "Wang"),
+     #   (63, "Zhang"),
+     #   (70, "Zhou"),
+     #   (90, "Yang")
+     # ]
+
+   #+end_src
+
+3. [第三题] 查找关键字为 63 和 39 对应的姓氏
+   这里定义 =search(tree, target)= 函数，游标节点 =current= 通过其中的值与 =target= 比较来选择往左还是往右节点移动
+   #+begin_src julia
+     function search(tree::BinarySearchTree{T}, target::T) where T
+       current = tree.root
+       compare = tree.compare
+       while !isnil(current)
+         result = compare(dataof(current), target)
+         if result == 0
+           return current
+         elseif result < 0
+           current = right(current)
+         else
+           current = left(current)
+         end
+       end
+
+       return current                # now return nil
+     end
+   #+end_src
+
+   接下来用到 =search= 判断是否有对应的节点
+   #+begin_src julia
+     @testset "find the names of code 63 and 39" begin
+            iter_item63 = search(tree, (63, "nothing"))
+       iter_item39 = search(tree, (39, "nothing"))
+
+
+       if isnil(iter_item63)
+         @info "there is no item which code is 63"
+       else
+         @info "the name of code 63 is " name(dataof(iter_item63))
+       end
+
+       if isnil(iter_item39)
+         @info "there is no item which code is 39"
+       else
+         @info "the name of code 39 is " name(dataof(iter_item39))
+       end
+     end
+
+
+     # ┌ Info: the name of code 63 is 
+     # └   name(dataof(iter_item63)) = "Zhang"
+     # [ Info: there is no item which code is 39
+
+   #+end_src
+
+4. [第四题] 删除关键字值为13的节点
+   仿照 [[https://blog.csdn.net/zxnsirius/article/details/52131433][这篇文章]] ，写出删除节点的函数 =popat!(tree, iter)=
+   #+begin_src julia
+     function _find_node(node::BinaryNode{T}, data::T) where T
+       backfather = node
+       status = 0
+
+       while !isnil(node)
+         if dataof(node) == data 
+           return backfather, status
+         else
+           backfather = node
+
+           if dataof(node) > data
+             node = left(node)
+             status = -1
+           else
+             node = right(node)
+             status = 1
+           end
+         end
+       end
+
+       return BinaryNil(T)
+     end
+
+     function _popat!(tree::BinarySearchTree{T}, node::BinaryNode{T}) where T
+       targetnode = node # target for delete
+
+       backfather, status = _find_node(tree.root, node.data) 
+       if isnil(backfather)
+         return backfather
+       end
+
+       if status == -1
+         targetnode = left(backfather)
+       elseif status == 1
+         targetnode = right(backfather)
+       elseif status == 0
+         targetnode = backfather
+       end
+
+       # 第一中情况，没有左子树
+       if isnil(left(targetnode))
+         if backfather != targetnode
+           backfather.right = right(targetnode)
+         else
+           tree.root = right(tree.root)
+         end
+
+         targetnode = BinaryNil(T)
+         return tree.root
+       end
+
+       # 第二种情况，没有右子树
+       if isnil(right(targetnode))
+         if backfather != targetnode
+           backfather.left = left(targetnode)
+         else
+           tree.root = left(tree.root)
+         end
+
+         targetnode = BinaryNil(T)
+         return tree.root
+       end
+
+       # 第三种情况，有左子树和右子树
+       backfather = targetnode
+       nextnode = left(targetnode)
+       while !isnil(right(nextnode)) 
+         backfather = nextnode
+         nextnode = right(nextnode)
+       end
+
+       targetnode.data = dataof(nextnode)
+
+       if left(backfather) == nextnode
+         backfather.left = left(nextnode)
+       else
+         backfather.right = right(nextnode)
+       end
+
+       return tree.root
+     end
+
+     popat!(tree::BinarySearchTree, node::BinaryNode) = begin
+       tree.length -= 1
+       tree.root = _popat!(tree, node)
+     end
+
+   #+end_src
+
+   这样以后，题目就迎刃而解了
+   #+begin_src julia
+     @testset "delete node" begin
+       iter = findfirst(item::Item -> code(item) == 13, tree)
+       if !isnil(iter)
+         popat!(tree, iter)
+       end
+
+       @info "after delete node, the treee is " tree
+     end
+
+     # ┌ Info: after delete node, the treee is 
+     # └   tree = (50, "Wang"), (10, "Zhao"), (63, "Zhang"), (8, "Liu"), (36, "Chen"), (90, "Yang"), (5, "Huang"), (18, "Wu"), (70, "Zhou"), 
+
+   #+end_src
+*** 10.1.3 二叉树与树
+- 我已提前实现了二叉树的遍历方法
+- 题目过于简单，就不用分析了吧
+**** 1. 二叉树各节点数值的平均值
+***** 函数说明
+=average(tree::BinarySearchTree)=
+- 输入一个二叉树
+- 返回各节点数值的平均值
+***** 测试案例
+#+begin_src julia
+  @test average(tree) == reduce(+, collect(tree)) / length(tree)
+#+end_src
+***** 完整代码
+#+begin_src julia
+  function average(tree::BinarySearchTree)
+    len = length(tree)
+    sum = reduce(+, collect(tree))
+    return sum / len
+  end
+#+end_src
+**** 2. 交换每个节点的左右节点
+***** 函数说明
+#+begin_src julia
+  swapnode!(tree::BinarySearchTree)
+#+end_src
+
+- 输入一个二叉树
+- 将其中每个节点的左右节点交换
+- 没有返回值
+***** 测试案例
+#+begin_src julia
+  @testset "practise 2" begin
+    swapnode!(tree)
+    @info "after swap the tree is " tree
+  end
+#+end_src
+
+由于代码中向 =tree= 插入的数据都是随机的，测试结果不好展示
+其实我懒得展示
+***** 完整代码
+#+begin_src julia
+  function swapnode!(tree::BinarySearchTree)
+    swap(node::BinaryNode) = begin
+      temp = left(node)
+      node.left = node.right
+      node.right = temp
+    end
+
+    for treenode in bfsiterate(tree)
+      swap(treenode)
+    end
+  end
+#+end_src
+
+程序从 =bfsiterate= 返回的迭代器中取出节点 =treenode=
+**** 3. 验证 二叉树性质3
+***** 函数说明
+=verify(tree::BinarySearchTree)=
+- 输入一个二叉树
+- 输出 =true= 或者 =false= 
+***** 测试案例
+#+begin_src julia
+  @test verify(tree) == true
+#+end_src
+***** 完整代码
+#+begin_src julia
+  function verify(tree::BinarySearchTree)
+    queue = createQueue(AbstractBinaryNode)
+    push!(queue, tree.root)
+
+    n0 = n2 = 0
+
+    for treenode in bfsiterate(tree)
+      # here process the node
+      if isleaf(treenode)
+        n0 += 1
+        el seif !isnil(left(treenode)) && !isnil(right(treenode))
+        n2 += 1
+      end
+    end
+
+    return n0 == n2 + 1
+  end
+#+end_src
+**** 4. 中序遍历，后序遍历
+***** 函数说明
+****** 前提
+在 Julia 中，
+#+begin_src julia
+  for value in collection
+    # some operation
+  end
+#+end_src
+
+等同于
+#+begin_src julia
+  next = iterate(collection)
+  while next != nothing
+    (item, state) = next
+    # body
+    next = itearate(collection, state)
+  end
+#+end_src
+
+由于在设计上，我已经为二叉树的设置了遍历方法
+#+begin_src julia
+  for data in tree
+    print(data)
+  end
+#+end_src
+
+这里创建一个新的迭代器类型，并为其重载 =itearte= 方法
+与默认的 =iterate= 方法返回数值类型不同的是，这些迭代器的遍历方法返回 二叉树节点类型
+
+****** 迭代器类型
+#+begin_src julia
+  struct InOrderIterator <: AbstractBinaryTreeIterator
+    node::AbstractBinaryNode
+    length::Int
+  end
+
+  struct PostOrderIterator <: AbstractBinaryTreeIterator
+    node::AbstractBinaryNode
+    length::Int
+  end
+
+#+end_src
+
+****** 迭代方法
+1. 创建迭代器
+   #+begin_src julia
+     inorder(tree::AbstractBinaryTree) = InOrderIterator(tree.root, length(tree))
+     postorder(tree::AbstractBinaryTree) = PostOrderIterator(tree.root, length(tree))
+   #+end_src
+2. 使用 =for=
+   #+begin_src julia
+     for treenode in inorder(tree)
+       # do something with treenode
+     end
+
+     for treenode in postorder(tree)
+       # do something with treenode
+     end
+   #+end_src
+***** 测试案例
+#+begin_src julia
+  tree = createBSTree(Int)
+  arrays = [1, 4, 1, 3, 7, 7, 7, 3, 3, 2]
+
+  for i in arrays
+    insert!(tree, i)
+  end
+
+  for treenode in inorder(tree)
+    @show dataof(treenode)
+  end
+
+#+end_src
+***** 完整代码
+首先是中序遍历
+#+begin_src julia
+  function iterate(iterator::InOrderIterator)
+    node = iterator.node
+    if isnil(node)
+      return nothing
+    else
+      stack = createStack(AbstractBinaryNode)
+      current = node
+      if hasright(current)
+        push!(stack, right(current))
+      end
+
+      while hasleft(current)
+        push!(stack, left(current))
+        current = left(current)
+      end
+
+      return current, stack
+    end
+  end
+
+  function iterate(::InOrderIterator, stack::BaseList{AbstractBinaryNode})
+    if !isempty(stack)
+      current = first(stack)
+      pop!(stack)
+
+      if hasright(current)
+        push!(stack, right(current))
+      end
+
+      inner_cur = current
+      while hasleft(inner_cur)
+        push!(stack, left(inner_cur))
+        inner_cur = left(inner_cur)
+      end
+
+      return current, stack
+    else
+      return nothing
+    end
+  end
+
+#+end_src
+
+然后是后序遍历
+#+begin_src julia
+  function iterate(iterator::PostOrderIterator)
+    node = iterator.node
+    if isnil(node)
+      return nothing
+    else
+      stack = createStack(AbstractBinaryNode)
+      push!(stack, node)
+
+      current = first(stack)
+      pop!(stack)
+
+      if !isnil(left(current))
+        push!(stack, left(current))
+      end
+
+      if !isnil(right(current))
+        push!(stack, right(current))
+      end
+
+      return current, stack
+    end
+  end
+
+  function iterate(::PostOrderIterator, stack::BaseList{AbstractBinaryNode})
+    if !isempty(stack) 
+      current = first(stack)
+      pop!(stack)
+
+      if !isnil(left(current))
+        push!(stack, left(current))
+      end
+
+      if !isnil(right(current))
+        push!(stack, right(current))
+      end
+
+      return current, stack
+    else
+      return nothing
+    end
+  end
+#+end_src
+
+**** 5. 判断两个二叉树相等
+***** 函数说明
+#+begin_src julia
+  treeequal(leftTree::BinarySearchTree, rightTree::BinarySearchTree)
+#+end_src
+- 输入左树和右树
+- 返回他们是否相等
+***** 测试案例
+#+begin_src julia
+  @testset "practise 4" begin
+    lefttree = createBSTree(Int)
+    righttree = createBSTree(Int)
+
+    for i in 1:10
+      insert!(lefttree, i)
+      insert!(righttree, i)
+    end
+
+    @test treeequal(lefttree, righttree) == true
+
+    insert!(righttree, 1)
+    @test treeequal(lefttree, righttree) == false
+
+  end
+
+#+end_src
+***** 完整代码
+#+begin_src julia
+  function treeequal(leftTree::BinarySearchTree, rightTree::BinarySearchTree)
+    for (leftnode, rightnode) in Iterators.zip(leftTree, rightTree)
+      if leftnode != rightnode
+        return false
+      end
+    end
+  
+    return true
+  end
+#+end_src
+**** 6. 后序遍历中第一个返回的节点
+#+begin_src julia
+  @testset "后序遍历中第一个返回的节点" begin
+    newtree = createBSTree(Int)
+    for i in [2, 1, 4, 3, 5]
+      insert!(newtree, i)
+    end
+
+    @test dataof(first(postorder(newtree))) == 2
+  end
+#+end_src
+**** 7. 非递归实现 先序遍历，中序遍历，后序遍历
+同题目4，添加前序遍历的迭代器类型
+#+begin_src julia
+  struct PreOrderIterator <: AbstractBinaryTreeIterator
+    node::AbstractBinaryNode
+    length::Int
+  end
+#+end_src
+
+为其定义创建方法
+#+begin_src julia
+  preorder(tree::AbstractBinaryTree) = PreOrderIterator(tree.root, length(tree))
+#+end_src
+
+再重载其 =iterate= 方法
+#+begin_src julia
+  function iterate(iterator::PreOrderIterator)
+    node = iterator.node
+    if isnil(node)
+      return nothing
+    else
+      stack = createStack(AbstractBinaryNode)
+      push!(stack, node)
+    
+      current = first(stack)
+      pop!(stack)
+
+      if !isnil(right(current))
+        push!(stack, right(current))
+      end
+    
+      if !isnil(left(current))
+        push!(stack, left(current))
+      end
+
+      return current, stack
+    end
+  end
+
+  function iterate(::PreOrderIterator, stack::BaseList{AbstractBinaryNode})
+    if !isempty(stack)
+      current = first(stack)
+      pop!(stack)
+
+      if !isnil(right(current))
+        push!(stack, right(current))
+      end
+    
+      if !isnil(left(current))
+        push!(stack, left(current))
+      end
+    
+
+      return current, stack
+
+    else
+      return nothing
+    end
+  end
+
+#+end_src
+
+测试案例不再赘述
+**** 8. 查看节点所在层次
+***** 函数说明
+=height(node::AbstractBinaryNode)=
+- 输入一个 二叉树节点
+- 输出其所在高度
+
+这里设置叶子节点的高度为1，逐步上升到根节点
+***** 测试案例
+#+begin_src julia
+  @testset "后序遍历中第一个返回的节点" begin
+    newtree = createBSTree(Int)
+    for i in [2, 1, 4, 3, 5]
+      insert!(newtree, i)
+    end
+
+    @test dataof(first(postorder(newtree))) == 2
+  end
+
+#+end_src
+***** 完整代码
+#+begin_src julia
+  function height(node::AbstractBinaryNode) 
+    if isnil(node)
+      return 0
+    else
+      leftHeight = height(left(node))
+      rightHeight = height(right(node))
+      return max(leftHeight, rightHeight) + 1
+    end
+  end
+
+#+end_src

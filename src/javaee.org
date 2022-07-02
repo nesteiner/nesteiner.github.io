@@ -1,0 +1,552 @@
+#+title: JavaEE 大作业报告
+* 程序需求分析
+** 用户需求分析
+这次的选题是第一题，用户需要看到一个表格来显示所有数据，然后通过表格提供的编辑功能来对数据进行操作
+** 功能需求分析
+*** 学生信息管理
+首先是在一个表格中显示所有的学生信息，并在表格中提供操作按钮，能够对该列进行编辑和删除操作
+如果是编辑操作，跳转到另外一个 *编辑页面* ，在其中编辑信息
+
+#+DOWNLOADED: screenshot @ 2021-12-24 22:37:05
+[[file:images/程序需求/2021-12-24_22-37-05_screenshot.png]]
+
+
+#+DOWNLOADED: screenshot @ 2021-12-24 22:37:21
+[[file:images/程序需求/2021-12-24_22-37-21_screenshot.png]]
+
+*** 课程管理
+类似的，用一个表格显示所有课程信息，并在表格中提供查看按钮，跳转到另外的页面查看该课程的知识点和案例
+
+#+DOWNLOADED: screenshot @ 2021-12-24 22:37:47
+[[file:images/程序需求/2021-12-24_22-37-47_screenshot.png]]
+
+#+DOWNLOADED: screenshot @ 2021-12-24 22:38:26
+[[file:images/程序需求/2021-12-24_22-38-26_screenshot.png]]
+
+* 系统设计
+** 系统架构及工作原理
+这里采用前后端分离的方法，后端只需要对数据进行增删改查，重难点都在前端，娘的折磨了我一个月的设计，以后干脆用极简主义来做
+*** 前端
+- Vue3 + composition api
+- typescript
+- axios
+- scss
+*** 后端
+- mysql 11
+- spring mvc
+- jetty server
+- ibatis
+- mybatis
+
+
+** 系统总体设计
+设计上前端负责交互，后端负责数据操作，其中 =Controller= 全部设置为 =RestController=
+前后端之间的数据传递使用 =JSON= 格式，使用 =Restful= 接口
+
+*** 前端页面
+**** 学生管理
+- =Home.vue=
+  在这里展示包含所有学生数据的表格
+- =StudentEdit.vue=
+  提供编辑功能
+**** 课程管理
+- =CoursePage.vue=
+  展示包含所有课程数据的表格
+- =SectionPage.vue=
+  展示对应的课程知识点，提供编辑功能
+
+**** 路由映射
+#+begin_src typescript
+  {
+    path: '/student',
+    name: 'student',
+    component: () => import('@/views/StudentEdit.vue')
+  },
+
+  {
+    path: '/course',
+    name: 'course',
+    component: () => import('@/views/CoursePage.vue')
+  },
+
+  {
+    path: '/section',
+    name: 'section',
+    component: () => import('@/views/SectionPage.vue')
+  }
+#+end_src
+
+*** 后端控制器
+后端操作数据，对请求数据作出行为，其中有
+- =StudentController=
+- =CourseController=
+
+控制器接收以下方法
+- =GET=
+- =POST=
+- =PUT=
+- =DELETE=
+
+他们通过 =mapper= 操作数据库数据，其中有
+- =CourseMapper=
+- =RawSectionMapper=
+- =StudentMapper=
+
+
+** 系统数据模型设计
+*** 数据表的创建
+程序中涉及到的有三个表
+**** 学生管理
+#+begin_src sql
+  create table Student(
+    `id` int not null primary key auto_increment,
+    `password` varchar(20),
+    `gender` varchar(20),
+    `name` varchar(20),
+    `nationality` varchar(40),
+    `birthDate` varchar(40),
+    `hometown` varchar(40),
+    `admissionDate` varchar(40),
+    `college` varchar(40),
+    `job` varchar(40)
+  );
+#+end_src
+**** 课程管理
+#+begin_src sql
+  create table Course(
+    `id` int not null primary key auto_increment,
+    `name` varchar(40) not null,
+    `score` int not null
+  );
+
+  create table Section(
+  `id` int not null primary key auto_increment,
+  `courseid` int not null,
+  `parentid` int not null,
+  `name` varchar(40) not null,
+  `content` varchar(120),
+
+  constraint `FK_ID` foreign key(`courseid`) references Course(`id`)
+  );
+
+#+end_src
+
+*** 对应的Java类和数据库映射
+**** 学生管理
+***** Java类
+#+begin_src java
+  @Data
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public class Student {
+      int id;
+      String password;
+      String gender;
+      String name;
+      String nationality;
+      String birthDate;
+      String hometown;
+      String admissionDate;
+      String college;
+      String job;
+  }
+
+#+end_src
+***** 数据表映射
+#+begin_src java
+  public interface StudentMapper {
+      @Select("select * from Student")
+      List<Student> findAll();
+
+      @Insert({"insert into Student",
+                  "(id, name, password, gender, nationality, birthDate, hometown, admissionDate, college, job)",
+                  "values(", "#{id}, #{name}, #{password}, #{gender}, #{nationality}, #{birthDate}, #{hometown}, #{admissionDate}, #{college}, #{job}",
+                  ")"})
+                  void insertOne(Student student);
+
+      @Delete("delete from Student where id = #{id}")
+      void deleteOne(int id);
+
+      @Update("update Student set " +
+              "name = #{name}," +
+              "password = #{password}," +
+              "gender = #{gender}," +
+              "nationality = #{nationality}," +
+              "birthDate = #{birthDate}," +
+              "hometown = #{hometown}," +
+              "admissionDate = #{admissionDate}," +
+              "college = #{college}," +
+              "job = #{job} " +
+              "where id = #{id}")
+      void updateOne(Student student);
+
+      @Select("select * from Student where id = #{id}")
+      Student findOne(int id);
+  }
+
+#+end_src
+**** 课程管理
+***** Java类
+#+begin_src java
+  public class Course {
+      int id;
+      String name;
+      int score;
+  }
+
+  public class RawSection {
+      int id;
+      int courseid;
+      int parentid;
+
+      String name;
+      String content;
+  }
+
+#+end_src
+
+需要注意的是，数据表对应的类不是后端返回的类，需要进行加工，处理成 =Section= 类
+#+begin_src java
+  public class Section {
+      int id;
+      int courseid;
+      String name;
+      String content;
+      List<Section> children;
+  }
+
+#+end_src
+***** 数据表映射
+#+begin_src java
+  public interface CourseMapper {
+      @Select("select * from Course")
+      List<Course> findAll();
+
+      @Select("select * from Course where id = #{id}")
+      Course findOne(int id);
+
+      @Insert({"insert into Course", "values(",
+              "#{id}, #{name}, #{score}",
+              ")"})
+      void insertOne(Course course);
+
+      @Delete({"delete from Course ",
+              "where ",
+              "id=#{id}"})
+      void deleteOne(int id);
+
+      @Update({"update Course",
+              "set",
+              "name = #{name}, ",
+              "score = #{score} ",
+              "where id = #{id}"})
+      void updateOne(Course course);
+  }
+
+  public interface RawSectionMapper {
+      @Select("select * from Section")
+      List<RawSection> findAll();
+
+      @Select("select * from Section where id = #{id}")
+      RawSection findOne(int id);
+
+      @Select("select * from Section where courseid = #{courseid}")
+      List<RawSection> findCourseSection(int courseid);
+
+      @Select("select * from Section where parentid = #{id}")
+      List<RawSection> findChildren(int id);
+
+      @Insert({"insert into Section(courseid, parentid, name, content)",
+              "values(",
+              "#{courseid}, #{parentid}, #{name}, #{content}",
+              ")"})
+      void insertOne(RawSection section);
+
+      @Delete("delete from Section where id = #{id}")
+      void deleteOne(int id);
+
+      @Update({"update Section",
+              "set name = #{name},",
+              "content = #{content}",
+              "where id = #{id}"})
+      void updateOne(@Param("id") int id, @Param("name") String name, @Param("content") String content);
+  }
+
+#+end_src
+
+* 系统实现
+** 数据库的连接和配置
+在 =classpath: resourses/db.properties= 中，定义以下属性
+#+begin_src java
+  jdbc.driver=com.mysql.cj.jdbc.Driver
+  jdbc.url=jdbc:mysql://localhost:3306/runoob?useSSL=false
+  jdbc.username=steiner
+  jdbc.password=whoamisteiner3044
+  jdbc.maxTotal=30
+  jdbc.maxIdle=10
+  jdbc.initialSize=5
+#+end_src
+
+接着，在 =mybatis-config.xml= 中配置相关代码，设置 =spring= 的数据库配置，注册数据库映射类型
+#+begin_src xml
+  <?xml version="1.0" encoding="UTF-8" ?>
+  <!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+  <configuration>
+    <properties resource="db.properties"/>
+
+    <environments default="development">
+      <environment id="development">
+        <transactionManager type="JDBC"/>
+        <dataSource type="POOLED">
+          <property name="driver" value="${jdbc.driver}"/>
+          <property name="url" value="${jdbc.url}"/>
+          <property name="username" value="${jdbc.username}"/>
+          <property name="password" value="${jdbc.password}"/>
+        </dataSource>
+      </environment>
+    </environments>
+
+    <mappers>
+      <mapper class="com.company.datasource.StudentMapper"/>
+      <mapper class="com.company.datasource.RawSectionMapper"/>
+      <mapper class="com.company.datasource.CourseMapper"/>
+    </mappers>
+  </configuration>
+#+end_src
+
+** Spring 相关配置
+在 =resources/application-config.xml= 下
+*** 设置 自动扫描
+#+begin_src xml
+  <context:component-scan base-package="com.company.controller"/>
+#+end_src
+*** 设置 JSON数据装换器
+#+begin_src xml
+  <mvc:annotation-driven>
+    <mvc:message-converters>
+      <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/>
+    </mvc:message-converters>
+  </mvc:annotation-driven>
+#+end_src
+*** 设置 跨域请求
+这个应用设置简单粗暴点，全部开放，并注册允许的HTTP请求方法
+#+begin_src xml
+  <mvc:cors>
+    <mvc:mapping path="/**" allowed-methods="GET,POST,PUT,HEAD,PATCH,DELETE,OPTIONS"/>
+  </mvc:cors>
+#+end_src
+
+*** 使用 Jetty 作为内嵌服务器
+在 =com.company.server= 下新建类 =JettyServer= ，在其中加载上述的 =spring= 配置文件
+#+begin_src java
+  public class JettyServer {
+      private static final int DEFAULT_PORT = 8081;
+      private static final String CONTEXT_PATH = "/";
+      private static final String MAPPING_URL = "/*";
+
+      public void run() throws Exception {
+          Server server = new Server(DEFAULT_PORT);
+          server.setHandler(
+                            servletContextHandler(
+                                                  webApplicationContext()
+                                                  )
+                            );
+
+          server.start();
+          server.join();
+      }
+
+      private ServletContextHandler servletContextHandler(WebApplicationContext context) {
+          ServletContextHandler handler = new ServletContextHandler();
+          //        ServletContextHandler handler = new WebAppContextWithReload();
+          handler.setContextPath(CONTEXT_PATH);
+          handler.addServlet(
+                             new ServletHolder(
+                                               new DispatcherServlet(context)
+                                               ),
+
+                             MAPPING_URL
+                             );
+
+          handler.addEventListener(
+                                   new ContextLoaderListener(context)
+                                   );
+
+          return handler;
+      }
+
+      private WebApplicationContext webApplicationContext() {
+          XmlWebApplicationContext context = new XmlWebApplicationContext();
+          context.setConfigLocation("classpath:application-config.xml");
+          return context;
+      }
+  }
+
+#+end_src
+
+接着，在 =com.company.app= 中设置主类 =Application=
+#+begin_src java
+  public class Application {
+      public static void main(String[] args) throws Exception {
+          new JettyServer().run();
+      }
+  }
+
+#+end_src
+
+
+** Controller 处理请求
+=Controller= 需要使用不同的 =Mapping= 注解方法来对不同的请求进行处理
+由于涉及到数据库操作，需要为 =Controller= 实现加载 =sqlSession= 并处理 =IOException= 错误
+另外操作完毕后记得提交更改
+*** CourseController
+#+begin_src java
+  @RestController
+  @RequestMapping("/course")
+  public class CourseController {
+      static SqlSession sqlSession;
+      static CourseMapper courseMapper;
+      static RawSectionMapper sectionMapper;
+
+      static {
+          try {
+              sqlSession = Utils.getSession();
+              courseMapper = sqlSession.getMapper(CourseMapper.class);
+              sectionMapper = sqlSession.getMapper(RawSectionMapper.class);
+          } catch (IOException exception) {
+              System.out.println("Fuck");
+              System.exit(0);
+          }
+      }
+
+      @GetMapping
+      List<Course> findAllCourse() {
+          return courseMapper.findAll();
+      }
+
+      @GetMapping("/sections")
+      List<Section> findAllSection(int courseid) {
+          // find matched raw sections where courseid = courseid
+          List<RawSection> rawSections = sectionMapper.findCourseSection(courseid);
+          List<RawSection> rootSections = rawSections
+              .stream()
+              .filter(section -> section.getParentid() == 0)
+              .collect(Collectors.toList());
+
+          return rootSections
+              .stream()
+              .map(section -> groupSection(section, rawSections))
+              .collect(Collectors.toList());
+      }
+
+      @GetMapping("/sections/id")
+      RawSection findSection(int id) {
+          RawSection rawSection = sectionMapper.findOne(id);
+          return rawSection;
+      }
+
+      @PostMapping("/sections")
+      void insertSection(@RequestBody RawSection section) {
+          sectionMapper.insertOne(section);
+          sqlSession.commit();
+      }
+
+      @DeleteMapping("/sections")
+      void deleteSection(@RequestParam int id) {
+          sectionMapper.deleteOne(id);
+          sqlSession.commit();
+      }
+ 
+     @PutMapping("/sections")
+      void updateSection(@RequestBody Map<String, Object> json) {
+          Integer id = (Integer) json.get("id");
+          String name = (String) json.get("name");
+          String content = (String) json.get("content");
+
+          sectionMapper.updateOne(id, name, content);
+          sqlSession.commit();
+      }
+
+  }
+#+end_src
+这里 =PUT= 很奇怪，定义一个 =RawSection= 接收死活接不上去，只好用 =Map= 来代替以下
+另外这里还有一个功能，返回 =Section= 对象时需要从数据库中获取 =RawSection= ，再通过转换生成 =Section=
+#+begin_src java
+  Section groupSection(RawSection rawSection, List<RawSection> rawSections) {
+      // transform into section
+      // 参数要不要变下，改成 section
+      Section result = new Section(
+                                   rawSection.getId(),
+                                   rawSection.getCourseid(),
+                                   rawSection.getName(),
+                                   rawSection.getContent(),
+                                   new ArrayList<>());
+
+      for (RawSection innerRowSection : rawSections) {
+          if(innerRowSection.getParentid() == result.getId()) {
+              Section child = groupSection(innerRowSection, rawSections);
+              result.getChildren().add(child);
+          }
+      }
+
+      return result;
+  }
+#+end_src
+*** StudentController
+#+begin_src java
+  @RestController
+  @RequestMapping("/student")
+  public class StudentController {
+      static StudentMapper mapper;
+      static SqlSession sqlSession;
+      static {
+          try {
+              sqlSession = Utils.getSession();
+              mapper = sqlSession.getMapper(StudentMapper.class);
+          } catch (IOException exception) {
+              System.out.println("Fuck");
+              System.exit(0);
+          }
+      }
+
+      @GetMapping
+      List<Student> findAll() {
+          return mapper.findAll();
+      }
+
+      @GetMapping("id")
+      Student findOne(@RequestParam("id") int id) {
+          return mapper.findOne(id);
+      }
+
+      @PostMapping
+      void insertOne(Student student) {
+          mapper.insertOne(student);
+          sqlSession.commit();
+      }
+
+      @PutMapping
+      Map<String, Object> updateOne(@RequestBody Student student) {
+          mapper.updateOne(student);
+          sqlSession.commit();
+
+          Map<String, Object> response = new HashMap<>();
+          response.put("status", "put success");
+          response.put("passed student is", student);
+          return response;
+      }
+
+      @DeleteMapping
+      void deleteOne(@RequestParam("id") String id) {
+          mapper.deleteOne(Integer.parseInt(id));
+          sqlSession.commit();;
+      }
+  }
+
+#+end_src
+
+
+* 结论

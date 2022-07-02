@@ -1,0 +1,23 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Julia - Category - My New Hugo Site</title>
+        <link>http://example.org/categories/julia/</link>
+        <description>Julia - Category - My New Hugo Site</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sat, 02 Jul 2022 01:54:00 &#43;0800</lastBuildDate><atom:link href="http://example.org/categories/julia/" rel="self" type="application/rss+xml" /><item>
+    <title>MLJ中 线性模型 在回归预测中的简单使用</title>
+    <link>http://example.org/post/2022/07/linear_model/</link>
+    <pubDate>Sat, 02 Jul 2022 01:54:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/post/2022/07/linear_model/</guid>
+    <description><![CDATA[开始之前 我想向大家介绍一下一些线性模型的用法，以及他们对数据的拟合程度 在我开始学习 MLJ 时，我对他们的拟合能力有所怀疑，经常遇到欠拟合的情况，经过一次简单的测试后，才慢慢了解如何使用模型，处理特征 这里将这个测试介绍给各位 数据准备 我们模拟对函数 f(x) = x^2 + 2x 的拟合，在理想的预测结果 standardy 上加上一点噪音，形成训练用测试结果 coly 接下来依次定义 f(x) standardy coly f(x) = x^2 + 2x colx = DataFrame(x1=-10:10) coly = f.(colx.x1) + rand(-2:2, length(colx.x1)) standardy = f.(colx.x1) 再绘制下图像 plot(colx.x1, standardy, label=&#34;standarty&#34;, color=:blue) plot!(colx.x1, coly, label=&#34;coly&#34;, color=:red) 模型介绍 拟合数据我们使用 Ridge 回归，他在损失函数上添加了 L2 正则化 \begin{array}{cl} {\min \limits_{w, b}} &amp; {\dfrac{1}{n}\sum_{i = 1}^n (w^{\top} x_i + b - y_i)^2} \\ {\text{s.t.}} &amp;{\|w\|_2^2 \le t} \end{array}]]></description>
+</item>
+<item>
+    <title>Titanic 生存预测，使用Logistic分类</title>
+    <link>http://example.org/post/2022/07/titanic/</link>
+    <pubDate>Sat, 02 Jul 2022 01:53:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/post/2022/07/titanic/</guid>
+    <description><![CDATA[项目介绍 最近终于去学习 Julia 了，重温了下没做完的 Titanic 项目，打算做完 那就先导入必要的库吧 using MLJ, DataFrames, StableRNGs, CSV, Plots plotly() 还要从 Kaggle 上下载好数据集 train.csv 与 test.csv ， 并用 CSV 模块加载 origin_data = CSV.read(&#34;data/train.csv&#34;, DataFrame) 到提交的时候，数据表中的字段 PassengerId(Integer) 与 Survived(Integer) 数据探索 字段含义 我从网上查到这些字段的含义，有些字段的类型虽然是 Float ，但也是 1.0, 2.0之类的，比如 Age 字段名称 字段含义 字段类型 PassengerId 乘客ID Int Survived 是否存活 Int Pclass 乘客等级(1/2/3等舱位) Int Name 乘客姓名 String Sex 性别 String Age 年龄 Float SibSp 堂兄弟/妹个数 Float Parch 父母与小孩个数 Float Ticket 船票信息 String Fare 票价 Float Cabin 客舱 String Embarked 登船港口 String 字段科学类型 这个数据集使用分类预测，先要统一好各个字段的科学类型，不然一些 model 对字段不起作用 这里需要每个输入的数据类型是 Continuous, 而输出类型为 Multiclass 使用 schema 查看情况 schema(origin_data) 描述数据 看看这个数据有多少缺斤少两的 describe(origin_data) 数据处理 探索完数据后，接下来可以 填充缺失的数据 扔掉不用的数据 生成新的字段，或者优化数据 对 train.]]></description>
+</item>
+</channel>
+</rss>

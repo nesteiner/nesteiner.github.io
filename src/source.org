@@ -1,0 +1,411 @@
+#+title: 编译实践 源代码
+
+* 项目结构说明
+#+DOWNLOADED: screenshot @ 2021-06-16 09:45:19
+[[file:../images/2021-06-16_09-45-19_screenshot.png]]
+
+实验一的项目在 _src/com/lexer_ 下，其中 antlr 生成的 *.java 类在 _antlr_ 目录下，语法解析程序在 _main_ 目录下，需要解析的文本写在 _lexerdemo_ 中
+实验三的项目在 _src/com/calculator_ 下，结构同上， _LispValue_ 在 _value_ 目录下，数据结构需要解析的文本写在 _demo_ 中
+* 实验一 源代码
+** 文法定义
+#+begin_src antlr
+  grammar Lexer;
+  // 识别单词,整数,浮点数,变量、加号、减号、乘号、除号
+
+  entry: paragraph+;
+
+  paragraph: unit+ NEWLINE #PrintParagraph
+  | NEWLINE #Blank;
+  // node 额表示
+  unit: WORDS #Words
+  | INTEGER #Integer
+  | FLOAT #Float
+  | VAR #Var
+  | ADD #Add
+  | SUB #Sub
+  | MUL #Mul
+  | DIV #Div
+  ;
+
+  NEWLINE: '\n';
+  SPACE: ' ' -> skip;
+
+  WORDS: [a-zA-Z]+; // Only English words, will not be conflict with varible
+  INTEGER: '-'?[0-9]+;
+  FLOAT: INTEGER '.' [0-9]+;
+  VAR: [a-zA-Z]+[a-zA-Z0-9_]*; // FIXME 这边的二义性你怎么解决
+  ADD: '+';
+  SUB: '-';
+  MUL: '*';
+  DIV: '/';
+#+end_src
+** EvalVisitor
+#+begin_src java
+  package com.lexer.main;
+
+  import com.lexer.antlr.LexerBaseVisitor;
+  import com.lexer.antlr.LexerParser;
+  import java.util.List;
+  import java.util.stream.Collectors;
+  import java.util.Optional;
+
+  public class EvalVisitor extends LexerBaseVisitor<String> {
+      @Override
+      public String visitEntry(LexerParser.EntryContext ctx) {
+          ctx.children.stream()
+                  .forEach(parseTree -> {
+                      System.out.println(visit(parseTree));
+                  });
+
+          return null;
+      }
+
+      @Override
+      public String visitPrintParagraph(LexerParser.PrintParagraphContext ctx) {
+          return ctx.unit().stream()
+                  .map(unitContext -> visit(unitContext) + "\n")
+                  .reduce(new String(), (r, x) -> r + x);
+      }
+
+      @Override
+      public String visitWords(LexerParser.WordsContext ctx) {
+          return String.format("words: %s", ctx.WORDS().getText());
+      }
+
+      @Override
+      public String visitInteger(LexerParser.IntegerContext ctx) {
+          return String.format("Integer: %s", ctx.INTEGER().getText());
+      }
+
+      @Override
+      public String visitFloat(LexerParser.FloatContext ctx) {
+          return String.format("Float: %s", ctx.FLOAT().getText());
+      }
+
+      @Override
+      public String visitVar(LexerParser.VarContext ctx) {
+          return String.format("Variable: %s", ctx.VAR().getText());
+      }
+
+      @Override
+      public String visitAdd(LexerParser.AddContext ctx) {
+          return String.format("Operator: %s", "+");
+      }
+
+      @Override
+      public String visitSub(LexerParser.SubContext ctx) {
+          return String.format("Operator: %s", "-");
+      }
+
+      @Override
+      public String visitMul(LexerParser.MulContext ctx) {
+          return String.format("Operator: %s", "*");
+      }
+
+      @Override
+      public String visitDiv(LexerParser.DivContext ctx) {
+          return String.format("Operator: %s", "/");
+      }
+  }
+
+#+end_src
+** Main
+#+begin_src java
+  package com.lexer.main;
+  import java.io.FileInputStream;
+  import java.io.InputStream;
+
+  import org.antlr.v4.runtime.*;
+  import org.antlr.v4.runtime.tree.*;
+  import com.lexer.antlr.*;
+
+
+  public class Main {
+      public static void main(String[] args) throws Exception {
+          String inputFile = "src/com/lexer/lexerdemo";
+          InputStream is = new FileInputStream(inputFile);
+          ANTLRInputStream input = new ANTLRInputStream(is);
+
+          LexerLexer lexer = new LexerLexer(input);
+          CommonTokenStream tokens = new CommonTokenStream(lexer);
+
+          LexerParser parser = new LexerParser(tokens);
+
+          ParseTree tree = parser.entry();
+          EvalVisitor eval = new EvalVisitor();
+          eval.visit(tree);
+
+      }
+  }
+
+#+end_src
+
+** lexerdemo
+#+begin_src text
+  hello world
+  1+1
+  2+2
+  fuck you var123
+
+#+end_src
+
+* 实验三 源代码
+** 文法定义
+#+begin_src antlr
+  grammar Calculator;
+
+  entry: stat+;
+
+  // FIXME can't handle assign
+  stat: expr NEWLINE # PrintExpr
+  | NEWLINE # Blank
+  ;
+
+  expr: '(' expr ')' # Parens
+  | expr op=(MUL | DIV) expr # MulDiv
+  | expr op=(ADD | SUB) expr # AddSub
+  | NUMBER # Number
+  | FLOAT # Float
+  | ID # Id
+  ;
+
+  assign: LET ID '=' expr;
+
+  ID: [a-zA-Z_]+;
+  NUMBER: '-'?DIGITS;
+  FLOAT: NUMBER '.' DIGITS;
+  fragment DIGITS: [0-9]+;
+  MUL: '*';
+  DIV: '/';
+  ADD: '+';
+  SUB: '-';
+
+  LET: 'let';
+
+  WS: [\t ] -> skip;
+  NEWLINE: '\n';
+#+end_src
+** EvalVisitor
+#+begin_src java
+  package com.calculator.main;
+
+  import com.calculator.antlr.CalculatorBaseVisitor;
+  import com.calculator.antlr.CalculatorParser;
+  import com.calculator.value.ErrorType;
+  import com.calculator.value.LispValue;
+  import com.calculator.value.ValueType;
+
+  public class EvalVisitor extends CalculatorBaseVisitor<LispValue> {
+      @Override
+      public LispValue visitEntry(CalculatorParser.EntryContext ctx) {
+          return super.visitEntry(ctx);
+      }
+
+      @Override
+      public LispValue visitPrintExpr(CalculatorParser.PrintExprContext ctx) {
+          LispValue value = visit(ctx.expr());
+          System.out.println(value);
+          return null;
+      }
+
+      @Override
+      public LispValue visitBlank(CalculatorParser.BlankContext ctx) {
+          return super.visitBlank(ctx);
+      }
+
+      @Override
+      public LispValue visitNumber(CalculatorParser.NumberContext ctx) {
+          Integer value = Integer.valueOf(ctx.NUMBER().getText());
+          return new LispValue(value);
+      }
+
+      @Override
+      public LispValue visitFloat(CalculatorParser.FloatContext ctx) {
+          Double value = Double.valueOf(ctx.FLOAT().getText());
+          return new LispValue(value);
+      }
+
+      @Override
+      public LispValue visitMulDiv(CalculatorParser.MulDivContext ctx) {
+          LispValue left = visit(ctx.expr(0));
+          LispValue right = visit(ctx.expr(1));
+          int op = ctx.op.getType();
+          return evalOp(op, left, right);
+      }
+
+      @Override
+      public LispValue visitAddSub(CalculatorParser.AddSubContext ctx) {
+          LispValue left = visit(ctx.expr(0));
+          LispValue right = visit(ctx.expr(1));
+          int op = ctx.op.getType();
+
+          return evalOp(op, left, right);
+      }
+
+      @Override
+      public LispValue visitParens(CalculatorParser.ParensContext ctx) {
+          return visit(ctx.expr());
+      }
+
+      public LispValue evalOp(int op, LispValue left, LispValue right) {
+          if(left.valueType == ValueType.LVAL_ERR) {
+              return left;
+          }
+
+          if(right.valueType == ValueType.LVAL_ERR) {
+              return right;
+          }
+
+          if(left.valueType != right.valueType) {
+              return new LispValue(ErrorType.LERR_CONFLICT_TYPE);
+          }
+
+          return evalSameType(op, left, right);
+      }
+
+      public LispValue evalSameType(int op, LispValue left, LispValue right) {
+          switch (left.valueType) {
+          case LVAL_FLT: return evalFloat(op, left.fltValue, right.fltValue);
+          case LVAL_INT: return evalInteger(op, left.intValue, right.intValue);
+          default:
+              return new LispValue(ErrorType.LERR_NO_METHOD_FOR_TYPE);
+          }
+      }
+
+      public LispValue evalInteger(int op, Integer left, Integer right) {
+          switch (op) {
+          case CalculatorParser.ADD: return new LispValue(left + right);
+          case CalculatorParser.SUB: return new LispValue(left - right);
+          case CalculatorParser.MUL: return new LispValue(left * right);
+          case CalculatorParser.DIV: return (right == 0 ? new LispValue(ErrorType.LERR_DIV_BY_ZERO) : new LispValue(left / right));
+          default:
+              return new LispValue(ErrorType.LERR_NO_MATCHED_METHOD);
+          }
+
+      }
+
+      public LispValue evalFloat(int op, Double left, Double right) {
+          switch (op) {
+          case CalculatorParser.ADD: return new LispValue(left + right);
+          case CalculatorParser.SUB: return new LispValue(left - right);
+          case CalculatorParser.MUL: return new LispValue(left * right);
+          case CalculatorParser.DIV: return (right == 0 ? new LispValue(ErrorType.LERR_DIV_BY_ZERO) : new LispValue(left / right));
+          default:
+              return new LispValue(ErrorType.LERR_NO_MATCHED_METHOD);
+          }
+
+      }
+  }
+
+#+end_src
+** Main
+#+begin_src java
+  package com.calculator.main;
+  import java.io.FileInputStream;
+  import java.io.IOException;
+  import java.io.InputStream;
+
+  import org.antlr.v4.runtime.*;
+  import org.antlr.v4.runtime.tree.*;
+  import com.calculator.antlr.*;
+
+
+
+  public class Main {
+      public static void main(String[] args) throws IOException {
+          String inputFile = "src/com/calculator/demo";
+          InputStream is = new FileInputStream(inputFile);
+          ANTLRInputStream input = new ANTLRInputStream(is);
+
+          CalculatorLexer lexer = new CalculatorLexer(input);
+          CommonTokenStream tokens = new CommonTokenStream(lexer);
+
+          CalculatorParser parser = new CalculatorParser(tokens);
+
+          ParseTree tree = parser.entry();
+          EvalVisitor eval = new EvalVisitor();
+          eval.visit(tree);
+
+      }
+  }
+
+#+end_src
+
+** Demo
+#+begin_src text
+  1 + 1
+  1 * 1
+  2 + 3
+  2 * (1 + 1)
+  2 / 0
+  1 + 1
+  1.1 + 2.2
+  1 + 1.1
+
+#+end_src
+
+** LispValue
+#+begin_src java
+  package com.calculator.value;
+
+  public class LispValue {
+      public ValueType valueType;
+      public ErrorType errorType;
+
+      public Integer intValue;
+      public Double fltValue;
+
+      public LispValue(Integer intValue) {
+          valueType = ValueType.LVAL_INT;
+          this.intValue = intValue;
+      }
+
+      public LispValue(Double fltValue) {
+          valueType = ValueType.LVAL_FLT;
+          this.fltValue = fltValue;
+      }
+
+      public LispValue(ErrorType errorType) {
+          valueType = ValueType.LVAL_ERR;
+          this.errorType = errorType;
+      }
+
+      @Override
+      public String toString() {
+          switch (valueType) {
+          case LVAL_ERR: return errorType.toString();
+          case LVAL_FLT: return fltValue.toString();
+          case LVAL_INT: return intValue.toString();
+          default:
+              return "fuck, error occusin";
+          }
+      }
+
+  }
+
+#+end_src
+** ValueType
+#+begin_src java
+  package com.calculator.value;
+
+  public enum ValueType {
+      LVAL_INT,
+      LVAL_FLT,
+      LVAL_ERR,
+  }
+
+#+end_src
+** ErrorType
+#+begin_src java
+  package com.calculator.value;
+
+  public enum ErrorType {
+      LERR_DIV_BY_ZERO,
+      LERR_NO_SUCH_VAR,
+      LERR_REDEFINE_VAR,
+      LERR_CONFLICT_TYPE,
+      LERR_NO_MATCHED_METHOD,
+      LERR_NO_METHOD_FOR_TYPE,
+  }
+
+#+end_src

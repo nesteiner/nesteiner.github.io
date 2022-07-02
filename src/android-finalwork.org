@@ -1,0 +1,600 @@
+#+title: Android 项目总结报告
+* 项目介绍
+- 基于Android平台实现简单的项目管理App
+- 没有登录界面
+- 界面让用户输入项目组，项目名称
+- 使用SQLITE记录数据
+
+* 功能简介
+[[file:./images/android-finalwork/1.jpg]]
+[[file:./images/android-finalwork/2.jpg]]
+
+1. TaskGroupActivity
+   - 添加 TaskGroup
+2. TaskActivity
+   - 添加 Task
+   - 重命名 TaskGroup
+   - 删除 TaskGroup
+   - 更改 Task 状态
+* 实现思路
+** 数据模型
+*** Model
+**** TaskGroup
+#+begin_src java
+  @Data
+  @AllArgsConstructor
+  @NoArgsConstructor
+  @Entity(tableName = "TaskGroup")
+  public class TaskGroup {
+      @PrimaryKey(autoGenerate = true)
+      Integer id;
+      String name;
+  }
+
+#+end_src
+**** Task
+#+begin_src java
+  @Data
+  @AllArgsConstructor
+  @NoArgsConstructor
+  @Entity(tableName = "Task")
+  public class Task {
+      @PrimaryKey(autoGenerate = true)
+      Integer id;
+      String name;
+      Boolean isdone;
+      Integer groupid;
+  }
+
+#+end_src
+*** Dao
+**** TaskGroupDao
+#+begin_src java
+  @Dao
+  public interface TaskGroupDao {
+      @Query("select * from TaskGroup")
+      List<TaskGroup> findAll();
+
+      @Query("select * from TaskGroup where id = :id limit 1")
+      TaskGroup findOne(int id);
+
+      @Query("select id from TaskGroup order by id desc limit 1")
+      Integer findLastId();
+      @Insert
+      void insertOne(TaskGroup taskGroup);
+
+      @Delete
+      void deleteOne(TaskGroup taskGroup);
+
+      @Update
+      void updateOne(TaskGroup taskGroup);
+  }
+
+#+end_src
+**** TaskDao
+#+begin_src java
+  @Dao
+  public interface TaskDao {
+      @Query("select * from Task where groupid = :groupid")
+      List<Task> findWith(int groupid);
+
+      @Query("select * from Task")
+      List<Task> findAll();
+
+      @Query("select count(*) from Task where groupid = :groupid")
+      Integer findCountWith(int groupid);
+      @Insert
+      void insertOne(Task task);
+
+      @Delete
+      void deleteOne(Task task);
+
+      @Delete
+      void deleteAll(List<Task> tasks);
+      @Update
+      void updateOne(Task task);
+  }
+
+#+end_src
+*** Database
+#+begin_src java
+  @Database(entities = {Task.class, TaskGroup.class}, version = 1)
+  public abstract class AppDatabase extends RoomDatabase {
+      public abstract TaskDao taskDao();
+      public abstract TaskGroupDao taskGroupDao();
+  }
+
+#+end_src
+** 界面
+*** TaskGroupActivity
+#+begin_src java
+  public class TaskGroupActivity extends AppCompatActivity {
+      TaskGroupDao taskGroupDao;
+      RecyclerView recyclerView;
+      List<TaskGroup> taskGroupList;
+      TaskGroupAdapter adapter;
+
+      @Override
+      protected void onCreate(@Nullable Bundle savedInstanceState) {
+          super.onCreate(savedInstanceState);
+          final ActivityTaskgroupBinding binding =
+                  DataBindingUtil.setContentView(this, R.layout.activity_taskgroup);
+          binding.setOnClick(this::onClickAddTask);
+
+          recyclerView = binding.recyclerView;
+          AppDatabase database = Room.databaseBuilder(
+                  getApplicationContext(),
+                  AppDatabase.class,
+                  "data.db"
+          ).allowMainThreadQueries().build();
+
+          taskGroupDao = database.taskGroupDao();
+
+          taskGroupList = new ArrayList<>();
+          taskGroupList.addAll(taskGroupDao.findAll());
+
+          adapter = new TaskGroupAdapter(this, taskGroupList, database.taskGroupDao(), database.taskDao());
+          recyclerView.setAdapter(adapter);
+          recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+      }
+
+      @Override
+      protected void onResume() {
+          super.onResume();
+
+          taskGroupList.clear();
+          taskGroupList.addAll(taskGroupDao.findAll());
+          adapter.notifyDataSetChanged();
+      }
+
+      private void onClickAddTask(View view) {
+          EditText editText = new EditText(this);
+          AlertDialog alertDialog = new AlertDialog.Builder(this)
+                  .setTitle("input taskgroup name")
+                  .setView(editText)
+                  .setPositiveButton(
+                          "submit",
+                          (dialogInterface, i) -> {
+                              String name = editText.getText().toString();
+                              if(name != null && !name.equals("")) {
+                                  TaskGroup taskGroup = new TaskGroup(null, name);
+                                  taskGroupDao.insertOne(taskGroup);
+                                  taskGroup.setId(taskGroupDao.findLastId());
+
+                                  taskGroupList.add(taskGroup);
+                                  adapter.notifyItemInserted(taskGroupList.size() - 1);
+                              }
+                          }
+                  ).setNegativeButton(
+                          "cancel",
+                          null
+                  ).create();
+
+          alertDialog.show();
+
+      }
+
+  }
+
+#+end_src
+*** TaskActivity
+#+begin_src java
+  public class TaskActivity extends AppCompatActivity {
+      static final String TAG = "TaskActivity";
+      TaskDao taskDao;
+      TaskGroupDao taskGroupDao;
+      RecyclerView taskListRecyclerView, finishedListRecyclerView;
+      ArrayList<Task> taskList;
+      ArrayList<Task> finishedList;
+
+      TaskAdapter taskListAdapter, finishedListAdapter;
+      int groupid;
+
+      @Override
+      protected void onCreate(@Nullable Bundle savedInstanceState) {
+          super.onCreate(savedInstanceState);
+          final ActivityTaskBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_task);
+          taskListRecyclerView = binding.tasklist;
+          finishedListRecyclerView = binding.finishedlist;
+
+          binding.setOnClick(this::onClickAddTask);
+
+          AppDatabase database = Room.databaseBuilder(
+                  getApplicationContext(),
+                  AppDatabase.class,
+                  "data.db"
+          ).allowMainThreadQueries().build();
+
+          Bundle args = getIntent().getExtras();
+          groupid = args.getInt(TaskGroupViewHolder.KEY);
+
+          taskDao = database.taskDao();
+          taskGroupDao = database.taskGroupDao();
+          taskList = new ArrayList<>();
+          finishedList = new ArrayList<>();
+
+          List<Task> allTasks = taskDao.findWith(groupid);
+          taskList.addAll(allTasks.stream().filter(task -> !task.getIsdone()).collect(Collectors.toList()));
+          finishedList.addAll(allTasks.stream().filter(task -> task.getIsdone()).collect(Collectors.toList()));
+
+
+          taskListAdapter = new TaskAdapter(this, taskList, database.taskDao());
+          finishedListAdapter = new TaskAdapter(this, finishedList, database.taskDao());
+          taskListRecyclerView.setAdapter(taskListAdapter);
+          finishedListRecyclerView.setAdapter(finishedListAdapter);
+          taskListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+          finishedListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+          // set Title
+          TaskGroup taskGroup = taskGroupDao.findOne(groupid);
+          String title = taskGroup.getName();
+          setTitle(title);
+      }
+
+      @Override
+      public boolean onCreateOptionsMenu(Menu menu) {
+          MenuInflater inflater = getMenuInflater();
+          inflater.inflate(R.menu.activity_task_menu, menu);
+          return true;
+      }
+
+      @Override
+      public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+          switch (item.getItemId()) {
+              case R.id.rename:
+                  renameTaskGroup();
+                  return true;
+
+              case R.id.delete:
+                  deleteTaskGroup();
+                  return true;
+
+              default:
+                  return super.onOptionsItemSelected(item);
+          }
+      }
+
+      private void onClickAddTask(View view) {
+          EditText editText = new EditText(this);
+          AlertDialog dialog = new AlertDialog.Builder(this)
+                  .setTitle("input task name")
+                  .setView(editText)
+                  .setPositiveButton("submit", (dialogInterface, i) -> {
+                      String name = editText.getText().toString();
+                      if(name != null && !name.equals("")) {
+                          Task task = new Task(null, name, false, groupid);
+                          taskDao.insertOne(task);
+                          insertTask(task);
+                      }
+                  }).setNegativeButton("cancel", null)
+                  .create();
+
+          dialog.show();
+      }
+
+      public void insertTask(Task task) {
+          taskList.add(0, task);
+          taskListAdapter.notifyItemInserted(0);
+      }
+      public void changeTask(Task task) {
+          int index = taskList.indexOf(task);
+          if(index != -1) {
+              taskList.remove(index);
+              finishedList.add(0, task);
+              taskListAdapter.notifyItemRemoved(index);
+              finishedListAdapter.notifyItemInserted(0);
+          } else {
+              Log.w(TAG, "there is no such task when calling changeTask: " + task);
+          }
+
+
+      }
+
+      public void changeFinished(Task task) {
+          int index = finishedList.indexOf(task);
+          if(index != -1) {
+              finishedList.remove(index);
+              taskList.add(0, task);
+              finishedListAdapter.notifyItemRemoved(index);
+              taskListAdapter.notifyItemInserted(0);
+          } else {
+              Log.w(TAG, "there is no such task when calling changeFinished: " + task);
+          }
+
+      }
+
+      private void renameTaskGroup() {
+          EditText editText = new EditText(this);
+          AlertDialog dialog = new AlertDialog.Builder(this)
+                  .setTitle("enter new name")
+                  .setView(editText)
+                  .setPositiveButton("submit", (dialogInterface, i) -> {
+                      String name = editText.getText().toString();
+                      TaskGroup taskGroup = new TaskGroup(groupid, name);
+                      taskGroupDao.updateOne(taskGroup);
+                  }).setNegativeButton("cancel", null)
+                  .create();
+          dialog.show();
+      }
+
+      private void deleteTaskGroup() {
+          AlertDialog dialog = new AlertDialog.Builder(this)
+                  .setTitle("are you sure to delete")
+                  .setPositiveButton("yes", (dialogInterface, i) -> {
+                      TaskGroup taskGroup = new TaskGroup(groupid, null);
+                      taskGroupDao.deleteOne(taskGroup);
+                      taskDao.deleteAll(taskDao.findWith(groupid));
+
+                      finish();
+                  }).setNegativeButton("no", null)
+                  .create();
+
+          dialog.show();
+      }
+  }
+
+#+end_src
+
+** 数据操作
+*** 数据加载
+在 *activity* 创建时，初始化数据库，在 =onCreate= 中
+#+begin_src java
+  AppDatabase database = Room.databaseBuilder(
+                                              getApplicationContext(),
+                                              AppDatabase.class,
+                                              "data.db"
+                                              ).allowMainThreadQueries().build();
+
+#+end_src
+*** TaskGroup CURD
+**** 加载
+在 *TaskGroupActivity* =onCreate= 中
+#+begin_src java
+  taskGroupDao = database.taskGroupDao();
+
+  taskGroupList = new ArrayList<>();
+  taskGroupList.addAll(taskGroupDao.findAll());
+
+  adapter = new TaskGroupAdapter(this, taskGroupList, database.taskGroupDao(), database.taskDao());
+  recyclerView.setAdapter(adapter);
+  recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+#+end_src
+**** 添加
+在 *TaskGroupActivity* 中，为 =button= 添加点击事件
+#+begin_src java
+  private void onClickAddTask(View view) {
+      EditText editText = new EditText(this);
+      AlertDialog alertDialog = new AlertDialog.Builder(this)
+          .setTitle("input taskgroup name")
+          .setView(editText)
+          .setPositiveButton(
+                             "submit",
+                             (dialogInterface, i) -> {
+                                 String name = editText.getText().toString();
+                                 if(name != null && !name.equals("")) {
+                                     TaskGroup taskGroup = new TaskGroup(null, name);
+                                     taskGroupDao.insertOne(taskGroup);
+                                     taskGroup.setId(taskGroupDao.findLastId());
+
+                                     taskGroupList.add(taskGroup);
+                                     adapter.notifyItemInserted(taskGroupList.size() - 1);
+                                 }
+                             }
+                             ).setNegativeButton(
+                                                 "cancel",
+                                                 null
+                                                 ).create();
+
+      alertDialog.show();
+
+  }
+#+end_src
+
+而在 =onCreate= 中，渲染xml文件
+#+begin_src java
+  final ActivityTaskgroupBinding binding =
+      DataBindingUtil.setContentView(this, R.layout.activity_taskgroup);
+  binding.setOnClick(this::onClickAddTask);
+
+#+end_src
+
+在 =activity_taskgroup= 中
+#+begin_src xml
+  <layout xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:app="http://schemas.android.com/apk/res-auto">
+      <data>
+          <import type="java.util.function.Consumer"/>
+          <variable name="onClick" type="Consumer&lt;android.view.View&gt;"/>
+      </data>
+
+      <androidx.constraintlayout.widget.ConstraintLayout
+              android:id="@+id/taskgroup_container"
+              android:layout_width="match_parent"
+              android:orientation="vertical"
+              android:layout_height="match_parent">
+
+          <androidx.recyclerview.widget.RecyclerView
+                  android:id="@+id/recycler_view"
+                  android:layout_width="match_parent"
+                  android:layout_height="0dp"
+                  android:layout_weight="16"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintTop_toTopOf="parent"
+                  app:layout_constraintBottom_toTopOf="@+id/addtaskgroup"
+                  app:layout_constraintVertical_bias="0.0"/>
+
+          <Button android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:onClick="@{view -> onClick.accept(view)}"
+                  android:text="@string/addtaskgroup"
+                  app:layout_constraintEnd_toEndOf="parent"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintBottom_toBottomOf="parent"
+                  android:id="@+id/addtaskgroup"/>
+
+      </androidx.constraintlayout.widget.ConstraintLayout>
+  </layout>
+#+end_src
+**** 删除
+在 *TaskActivity* 中，创建 menu 菜单，为其绑定事件
+#+begin_src xml
+  <?xml version="1.0" encoding="utf-8"?>
+  <menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+      <item android:id="@+id/rename"
+            android:title="@string/renametaskgroup"
+            app:showAsAction="collapseActionView"/>
+
+      <item android:id="@+id/delete"
+            android:title="@string/deletetaskgroup"
+            app:showAsAction="collapseActionView"/>
+
+  </menu>
+#+end_src
+
+#+begin_src java
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+      MenuInflater inflater = getMenuInflater();
+      inflater.inflate(R.menu.activity_task_menu, menu);
+      return true;
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+      switch (item.getItemId()) {
+      case R.id.rename:
+          renameTaskGroup();
+          return true;
+
+      case R.id.delete:
+          deleteTaskGroup();
+          return true;
+
+      default:
+          return super.onOptionsItemSelected(item);
+      }
+  }
+
+
+  private void deleteTaskGroup() {
+      AlertDialog dialog = new AlertDialog.Builder(this)
+          .setTitle("are you sure to delete")
+          .setPositiveButton("yes", (dialogInterface, i) -> {
+                  TaskGroup taskGroup = new TaskGroup(groupid, null);
+                  taskGroupDao.deleteOne(taskGroup);
+                  taskDao.deleteAll(taskDao.findWith(groupid));
+
+                  finish();
+          }).setNegativeButton("no", null)
+          .create();
+
+      dialog.show();
+  }
+#+end_src
+**** 修改
+同上，修改函数为
+#+begin_src java
+  private void renameTaskGroup() {
+      EditText editText = new EditText(this);
+      AlertDialog dialog = new AlertDialog.Builder(this)
+          .setTitle("enter new name")
+          .setView(editText)
+          .setPositiveButton("submit", (dialogInterface, i) -> {
+                  String name = editText.getText().toString();
+                  TaskGroup taskGroup = new TaskGroup(groupid, name);
+                  taskGroupDao.updateOne(taskGroup);
+          }).setNegativeButton("cancel", null)
+          .create();
+      dialog.show();
+  }
+
+#+end_src
+*** Task CURD
+**** 添加
+在 *TaskActivity* 中，创建 dialog ，并为其绑定事件
+#+begin_src java
+  private void onClickAddTask(View view) {
+      EditText editText = new EditText(this);
+      AlertDialog dialog = new AlertDialog.Builder(this)
+          .setTitle("input task name")
+          .setView(editText)
+          .setPositiveButton("submit", (dialogInterface, i) -> {
+                  String name = editText.getText().toString();
+                  if(name != null && !name.equals("")) {
+                      Task task = new Task(null, name, false, groupid);
+                      taskDao.insertOne(task);
+                      insertTask(task);
+                  }
+          }).setNegativeButton("cancel", null)
+          .create();
+
+      dialog.show();
+  }
+#+end_src
+
+渲染时
+#+begin_src java
+  super.onCreate(savedInstanceState);
+  final ActivityTaskBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_task);
+
+  binding.setOnClick(this::onClickAddTask);
+
+#+end_src
+
+在 =activity_task= 中
+#+begin_src xml
+  <?xml version="1.0" encoding="utf-8"?>
+  <layout xmlns:tools="http://schemas.android.com/tools" xmlns:app="http://schemas.android.com/apk/res-auto"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+      <data>
+          <import type="java.util.function.Consumer"/>
+          <variable name="onClick" type="Consumer&lt;android.view.View&gt;"/>
+      </data>
+      <androidx.constraintlayout.widget.ConstraintLayout
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+          <androidx.recyclerview.widget.RecyclerView
+                  android:layout_width="match_parent"
+                  android:layout_height="0dp"
+                  android:layout_weight="16"
+                  android:id="@+id/tasklist"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintTop_toTopOf="parent"
+                  app:layout_constraintBottom_toTopOf="@+id/finishedlist"
+                  app:layout_constraintVertical_bias="0.0"/>
+
+          <TextView android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/done"
+                    app:layout_constraintBottom_toTopOf="@+id/finishedlist"
+                    app:layout_constraintStart_toStartOf="parent"
+                    style="@style/BigBlackFont"/>
+          <androidx.recyclerview.widget.RecyclerView
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/finishedlist"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintBottom_toTopOf="@id/button"
+                  app:layout_constraintTop_toBottomOf="@+id/tasklist"
+                  app:layout_constraintEnd_toEndOf="@id/button"/>
+
+          <Button android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:text="@string/addtask"
+                  android:onClick="@{view -> onClick.accept(view)}"
+                  android:id="@+id/button"
+                  app:layout_constraintBottom_toBottomOf="parent"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintEnd_toEndOf="parent"/>
+
+      </androidx.constraintlayout.widget.ConstraintLayout>
+  </layout>
+#+end_src
+* 项目心得
+- 这次项目忘了做任务的删除和重命名了
+- 没有用到 *fragment* 和 *fragment argument* 等知识点
+- 用 *SQLITE* 的时候又出了莫名其妙的错误，只好该用 *Room* 来操作

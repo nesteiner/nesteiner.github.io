@@ -1,0 +1,426 @@
+#+title: 编译实践报告
+* 实验一 词法分析程序
+** 实验内容
+实现识别单词,整数,浮点数,变量、加号、减号、乘号、除号的功能。
+** 文法定义
+这不是挺简单的吗，定义一个语法文件 Lexer.g4
+#+begin_src antlr
+  grammar Lexer;
+
+  entry: paragraph+;
+
+  paragraph: unit+ NEWLINE #PrintParagraph
+  | NEWLINE #Blank;
+
+  unit: WORDS #Words
+  | INTEGER #Integer
+  | FLOAT #Float
+  | VAR #Var
+  | ADD #Add
+  | SUB #Sub
+  | MUL #Mul
+  | DIV #Div
+  ;
+
+  NEWLINE: '\n';
+  SPACE: ' ' -> skip;
+
+  WORDS: [a-zA-Z]+; // Only English words, will not be conflict with varible
+  INTEGER: '-'?[0-9]+;
+  FLOAT: INTEGER '.' [0-9]+;
+  VAR: [a-zA-Z]+[a-zA-Z0-9_]*; // FIXME 这边的二义性你怎么解决
+  ADD: '+';
+  SUB: '-';
+  MUL: '*';
+  DIV: '/';
+#+end_src
+在定义好了如何分辨 单词，整数，浮点数，符号的词法之后，
+明确文法的解析入口 _entry_ ，他的内容是若干个 _paragraph_ 段落，接下来的语法解析程序只需打印处 _paragraph_ 中的 _unit_ 单元类型即可
+
+另外忽略程序中的空格符号，其实制表符也应该忽略
+
+
+#+DOWNLOADED: screenshot @ 2021-06-16 08:57:26
+[[file:../src/images/实验一_词法分析程序/2021-06-16_08-57-26_screenshot.png]]
+
+** 语法解析
+语法解析最重要的部分是 _EvalVisitor_ ，他负责对表达式求值， _Main_ 做的无非是调用
+*** Main
+#+begin_src java
+  package com.lexer.main;
+  
+  public class Main {
+      public static void main(String[] args) throws Exception {
+          String inputFile = "src/com/lexer/lexerdemo";
+          InputStream is = new FileInputStream(inputFile);
+          ANTLRInputStream input = new ANTLRInputStream(is);
+
+          LexerLexer lexer = new LexerLexer(input);
+          CommonTokenStream tokens = new CommonTokenStream(lexer);
+
+          LexerParser parser = new LexerParser(tokens);
+
+          ParseTree tree = parser.entry();
+          EvalVisitor eval = new EvalVisitor();
+          eval.visit(tree);
+
+      }
+  }
+
+#+end_src
+*** EvalVisitor
+在 g4 文件中， *#* 可不是注释，而是标签，我们可以重写分析这些标签的方法
+在 _EvalVisitor_ 中，对这些标签的解析方法重写
+#+begin_src java
+  @Override
+  public String visitWords(LexerParser.WordsContext ctx) {
+      return String.format("words: %s", ctx.WORDS().getText());
+  }
+
+  @Override
+  public String visitInteger(LexerParser.IntegerContext ctx) {
+      return String.format("Integer: %s", ctx.INTEGER().getText());
+  }
+
+  @Override
+  public String visitFloat(LexerParser.FloatContext ctx) {
+      return String.format("Float: %s", ctx.FLOAT().getText());
+  }
+
+  @Override
+  public String visitVar(LexerParser.VarContext ctx) {
+      return String.format("Variable: %s", ctx.VAR().getText());
+  }
+
+  @Override
+  public String visitAdd(LexerParser.AddContext ctx) {
+      return String.format("Operator: %s", "+");
+  }
+
+  @Override
+  public String visitSub(LexerParser.SubContext ctx) {
+      return String.format("Operator: %s", "-");
+  }
+
+  @Override
+  public String visitMul(LexerParser.MulContext ctx) {
+      return String.format("Operator: %s", "*");
+  }
+
+  @Override
+  public String visitDiv(LexerParser.DivContext ctx) {
+      return String.format("Operator: %s", "/");
+  }
+
+#+end_src
+
+需要注意的是， _EvalVisitor_ 继承自 _LexerBaseVisitor<String>_ ，这个父类中的泛型类型指的是解析过后的返回类型
+接着，补全我们的代码
+#+begin_src java
+  public class EvalVisitor extends LexerBaseVisitor<String> {
+      @Override
+      public String visitEntry(LexerParser.EntryContext ctx) {
+          ctx.children.stream()
+                  .forEach(parseTree -> {
+                      System.out.println(visit(parseTree));
+                  });
+
+          return null;
+      }
+
+      @Override
+      public String visitPrintParagraph(LexerParser.PrintParagraphContext ctx) {
+          return ctx.unit().stream()
+                  .map(unitContext -> visit(unitContext) + "\n")
+                  .reduce(new String(), (r, x) -> r + x);
+      }
+
+      // 抄下上面的代码就行了
+  }
+#+end_src
+** 演示
+在 lexerdemo 写下需要解析的语句段落
+#+begin_src text
+  hello world
+  1+1
+  2+2
+  fuck you var123
+#+end_src
+
+运行之后
+
+#+DOWNLOADED: screenshot @ 2021-06-16 08:33:47
+[[file:../src/images/实验一_词法分析程序/2021-06-16_08-33-47_screenshot.png]]
+哟系，成功了
+
+* 实验三 基于 antlr 的语法分析器
+** 实验内容
+#+begin_quote
+实现含有数字、加、减、乘、除等算术式的语法分析,并且具有 优先级关系
+#+end_quote
+
+这不就是一个简单的计算器解析程序吗，挺容易的，就是计算的时候需要提防除以0的情况
+为了避免这种情况，将所有返回类型设置为 _LispValue_ ，换句话说，将错误也看作返回类型
+#+begin_src java
+  public class LispValue {
+      public ValueType valueType;
+      public ErrorType errorType;
+
+      public Integer intValue;
+      public Double fltValue;
+
+      public LispValue(Integer intValue) {
+          valueType = ValueType.LVAL_INT;
+          this.intValue = intValue;
+      }
+
+      public LispValue(Double fltValue) {
+          valueType = ValueType.LVAL_FLT;
+          this.fltValue = fltValue;
+      }
+
+      public LispValue(ErrorType errorType) {
+          valueType = ValueType.LVAL_ERR;
+          this.errorType = errorType;
+      }
+
+      @Override
+      public String toString() {
+          switch (valueType) {
+          case LVAL_ERR: return errorType.toString();
+          case LVAL_FLT: return fltValue.toString();
+          case LVAL_INT: return intValue.toString();
+          default:
+              return "fuck, error occusin";
+          }
+      }
+
+  }
+
+#+end_src
+
+其中 _ValueType_ 为
+#+begin_src java
+  public enum ValueType {
+      LVAL_INT,
+      LVAL_FLT,
+      LVAL_ERR,
+  }
+#+end_src
+
+_ErrorType_ 为
+#+begin_src java
+  public enum ErrorType {
+      LERR_DIV_BY_ZERO, // 除以0
+      LERR_NO_SUCH_VAR, // 没有这个变量
+      LERR_REDEFINE_VAR, // 重定义变量
+      LERR_CONFLICT_TYPE, // 类型不兼容，好像没用到
+      LERR_NO_MATCHED_METHOD, // 没有调用的方法
+      LERR_NO_METHOD_FOR_TYPE, // 没有为这两个类型定义的方法
+  }
+
+#+end_src
+** 文法定义
+在语法文件 Calculator.g4 中
+#+begin_src antlr
+  grammar Calculator;
+
+  entry: stat+;
+
+  // FIXME can't handle assign
+  stat: expr NEWLINE # PrintExpr
+  | NEWLINE # Blank
+  ;
+
+  expr: '(' expr ')' # Parens
+  | expr op=(MUL | DIV) expr # MulDiv
+  | expr op=(ADD | SUB) expr # AddSub
+  | NUMBER # Number
+  | FLOAT # Float
+  | ID # Id
+  ;
+
+  assign: LET ID '=' expr;
+
+  ID: [a-zA-Z_]+;
+  NUMBER: '-'?DIGITS;
+  FLOAT: NUMBER '.' DIGITS;
+  fragment DIGITS: [0-9]+;
+  MUL: '*';
+  DIV: '/';
+  ADD: '+';
+  SUB: '-';
+
+  LET: 'let';
+
+  WS: [\t ] -> skip;
+  NEWLINE: '\n';
+#+end_src
+
+1. 定义入口为 entry
+2. stat 语句段由表达式和换行符组成
+3. 语法的二义性通过文法定义的先后顺序来解决
+4. 忽略制表符和空格
+5. 本来在解析变量符号，不过还没修好程序，这里 *ID* 词法先不管
+
+   #+DOWNLOADED: screenshot @ 2021-06-16 08:55:49
+   [[file:../src/images/实验三_基于_antlr_的语法分析器/2021-06-16_08-55-49_screenshot.png]]
+
+** 语法解析
+同上，重写解析标签的方法
+#+begin_src java
+  @Override
+  public LispValue visitEntry(CalculatorParser.EntryContext ctx) {
+      return super.visitEntry(ctx);
+  }
+
+  @Override
+  public LispValue visitPrintExpr(CalculatorParser.PrintExprContext ctx) {
+      LispValue value = visit(ctx.expr());
+      System.out.println(value);
+      return null;
+  }
+
+  @Override
+  public LispValue visitBlank(CalculatorParser.BlankContext ctx) {
+      return super.visitBlank(ctx);
+  }
+
+  @Override
+  public LispValue visitNumber(CalculatorParser.NumberContext ctx) {
+      Integer value = Integer.valueOf(ctx.NUMBER().getText());
+      return new LispValue(value);
+  }
+
+  @Override
+  public LispValue visitFloat(CalculatorParser.FloatContext ctx) {
+      Double value = Double.valueOf(ctx.FLOAT().getText());
+      return new LispValue(value);
+  }
+
+  @Override
+  public LispValue visitMulDiv(CalculatorParser.MulDivContext ctx) {
+      LispValue left = visit(ctx.expr(0));
+      LispValue right = visit(ctx.expr(1));
+      int op = ctx.op.getType();
+      return evalOp(op, left, right);
+  }
+
+  @Override
+  public LispValue visitAddSub(CalculatorParser.AddSubContext ctx) {
+      LispValue left = visit(ctx.expr(0));
+      LispValue right = visit(ctx.expr(1));
+      int op = ctx.op.getType();
+
+      return evalOp(op, left, right);
+  }
+
+  @Override
+  public LispValue visitParens(CalculatorParser.ParensContext ctx) {
+      return visit(ctx.expr());
+  }
+
+#+end_src
+由于引入了浮点数，就要处理整数和浮点数之间的操作，这里能力有限，只能处理下相同类型之间的操作，否则返回一个错误 _LERR_NO_METHOD_FOR_TYPE_
+这里定义 _evalOp_ 系列函数处理四则运算操作
+#+begin_src java
+  public LispValue evalOp(int op, LispValue left, LispValue right) {
+      if(left.valueType == ValueType.LVAL_ERR) {
+          return left;
+      }
+
+      if(right.valueType == ValueType.LVAL_ERR) {
+          return right;
+      }
+
+      if(left.valueType != right.valueType) {
+          return new LispValue(ErrorType.LERR_CONFLICT_TYPE);
+      }
+
+      return evalSameType(op, left, right);
+  }
+
+  public LispValue evalSameType(int op, LispValue left, LispValue right) {
+      switch (left.valueType) {
+      case LVAL_FLT: return evalFloat(op, left.fltValue, right.fltValue);
+      case LVAL_INT: return evalInteger(op, left.intValue, right.intValue);
+      default:
+          return new LispValue(ErrorType.LERR_NO_METHOD_FOR_TYPE);
+      }
+  }
+
+  public LispValue evalInteger(int op, Integer left, Integer right) {
+      switch (op) {
+      case CalculatorParser.ADD: return new LispValue(left + right);
+      case CalculatorParser.SUB: return new LispValue(left - right);
+      case CalculatorParser.MUL: return new LispValue(left * right);
+      case CalculatorParser.DIV: return (right == 0 ? new LispValue(ErrorType.LERR_DIV_BY_ZERO) : new LispValue(left / right));
+      default:
+          return new LispValue(ErrorType.LERR_NO_MATCHED_METHOD);
+      }
+
+  }
+
+  public LispValue evalFloat(int op, Double left, Double right) {
+      switch (op) {
+      case CalculatorParser.ADD: return new LispValue(left + right);
+      case CalculatorParser.SUB: return new LispValue(left - right);
+      case CalculatorParser.MUL: return new LispValue(left * right);
+      case CalculatorParser.DIV: return (right == 0 ? new LispValue(ErrorType.LERR_DIV_BY_ZERO) : new LispValue(left / right));
+      default:
+          return new LispValue(ErrorType.LERR_NO_MATCHED_METHOD);
+      }
+
+  }
+
+#+end_src
+
+同样要注意，这里的 _EvalVisitor_ 继承自 _CalculatorBaseVisitor<LispValue>_ 
+** 演示
+在 demo 文件写下
+#+begin_src text
+  1 + 1
+  1 * 1
+  2 + 3
+  2 * (1 + 1)
+  2 / 0
+  1 + 1
+  1.1 + 2.2
+  1 + 1.1
+#+end_src
+
+在 Main 主类中
+#+begin_src java
+  public class Main {
+      public static void main(String[] args) throws IOException {
+          String inputFile = "src/com/calculator/demo";
+          InputStream is = new FileInputStream(inputFile);
+          ANTLRInputStream input = new ANTLRInputStream(is);
+
+          CalculatorLexer lexer = new CalculatorLexer(input);
+          CommonTokenStream tokens = new CommonTokenStream(lexer);
+
+          CalculatorParser parser = new CalculatorParser(tokens);
+
+          ParseTree tree = parser.entry();
+          EvalVisitor eval = new EvalVisitor();
+          eval.visit(tree);
+
+      }
+  }
+
+#+end_src
+运行之后，
+
+#+DOWNLOADED: screenshot @ 2021-06-16 09:07:44
+[[file:../src/images/实验三_基于_antlr_的语法分析器/2021-06-16_09-07-44_screenshot.png]]
+哟系，成功了
+
+* 心得体会
+感谢 *Intellij IDEA* ，感谢 *Antlr* ，感谢 *Java* ，早知道几个月前将做过这玩样，期末我还至于累得跟孙子似的
+我自由啦
+
+#+DOWNLOADED: screenshot @ 2021-06-16 09:12:23
+[[file:../src/images/心得体会/2021-06-16_09-12-23_screenshot.png]]
+
+ 

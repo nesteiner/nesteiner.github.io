@@ -1,0 +1,521 @@
+#+title: JSP大作业文档
+
+* 程序需求分析
+这次的选题是第二题，笔记分享系统
+一个用户登录后可以在他的主页查看到他自己的文章 *Post* ，并且只要用户不登出网站，不论他点击那个子网站，服务器必须保存他的登录信息，免得重新登录一遍
+一个管理员也是如此，不过在他的主页显示的都是用户 *User* ，点击后可以到 *User* 的主页去，查看他们的文章
+我们再详细设计一下
+
+** 用户需求
+假设用户首先访问的入口网站是 *localhost:8081* ， 这个时候，
+1. 前端问后端: 你那有存储当前登录的用户名字 *curuser* 吗？
+2. 后端在 *Session* 中查看后，回复
+   + 有， *curuser* 为 __Steiner__  
+   + 没有， *curuser* 为 __null__ 
+3. 前端接收到
+   + *curuser* 为 __Steiner__ ，重定向到用户主页 *localhost:8081/user* 
+   + *curuser* 为 __null__ ，重定向到登录界面 *localhost:8081/login*
+
+4. 前端跳转到
+   + *localhost:8081/user* 通过 *http://backend-url/posts* 向后端请求当前用户的所有文章 
+   + *localhost:8081/login* 提交登录信息给 *http://backend-url/login*
+     + 登录成功，跳转到 *localhost:8081/user* ，同时后端设置 *curuser* 
+     + 登录失败，不进行跳转
+   + *localhost:8081/logout* 此时
+     + 前端发送登出信息到后端
+     + 后端清除 *curuser* 
+
+   
+
+** 功能需求设计
+至此，前后端设计的需求已经明确
+*** 前端需要:
+1. 提供用户各种路由界面，提供不同的交互内容
+2. 必要时将数据传递给后端
+3. 数据格式用 *JSON* ---- 我定的
+*** 后端需要:
+1. 对用户登录进行 验证
+2. 使用 *Session* 保存用户登录状态，在后端共享 *Session* 数据
+3. 使用数据表 *User* 与 *Post* 存储用户信息和用户的文章信息
+
+* 程序设计
+** 工作原理
+*** 系统架构
+这里使用前后端分离的做法，前端使用 Vue 框架，后端使用 Servlet + MySQL
+*** 系统工作原理
+其中用户交互的内容，网页页面全部交给前端实现，后端负责会话保存和数据库处理
+另外注意前后端之间的交互需要处理 CORS 跨域请求，数据格式采用 JSON
+** 总体设计
+*** 功能模块
+**** 前端模块
+这里为每个不同的路由设置不同的 *View*
+需要注意的是在用户界面 *User* 中显示的是文章 *Post* 的入口，他是一个超链接，会跳转到 *Post.vue* 显示内容
+另外，将路由的根目录绑定到 __Home.vue__ 组件
+***** Home.vue
+ __Home.vue__ 基本不显示什么内容，他就像是一个中转站，会根据后端传递的 *curuser* 跳转到不同的路由
+***** Login.vue
+ __Login.vue__ 提供一个登录界面
+
+#+DOWNLOADED: screenshot @ 2021-06-06 22:11:36
+[[file:images/前端设计/2021-06-06_22-11-36_screenshot.png]]
+不仅要设计表单的结构，还要负责传递登录信息给后端
+验证登录所需要的数据都在后端，前端只负责将密码加密后，传递到后端
+
+***** User.vue
+ __User.vue__ 代表当前登录用户的主页，显示其所有文章的入口 *post-entry*
+
+点击跳转时会将自身的参数作为路由参数传递至 __Post.vue__
+***** Post.vue
+ __Post.vue__ 接收 __post-entry__ 提供的路由参数，并将其渲染
+
+***** Logout.vue
+ __Logout.vue__ 内容为空，负责向服务端请求登出操作，然后会重定向到 __Home.vue__
+
+***** index.ts
+这是路由表的定义，在 *src/router/index.ts* 内，这里只给出路径与组件的映射
+#+begin_src typescript
+  const routes: Array<RouteRecordRaw> = [
+      {
+          path: '/',
+          name: 'Home',
+          component: Home
+      },
+
+      {
+          path: '/post',
+          name: 'post',
+          component: Post
+      },
+
+      {
+          path: '/user',
+          name: 'user',
+          component: User,
+      },
+
+      {
+          path: '/admin',
+          name: 'admin',
+          component: Admin,
+      },
+
+      {
+          path: '/login',
+          name: 'login',
+          component: Login,
+      },
+      {
+          path: '/logout',
+          name: 'Logout',
+          component: Logout
+      },
+  ]
+#+end_src
+
+
+**** 后端设计
+后端的重点是如何保持会话状态，如何处理前端传递的 *JSON* 数据传递，以及如何处理用户登录验证
+另外，我的程序不是通过打包运行的，我无法在控制台看到错误，调试很麻烦，错误处理也应该算一个
+***** 保持会话状态
+*Session* 可以看作存储在服务器上的 *Cookie* ，也就是说，服务器上所有运行的 __Servlet__ 类都能看见他，调用他
+前端访问同一源的网站， *Session* 都是一样的
+那么，我们在 *Session* 中设置 *当前用户* 为 __curuser__ ，设置 *当前用户类型* 为 __usertype__ ，
+后端验证登录后，将 *Session* 的上述属性设置，那么其他 __Servlet__ 可以读取 *Session* 来获取当前用户信息， __Logout__ 可以请求删除 __curuser__ 属性来实现登出效果
+那么保持会话状态的原理就已经确定了
+
+***** 接收 *JSON* 数据
+*JSON* 数据无法从 *request.getParamaters* 得到，因为他不是用过表单发送的。
+在 __utils__ 目录下，我定义了一个 *InputStream2String* 包，内有 *transform* 方法负责获取 *String* ，接着通过这个 *String* 构造 *JSONObject* 即可
+在 __Login.java__ 下看看这是如何使用的
+#+begin_src java
+  String jsonData = transform(request.getInputStream());
+  JSONObject jsonObject = JSONObject.parseObject(jsonData);
+
+  String username = jsonObject.getString("username");
+  String usertype = jsonObject.getString("usertype");
+  String passhash = jsonObject.getString("passhash");
+
+#+end_src
+
+***** 用户登录验证
+还是在 __Login__ 中，查询数据表 *User* ，查看是否有符合以下条件的用户
+1. __name__ 为 __username__
+2. __isadmin__ 为 __usertype.equals("admin")__
+3. __passhash__ 为 __passhash__
+
+#+begin_src java
+  User.queryWithPasshash(username, usertype.equals("admin"), passhash);
+#+end_src
+
+如果有，那就是验证成功了，否则就是失败，没有这个用户或者登录密码错误
+
+
+*** 系统流程
+流程在用户需求那里已经给过，这里不再赘述
+*** 代码逻辑
+同上
+
+* 数据模型
+使用数据表 *User* 与 *Post* 存储用户信息和用户的文章信息
+** 概念结构设计 E-R 图
+也就两张表的事，直接看关系表就行了
+** 逻辑结构设计 关系表
+*** User
+| 名称    | 类型         | 可否为空 | 说明 | Default |
+|---------+--------------+----------+------+---------|
+| postid  | int(11)      | No       | 主键 | NULL    |
+| title   | varchar(20)  | YES      |      | NULL    |
+| author  | varchar(20)  | YES      |      | NULL    |
+| content | varchar(100) | YES      |      | NULL    |
+
+*** Post
+| 名称     | 类型         | 可否为空 | 说明            | Default |
+|----------+--------------+----------+-----------------+---------|
+| userid   | int(11)      | NO       | 主键            | NULL    |
+| name     | varchar(20)  | YES      |                 | NULL    |
+| passhash | varchar(128) | YES      | 密码的MD5哈希值 | NULL    |
+| isadmin  | tinyint(1)   | YES      | 是否为管理员    | NULL    |
+
+* 系统实现
+** 数据库的连接
+这里没有直接调用任何数据库代码，而是将其封装在类的静态方法中
+首先是 User 模型类有两个静态方法， queryWithPasshash 和 queryIfNotAdmin
+#+begin_src java
+  public static Result<List<User>, Exception> queryWithPasshash(String name, boolean isadmin, String passhash){
+      Connection conn = null;
+      Statement stmt = null;
+      List<User> users = new LinkedList<>();
+      Result<List<User>, Exception> result = new Result<>(null, null);
+
+      try {
+          Class.forName(JDBC_DRIVER);
+          conn = DriverManager.getConnection(DB_URL, connInfo);
+          // TODO 执行查询
+          stmt = conn.createStatement();
+          String querySQL = String.format("select * from %s where name = '%s' and passhash = '%s' and isadmin = %s", USER_TABLE, name, passhash, isadmin);
+          ResultSet resultSet = stmt.executeQuery(querySQL);
+
+          while (resultSet.next()) {
+              int userid = resultSet.getInt("userid");
+              String _name = resultSet.getString("name");
+              String _passhash = resultSet.getString("passhash");
+              boolean _isadmin  = resultSet.getBoolean("isadmin");
+              users.add(new User(userid, _name, _isadmin, _passhash));
+          }
+
+          resultSet.close();
+          stmt.close();
+          conn.close();
+
+          result.left = users;
+      } catch (SQLException sqlException) {
+          result.right = sqlException;
+      } catch (Exception exception) {
+          result.right = exception;
+      } finally {
+          return result;
+      }
+
+  }
+
+#+end_src
+
+#+begin_src java
+  public static Result<List<User>, Exception> queryIfNotAdmin() {
+      Connection conn = null;
+      Statement stmt = null;
+      List<User> users = new LinkedList<>();
+      Result<List<User>, Exception> result = new Result<>(null, null);
+
+      try {
+          Class.forName(JDBC_DRIVER);
+          conn = DriverManager.getConnection(DB_URL, connInfo);
+          // TODO 执行查询
+          stmt = conn.createStatement();
+          String querySQL = String.format("select * from %s where isadmin = %s", USER_TABLE, false);
+          ResultSet resultSet = stmt.executeQuery(querySQL);
+
+          while (resultSet.next()) {
+              int userid = resultSet.getInt("userid");
+              String _name = resultSet.getString("name");
+              boolean _isadmin  = resultSet.getBoolean("isadmin");
+              String _passhash = resultSet.getString("passhash");
+              users.add(new User(userid, _name, _isadmin, _passhash));
+          }
+
+          resultSet.close();
+          stmt.close();
+          conn.close();
+
+          result.left = users;
+      } catch (SQLException sqlException) {
+          result.right = sqlException;
+      } catch (Exception exception) {
+          result.right = exception;
+      } finally {
+          return result;
+      }
+
+  }
+
+
+
+#+end_src
+
+类似的，在 Post 模型类中， 有 queryWithAuthor 静态方法
+#+begin_src java
+  public static Result<List<Post>, Exception> queryWithAuthor(String author) {
+      Connection conn = null;
+      Statement stmt = null;
+      List<Post> posts = new LinkedList<>();
+      Result<List<Post>, Exception> result = new Result<>(null, null);
+
+      try {
+          Class.forName(JDBC_DRIVER);
+          conn = DriverManager.getConnection(DB_URL, connInfo);
+          // TODO 执行查询
+          stmt = conn.createStatement();
+          String querySQL = String.format("select * from %s where author = \'%s\'", POST_TABLE, author);
+          ResultSet resultSet = stmt.executeQuery(querySQL);
+
+          while (resultSet.next()) {
+              int postid = resultSet.getInt("postid");
+              String _title = resultSet.getString("title");
+              String _author = resultSet.getString("author");
+              String _content = resultSet.getString("content");
+              posts.add(new Post(postid, _title, _author, _content));
+          }
+
+          resultSet.close();
+          stmt.close();
+          conn.close();
+
+          result.left = posts;
+      } catch (SQLException sqlException) {
+          sqlException.printStackTrace();
+          result.right = sqlException;
+      } catch (Exception exception) {
+          exception.printStackTrace();
+          result.right = exception;
+      } finally {
+          return result;
+      }
+
+
+  }
+
+#+end_src
+** 前后端的交互处理
+*** 后端的JSON数据处理
+这里使用了 fastjson 这个库，详细内容去看菜鸟教程
+**** 接收前端 JSON 数据
+在 request 对象的方法中， getParamaters 函数只是用来获取表单数据的，对 JSON 数据格式不使用，这个时候需要读取其输入流对象
+在 utils 包中，定义转换方法
+#+begin_src java
+  package com.backend.utils;
+
+  import java.io.IOException;
+  import java.io.InputStream;
+
+  public class inputStream2String {
+      public static String transform(InputStream inputStream) throws IOException {
+          StringBuffer buffer = new StringBuffer();
+          byte [] bytes = new byte[4096];
+          int result = inputStream.read(bytes);
+          while(result != -1) {
+              buffer.append(new String(bytes, 0, result));
+              result = inputStream.read(bytes);
+          }
+
+          return buffer.toString();
+      }
+  }
+
+#+end_src
+
+想要获取 JSON 对应的键值对，需要先将输入流中的数据转化为 JSONObject 对象，再从中读取数据
+#+begin_src java
+  String jsonData = transform(request.getInputStream());
+  JSONObject jsonObject = JSONObject.parseObject(jsonData);
+  String username = jsonObject.getString("username");
+
+#+end_src
+
+**** 发送后端模型的JSON数据格式
+想要将一个类转化为 JSON 数据，fastjson 为我们提供了一种方法，首先在类的定义中，把类定义为 JavaBean 对象，再将需要 JSON 化的成员变量加上标注
+#+begin_src java
+  public class User {
+      @JSONField(name = "userid")
+      int userid;
+      @JSONField(name = "name")
+      String name;
+      @JSONField(name = "isadmin")
+      boolean isadmin;
+      @JSONField(name = "passhash")
+      String passhash;
+
+      // ignore setter and getter
+  }
+#+end_src
+
+可以通过调用
+#+begin_src java
+  JSONObject.toString(object)
+#+end_src
+获取其JSON格式化的数据，在对应的视图层中，我们对这个对象列表进行转换，并发送
+#+begin_src java
+  protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+      PrintWriter writer = response.getWriter();
+
+      String jsonData = transform(request.getInputStream());
+      JSONObject jsonObject = JSONObject.parseObject(jsonData);
+      String username = jsonObject.getString("username");
+      // TODO query from table `Post`, which author == username, return it as posts: List<Post>
+      Result<List<Post>, Exception> queryResult = Post.queryWithAuthor(username);
+
+      JSONObject result = new JSONObject();
+      if(queryResult.isOk()) {
+          result.put("status", "get post success");
+          result.put("posts", queryResult.left);
+          result.put("username", username == null ? "null" : username);
+
+      } else if(queryResult.isErr()) {
+          response.setStatus(400);
+          result.put("status", "error occusin");
+          result.put("error", queryResult.right.getMessage());
+      }
+
+      writer.write(result.toString());
+  }
+#+end_src
+
+*** 后端错误查看
+参考 *Rust* 的 *Result* 错误类型设计，自己搞了一个简易的 *Result* 类
+该类有两个属性， __left__ 与 __right__ ，两个属性不能同时为空，也不能同时都有值
+ __left__ 表示正确结果， __right__ 表示错误结果
+#+begin_src java
+  public class Result <Ok, Err> {
+      public Ok left;
+      public Err right;
+
+      public Result(Ok left, Err right) {
+          this.left = left;
+          this.right = right;
+      }
+
+      public boolean isOk() {
+          return left != null && right == null;
+      }
+
+      public boolean isErr() {
+          return left == null && right != null;
+      }
+  }
+#+end_src
+
+这样以后就可以通过 *isOk* 和 *isErr* 来判断是否发生错误，来看看具体使用，在 *User* 的静态查询方法中
+#+begin_src java
+  public static Result<List<User>, Exception> queryWithPasshash(String name, boolean isadmin, String passhash){
+      Connection conn = null;
+      Statement stmt = null;
+      List<User> users = new LinkedList<>();
+      Result<List<User>, Exception> result = new Result<>(null, null);
+
+      try {
+          Class.forName(JDBC_DRIVER);
+          conn = DriverManager.getConnection(DB_URL, connInfo);
+          // TODO 执行查询
+          stmt = conn.createStatement();
+          String querySQL = String.format("select * from %s where name = '%s' and passhash = '%s' and isadmin = %s", USER_TABLE, name, passhash, isadmin);
+          ResultSet resultSet = stmt.executeQuery(querySQL);
+
+          while (resultSet.next()) {
+              int userid = resultSet.getInt("userid");
+              String _name = resultSet.getString("name");
+              String _passhash = resultSet.getString("passhash");
+              boolean _isadmin  = resultSet.getBoolean("isadmin");
+              users.add(new User(userid, _name, _isadmin, _passhash));
+          }
+
+          resultSet.close();
+          stmt.close();
+          conn.close();
+
+          result.left = users;
+      } catch (SQLException sqlException) {
+          result.right = sqlException;
+      } catch (Exception exception) {
+          result.right = exception;
+      } finally {
+          return result;
+      }
+
+  }
+
+#+end_src
+
+虽然有 *try-catch* 代码处理错误，但是错误信息打印不出来，只好通过 *Result* 类型来传递，上面的调用程序调用的时候就可以通过 *Result* 来查看运行情况
+
+*** 前端错误处理
+前后端交互必然要解决 CORS 跨域问题， Cookie 传递的问题
+**** Cookie 设置
+如果要在后端使用 *Session* ，前端传递参数到后端时，得带上自己的 *Cookie* ，不然每次访问，后端都会生成一个新的 *Session*
+无法保持状态
+具体解决方法是，在 *axios* 的请求参数中，加上
+#+begin_src javascript
+  axios.get(url, {
+      withCredentials: true
+  })
+#+end_src
+
+#+begin_src javascript
+  axios.post(url, {
+      post-params ...
+  }, {
+      withCredentials: true
+  })
+#+end_src
+
+**** 跨域问题
+传递 *Cookie* 还不能让服务器正常运行，前端的请求会被同源策略拦下，后端需要为前端的 *Origin* 域提供一个口子
+在后端注册一个 *CORSFilter* :
+1. 为所有从 __urlPatterns__ 的请求设置拦截
+2. 为响应设置 __Access-Control-Allow-Origin__
+3. 为响应设置 __Access-Control-Allow-Methods__
+4. 为响应设置 __Access-Control-Allow-Credentials__
+5. 为响应设置 __Access-Control-ALlow-Headers__ ，这个是 *Tomcat* 提示我要加的
+
+顺便设置下 __Response__ 的内容
+#+begin_src java
+  @WebFilter(filterName = "CORSFilter", urlPatterns = "/*")
+  public class CORSFilter implements Filter {
+      @Override
+      public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain)
+          throws IOException, ServletException {
+          HttpServletRequest request = (HttpServletRequest) servletRequest;
+
+          // Authorize (allow) all domains to consume the content
+          HttpServletResponse response = (HttpServletResponse) servletResponse;
+          response.setHeader("Access-Control-Allow-Origin", "http://localhost:8081");
+          response.setHeader("Access-Control-Allow-Methods","GET, OPTIONS, HEAD, PUT, POST");
+          response.setHeader("Access-Control-Allow-Credentials","true");
+          response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+          response.setCharacterEncoding("UTF-8");
+          response.setContentType("application/json; charset=utf-8");
+
+          // pass the request along the filter chain
+          chain.doFilter(request, response);
+      }
+
+  }
+
+#+end_src
+
+
+
+
+
+* 总结
+
+#+DOWNLOADED: screenshot @ 2021-06-27 20:00:18
+[[file:images/总结/2021-06-27_20-00-18_screenshot.png]]

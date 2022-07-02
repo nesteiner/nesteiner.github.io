@@ -1,0 +1,95 @@
+#+OPTIONS: author:nil ^:{}
+#+HUGO_BASE_DIR: ../../ChiniBlogs
+#+HUGO_SECTION: posts/2022/07
+#+HUGO_CUSTOM_FRONT_MATTER: :toc true
+#+HUGO_AUTO_SET_LASTMOD: t
+#+HUGO_DRAFT: false
+#+DATE: [2022-07-02 Sat 14:32]
+#+HUGO_TAGS: 微积分
+#+HUGO_CATEGORIES: Julia
+
+
+
+#+title: Julia 微积分简要介绍
+* 介绍
+*JuliaMath* 下有一个微积分包，闲得没事看看文档，给大家简要整理了一下
+- =derivative= 求导
+- =second_derivative= 求二阶导
+然而关于积分，文档里说
+#+begin_quote
+The Calculus package no longer provides routines for univariate numerical integration. Use QuadGK.jl instead.
+#+end_quote
+他说单变量的积分在这个包中不再支持，可以去使用 =QuadGK.jl= 包中
+我又尝试了下 =Calculus= 包中的 =integrate= 函数
+#+begin_src julia
+  f((x, y)) = sin(x) + cos(y)
+#+end_src
+
+#+DOWNLOADED: screenshot @ 2022-04-25 19:01:20
+[[file:~/workspace/ChiniBlogs/src/images/介绍/shortcut.png]]
+
+我发现，这个错误中的 =quadgk= 和 =QuadGk= 中的 =quadgk= 不是同一个函数，他指的是 =Calculus.quadgk=
+这个函数不存在
+
+另外我去谷歌了一下，发现 =Quadgk= 不支持多重积分，所以我推荐使用同在 =JuliaMath= 仓库下的 =Cubature.jl= 包
+既可以做单变量积分，又可以做多变量积分
+* 使用
+** 导数 using Calculus
+*derivative*
+#+begin_src julia
+  derivative(sin, 0) == cos(0)
+  derivative(sin, 1) == cos(1)
+  derivative(sin, float(pi)) = cos(float(pi))
+#+end_src
+** 多元导数 using Calculus
+*derivative*
+#+begin_src julia
+  julia> derivative(f, [1, 1])
+  2-element Vector{Float64}:
+    0.5403023058631036
+   -0.8414709847974693
+#+end_src
+** 积分 using Cubature
+*hquadrature*
+#+begin_src julia
+  julia> (val, err) = hquadrature(x -> x^3, 0, 1)
+  (0.25, 2.7755575615628914e-15)
+
+#+end_src
+
+
+#+begin_src julia
+  (val, err) = hquadrature(f::Function, xmin, xmax;
+                           reltol=1e-8, abstol=0, maxevals=0)
+#+end_src
+
+其中
+- =f= 是被积函数
+- =xmin= 和 =xmax= 是积分区间
+- =reltol= 表示 /required relative error tolerance/
+- =abstol= 表示 /required absolute error tolerance/
+- =maxevals= 表示 /指定函数评估的(粗略)最大数量/
+
+
+** 多元积分 using Cubature
+*hcubature*
+#+begin_src julia
+  (val,err) = hcubature(f::Function, xmin, xmax;
+                        reltol=1e-8, abstol=0, maxevals=0)
+#+end_src
+只有函数名不同，参数类型不同，其他解释同上
+#+begin_src julia
+  f((x, y)) = x^3 * y^2
+  hcubature(f, [0,0],[1,1])
+#+end_src
+
+#+begin_src julia
+  julia> hcubature(f, [0,0],[1,1])
+  (0.08333333333333331, 2.7755575615628914e-17)
+#+end_src
+* 补充说明
+这份介绍主要是简单介绍，详细内容可以去查看这两个包的文档
+- Calculus
+  https://github.com/JuliaMath/Calculus.jl
+- Cubature
+  https://github.com/JuliaMath/Cubature.jl

@@ -1,0 +1,189 @@
+#+title: HTML5 移动开发 期末作业
+
+* 项目介绍
+参照去年的作业内容，对源代码进行了大幅度修改，从原来的 =Vue2= 修改到 =Vue3 CompositionAPI= + =typescript= + =scss=
+这次修改是为了提高组件设计的质量，纠正以前的一些错误，就当是大作业了
+另外废弃了 =Pomodoro= 组件，因为运行时会让浏览器卡死，暂时不做修改
+* 主题内容
+这个项目有
+- *Teambition* 软件项目管理
+- *滴答清单* 中的习惯打卡
+- 我的第一个Vue程序 *电子时钟*
+
+
+#+DOWNLOADED: screenshot @ 2021-12-23 14:36:46
+[[file:images/主题内容/2021-12-23_14-36-46_screenshot.png]]
+
+
+* 模块设计
+** 全局组件
+页面中有两个组件，不管路由如何更改，他们都是存在的
+1. =PageHeader=
+   #+DOWNLOADED: screenshot @ 2021-12-23 14:40:33
+   [[file:images/模块设计/2021-12-23_14-40-33_screenshot.png]]
+2. =PageMenu=
+   #+DOWNLOADED: screenshot @ 2021-12-23 14:40:42
+   [[file:images/模块设计/2021-12-23_14-40-42_screenshot.png]]
+
+在 =App.vue= 项目入口中，导入他们
+#+begin_src typescript
+  import PageHeader from '@/components/Page/Header.vue'
+  import PageMenu from '@/components/Page/Menu.vue'
+#+end_src
+
+#+begin_src html
+  <template>
+    <page-header/>
+    <div class="router-view">
+      <router-view/>
+    </div>
+
+    <page-menu/>
+  </template>
+
+#+end_src
+** 打卡组件
+#+DOWNLOADED: screenshot @ 2021-12-23 14:43:30
+[[file:images/模块设计/2021-12-23_14-43-30_screenshot.png]]
+
+#+DOWNLOADED: screenshot @ 2021-12-23 14:53:36
+[[file:images/模块设计/2021-12-23_14-53-36_screenshot.png]]
+
+打卡组件由两部分组成，一个是入口 =Card= ，一个是 =Modal= 悬浮窗
+点击 =Card= 后会是悬浮窗出现
+** 任务组件
+类似的，任务组件也由两部分组成，一个是入口 =Entry= ，一个是任务列表 =TaskList=
+不同的是，点击 =Entry= 后，路由会调到另一个界面显示 =TaskList=
+
+#+DOWNLOADED: screenshot @ 2021-12-23 14:57:16
+[[file:images/模块设计/2021-12-23_14-57-16_screenshot.png]]
+
+#+DOWNLOADED: screenshot @ 2021-12-23 14:57:49
+[[file:images/模块设计/2021-12-23_14-57-49_screenshot.png]]
+
+
+#+DOWNLOADED: screenshot @ 2021-12-23 15:01:22
+[[file:images/模块设计/2021-12-23_15-01-22_screenshot.png]]
+
+在任务列表组件中，顺带实现任务的添加，任务列表重命名和任务列表添加
+
+** 时钟组件
+#+DOWNLOADED: screenshot @ 2021-12-23 15:02:34
+[[file:images/模块设计/2021-12-23_15-02-34_screenshot.png]]
+
+时钟组件尤其简单，不过需要在一个使用 =PageMenu= 控制其显示
+在 =App.vue= 中，将 =clock= 的显示交给变量 =clockActive= 控制
+#+begin_src html
+  <page-menu
+    @toggle:clock="toggleClock"/>
+  <clock v-model:active="clockActive"/>
+
+#+end_src
+
+#+begin_src typescript
+  const clockActive = ref(false)
+#+end_src
+
+点击 =PageMenu= 中的时钟图标时，触发 =@toggle:clock= 事件，调用 =toggleClock= 处理
+#+begin_src typescript
+  function toggleClock() {
+    clockActive.value = true
+  }
+
+#+end_src
+
+然后时钟页面就会慢慢降落下来，知道点击圆形按钮后收回去
+* 组件实现
+这里挑几个来写吧，其他的有点简单
+** 可复用的打卡组件
+在页面中有四个打卡组件，在 =Home.vue= 中他们的部署代码是
+#+begin_src html
+  <div class="record">
+    <MedicineCard/>
+    <HomeWorkCard/>
+    <ReadingCard/>
+    <WritingCard/>
+  </div>
+#+end_src
+
+#+begin_src typescript
+  import {MedicineCard, HomeWorkCard, ReadingCard, WritingCard} from '@/components/Record';
+#+end_src
+
+在组件绘制中，用到了 =Card= 和 =Modal= 两个组件，然后通过其中的命名插槽 =slot= 和 =props= 来实现不同的内容
+以 =MediceCard= 为例，在模板中
+#+begin_src html
+  <template>
+    <div class="record-medicine">
+      <Card :title="title" :isdone="isdone" @toggle="togglemodal">
+        <template v-slot:icon>
+          <!-- svg code -->
+        </template>
+      </Card>
+    
+      <Modal :title="title" :words="words" :color="color"  v-model:active="active">
+        <template v-slot:background-image>
+          <!-- svg code -->
+        </template>
+      
+      </Modal>
+
+    </div>
+  </template>
+
+#+end_src
+
+这样以后，可以通过修改 =color= , =words=, =title= 属性，插入不同 =svg= 代码到插槽 =icon= 和 =background-image= 中
+来实现不同的卡片和不同的遮罩层 =Modal= 
+** 分离的任务组件
+参照网页应用的设计，任务组件的入口 =Entry= 和 任务列表 =TaskList= 是分离的，通过 =Entry= 跳转到
+=/project= 路由，并渲染 =TaskList= 组件
+那么渲染 =TaskList= 的数据从哪里来？ 如果有后端的话， =TaskList= 应该通过参数 =id= 向后端请求，
+所以在 =/project= 路由中定义了虚假的数据
+#+begin_src html
+  <template>
+    <div class="project-view">
+      <template v-for="(taskgroup, index) in taskgroups" :key="index">
+        <TaskList
+          :id="taskgroup.id"
+          v-model:title="taskgroup.title"
+          v-model:tasks="taskgroup.tasks"
+          @addlist="addlist(index, $event)"
+          @delete="deletelist(index)"
+          />
+      </template>
+    </div>
+  </template>
+
+#+end_src
+
+#+begin_src typescript
+  const taskgroups = ref([
+    new TaskGroup(1, "启动项目", [
+      new Task('【示例】立项准备'),
+      new Task('【示例】项目策划方案'),
+      new Task('【示例】项目启动会')
+    ]),
+
+    new TaskGroup(2, "执行推进", [
+      new Task('【示例】产品方案'),
+      new Task('【示例】进程汇报PPT'),
+      new Task('【示例】项目中期回顾'),
+      new Task('【示例】一期交付验收'),
+      new Task('【示例】二期交付验收')
+    ]),
+
+    new TaskGroup(3, '风险管理', [
+      new Task('【示例】产品设计风险'),
+      new Task('【示例】开发进度风险'),
+      new Task('【示例】验收风险')
+    ]),
+
+    new TaskGroup(4, '总结回顾', [
+      new Task('【示例】项目复盘总结'),
+      new Task('【示例】文档梳理沉淀'),
+      new Task('【示例】数据分析')
+    ])
+  ])
+
+#+end_src

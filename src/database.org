@@ -1,0 +1,65 @@
+#+title: 数据库原理笔记
+
+* COMMENT having
+*having* 作用在查询语句中
+
+我们先来看一条执行错误的sql语句
+#+BEGIN_SRC sql
+  select
+          count(*) as 'count'
+  from
+          db_name
+  where
+          count > 1;
+#+END_SRC
+
+这种情况下，函数调用语句`count(\*)` 的别名'count' 需要在整个sql语句执行完才会生成，
+为了解决这种情况，mysql引入了 *having* 查询条件，使我们可以直接用`count(\*)`来查询
+#+BEGIN_SRC sql
+  select
+          count(*)
+  from
+          db_name
+  having
+          count(*) > 1;
+#+END_SRC
+
+# TODO
+#+BEGIN_SRC sql
+select
+    sc.sno, count(cno)
+from
+    sc
+    join student on student.sno = sc.sno
+    group by student.sno
+having
+    avg(grade) > 85;
+
+#+END_SRC
+
+* group by
+`group by` 表示把数据表按照某个字段集中在一起，让我们来看一个例子
+假设有表格`table`
+|   id | name  | class |
+| :--: | :--:  | :--:  |
+|    1 | hello | A     |
+|    2 | world | B     |
+|    3 | fuck  | A     |
+|    4 | you   | A     |
+
+
+我们输入
+#+BEGIN_SRC sql
+  select	
+          class
+  from
+          table
+          group by class;
+#+END_SRC
+产生的结果是
+
+但是其他的字段到哪里去了？
+我们可以这样看待经过`group by`之后的`table`
+
+
+* join

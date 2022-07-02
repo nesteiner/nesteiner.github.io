@@ -1,0 +1,123 @@
+#+OPTIONS: author:nil ^:{}
+#+HUGO_BASE_DIR: ../../ChiniBlogs
+#+HUGO_SECTION: posts/2022/07
+#+HUGO_CUSTOM_FRONT_MATTER: :toc true
+#+HUGO_AUTO_SET_LASTMOD: t
+#+HUGO_DRAFT: false
+#+DATE: [2022-07-02 Sat 14:36]
+#+HUGO_TAGS: Fragment
+#+HUGO_CATEGORIES: Android
+
+
+
+#+title: Android Fragment 简单使用
+* Fragment
+这篇笔记大部分参考自 [[https://www.jianshu.com/p/2bf21cefb763][这篇教程]]
+** 什么是 Fragment
+=Fragment= 是 =Activity= 界面中的一部分，可理解为模块化的 =Activity=
+1. =Fragment= 不能独立存在，必须嵌入到 =Activity= 中
+2. =Fragment= 具有自己的生命周期，接收它自己的事件，并可以在 =Activity= 运行时被添加或删除
+3. =Fragment= 的生命周期直接受所在的Activity的影响。如：当 =Activity= 暂停时，它拥有的所有 =Fragment= 们都暂停
+
+** Fragment 有什么用
+支持动态，灵活的界面设计
+** 如何使用 Fragment
+*** 相关回调
+1. =onAttach= 方法
+   Fragment和Activity建立关联的时候调用（获得activity的传递的值）
+2. =onCreateView= 方法
+   为Fragment创建视图（加载布局）时调用（给当前的fragment绘制UI布局，可以使用线程更新UI）
+3. =onActivityCreated= 方法
+   当Activity中的onCreate方法执行完后调用（表示activity执行oncreate方法完成了的时候会调用此方法）
+4. =onDestroyView= 方法
+   Fragment中的布局被移除时调用（表示fragment销毁相关联的UI布局）
+5. =onDetach= 方法
+   Fragment和Activity解除关联的时候调用（脱离activity）
+
+*** 静态添加 Fragment
+首先需要创建一个 =fragment= 类，并为其创建布局文件 =example_fragment.xml= ，再将其配置到 =activity_main.xml= 中
+1. =example_fragment.xml= 布局文件
+   #+begin_src xml
+     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+         xmlns:tools="http://schemas.android.com/tools"
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+         android:orientation="vertical" >
+
+         <TextView
+             android:text="@string/example_fragment"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"/>
+   
+     </LinearLayout>
+   #+end_src
+
+2. =FragmentLayoutTest.java= 类文件
+   #+begin_src java
+     public class FragmentLayoutTest extends Fragment {
+         @Override
+         public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                  Bundle savedInstanceState) {
+            
+             return inflater.inflate(R.layout.example_fragment, container, false);
+             // 将example_fragment.xml作为该Fragment的布局文件
+             // 即相当于FragmentLayoutTest直接调用example_fragment.xml来显示到Fragment中
+         }
+     }
+   #+end_src
+3. 在 =activity_main= 布局文件中,
+   #+begin_src xml
+     <?xml version="1.0" encoding="utf-8"?>
+     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                   android:layout_width="match_parent"
+                   android:layout_height="match_parent"
+                   android:baselineAligned="false">
+       <fragment android:name="com.example.criminalintent.FragmentLayoutTest"
+                 android:id="@+id/list"
+                 android:layout_weight="1"
+                 android:layout_width="match_parent"
+                 android:layout_height="match_parent"/>
+     </LinearLayout>
+   #+end_src
+   
+*** 动态添加 Fragment
+或者，我们在运行时为主界面添加 =fragment= ，这时我们不用在 =activity_main.xml= 布局中声明 =fragment=
+而是使用三个步骤添加
+1. 获取 =FragmentManager=
+2. 获取 =FragmentTransaction=
+3. 创建 =Fragment=
+4. 添加 =Fragment=
+
+不过我们先调整下 =activity_main.xml= 布局
+#+begin_src xml
+  <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:orientation="vertical" >
+    
+      <FrameLayout
+          android:id="@+id/fragment_container"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"/>
+    
+  </LinearLayout>
+#+end_src
+
+在主界面的类文件中
+#+begin_src java
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+      super.onCreate(savedInstanceState);
+      setContentView(R.layout.fragment_transaction_test);
+      // 步骤1：获取FragmentManager
+      FragmentManager fragmentManager = getFragmentManager();
+      // 步骤2：获取FragmentTransaction        
+      FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+      FragmentLayoutTest fragment = new FragmentLayoutTest();
+      fragmentTransaction.add(R.id.fragment_container, fragment);
+      fragmentTransaction.commit();
+  }
+#+end_src
+
+   

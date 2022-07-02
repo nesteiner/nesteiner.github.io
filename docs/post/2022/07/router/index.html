@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>Flutter 中的Router - My New Hugo Site</title><meta name="Description" content="This is my cool site"><meta property="og:title" content="Flutter 中的Router" />
+<meta property="og:description" content="用你的应用来演示 路由用法 在这个演示里定义两个界面，HomePage 与 NextPage ，并从 HomePage 传递参数到 NextPage 中 接下来演示匿名路由和命名路由的情况 这是 HomePage 点击文字按钮后，跳转到 NextPage 1. 匿名路由跳转 首先是 HomePage class HomePage extends StatelessWidget { Widget buildBody(BuildContext context) { var fnpress = (String message) { return () { Navigator.push(context, MaterialPageRoute(builder: (builder) =&gt; NextPage(message: message))); }; }; return Center( child: Column( mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [ TextButton(onPressed: fnpress(&#39;Hello World&#39;), child: Text(&#39;goto the next page with status 1&#39;)), TextButton(onPressed: fnpress(&#39;Fuck You&#39;), child: Text(&#39;goto the next page with status 2&#39;)) ], ), ); } @override Widget build(BuildContext context) { // TODO: implement build return Scaffold( appBar: AppBar(title: Text(&#39;Home Page&#39;),), body: buildBody(context), ); } } 在跳转时通过构造函数来传递参数，其中 NextPage 为 class NextPage extends StatelessWidget { String message; NextPage({required this." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/post/2022/07/router/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-07-02T01:43:00+08:00" />
+<meta property="article:modified_time" content="2022-07-02T01:44:02+08:00" /><meta property="og:site_name" content="My cool site" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Flutter 中的Router"/>
+<meta name="twitter:description" content="用你的应用来演示 路由用法 在这个演示里定义两个界面，HomePage 与 NextPage ，并从 HomePage 传递参数到 NextPage 中 接下来演示匿名路由和命名路由的情况 这是 HomePage 点击文字按钮后，跳转到 NextPage 1. 匿名路由跳转 首先是 HomePage class HomePage extends StatelessWidget { Widget buildBody(BuildContext context) { var fnpress = (String message) { return () { Navigator.push(context, MaterialPageRoute(builder: (builder) =&gt; NextPage(message: message))); }; }; return Center( child: Column( mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [ TextButton(onPressed: fnpress(&#39;Hello World&#39;), child: Text(&#39;goto the next page with status 1&#39;)), TextButton(onPressed: fnpress(&#39;Fuck You&#39;), child: Text(&#39;goto the next page with status 2&#39;)) ], ), ); } @override Widget build(BuildContext context) { // TODO: implement build return Scaffold( appBar: AppBar(title: Text(&#39;Home Page&#39;),), body: buildBody(context), ); } } 在跳转时通过构造函数来传递参数，其中 NextPage 为 class NextPage extends StatelessWidget { String message; NextPage({required this."/>
+<meta name="application-name" content="My cool site">
+<meta name="apple-mobile-web-app-title" content="My cool site"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://example.org/post/2022/07/router/" /><link rel="prev" href="http://example.org/post/2022/07/counter/" /><link rel="next" href="http://example.org/post/2022/07/provider/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Flutter 中的Router",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/example.org\/post\/2022\/07\/router\/"
+        },"genre": "post","keywords": "Flutter路由","wordcount":  310 ,
+        "url": "http:\/\/example.org\/post\/2022\/07\/router\/","datePublished": "2022-07-02T01:43:00+08:00","dateModified": "2022-07-02T01:44:02+08:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "Author"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="My New Hugo Site">My cool site</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="My New Hugo Site">My cool site</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><main class="main">
+                <div class="container"><div class="page single special"><h1 class="single-title animate__animated animate__pulse animate__faster">Flutter 中的Router</h1><div class="content" id="content"><h2 id="用你的应用来演示-路由用法">用你的应用来演示 路由用法</h2>
+<p>在这个演示里定义两个界面，HomePage 与 NextPage ，并从 HomePage 传递参数到 NextPage 中 <!-- raw HTML omitted -->
+接下来演示匿名路由和命名路由的情况 <!-- raw HTML omitted --></p>
+<p>这是 <strong>HomePage</strong> <!-- raw HTML omitted --></p>
+<p><figure><img src="/ox-hugo/2021-06-13_14-36-32_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<p>点击文字按钮后，跳转到 NextPage <!-- raw HTML omitted --></p>
+<p><figure><img src="/ox-hugo/2021-06-13_14-37-33_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<h3 id="1-dot-匿名路由跳转">1. 匿名路由跳转</h3>
+<p>首先是 HomePage <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-dart" data-lang="dart"><span class="line"><span class="cl"><span class="kd">class</span> <span class="nc">HomePage</span> <span class="kd">extends</span> <span class="n">StatelessWidget</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">Widget</span> <span class="n">buildBody</span><span class="p">(</span><span class="n">BuildContext</span> <span class="n">context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="n">fnpress</span> <span class="o">=</span> <span class="p">(</span><span class="kt">String</span> <span class="n">message</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Navigator</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">MaterialPageRoute</span><span class="p">(</span><span class="nl">builder:</span> <span class="p">(</span><span class="n">builder</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">NextPage</span><span class="p">(</span><span class="nl">message:</span> <span class="n">message</span><span class="p">)));</span>
+</span></span><span class="line"><span class="cl">      <span class="p">};</span>
+</span></span><span class="line"><span class="cl">    <span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">Center</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">      <span class="nl">child:</span> <span class="n">Column</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="nl">mainAxisAlignment:</span> <span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="nl">crossAxisAlignment:</span> <span class="n">CrossAxisAlignment</span><span class="p">.</span><span class="n">center</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="nl">children:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">	  <span class="n">TextButton</span><span class="p">(</span><span class="nl">onPressed:</span> <span class="n">fnpress</span><span class="p">(</span><span class="s1">&#39;Hello World&#39;</span><span class="p">),</span> <span class="nl">child:</span> <span class="n">Text</span><span class="p">(</span><span class="s1">&#39;goto the next page with status 1&#39;</span><span class="p">)),</span>
+</span></span><span class="line"><span class="cl">	  <span class="n">TextButton</span><span class="p">(</span><span class="nl">onPressed:</span> <span class="n">fnpress</span><span class="p">(</span><span class="s1">&#39;Fuck You&#39;</span><span class="p">),</span> <span class="nl">child:</span> <span class="n">Text</span><span class="p">(</span><span class="s1">&#39;goto the next page with status 2&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="p">],</span>
+</span></span><span class="line"><span class="cl">      <span class="p">),</span>
+</span></span><span class="line"><span class="cl">    <span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="err">@</span><span class="n">override</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Widget</span> <span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span> <span class="n">context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// TODO: implement build
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">return</span> <span class="n">Scaffold</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">      <span class="nl">appBar:</span> <span class="n">AppBar</span><span class="p">(</span><span class="nl">title:</span> <span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Home Page&#39;</span><span class="p">),),</span>
+</span></span><span class="line"><span class="cl">      <span class="nl">body:</span> <span class="n">buildBody</span><span class="p">(</span><span class="n">context</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">    <span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>在跳转时通过构造函数来传递参数，其中 NextPage 为 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-dart" data-lang="dart"><span class="line"><span class="cl"><span class="kd">class</span> <span class="nc">NextPage</span> <span class="kd">extends</span> <span class="n">StatelessWidget</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">String</span> <span class="n">message</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">NextPage</span><span class="p">({</span><span class="kd">required</span> <span class="k">this</span><span class="p">.</span><span class="n">message</span><span class="p">})</span><span class="o">:</span> <span class="k">super</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">Widget</span> <span class="n">buildBody</span><span class="p">(</span><span class="n">BuildContext</span> <span class="n">context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">Center</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">      <span class="nl">child:</span> <span class="n">Text</span><span class="p">(</span><span class="s1">&#39;the message from HomePage is&#39;</span> <span class="o">+</span> <span class="n">message</span><span class="p">,</span> <span class="nl">style:</span> <span class="n">TextStyle</span><span class="p">(</span><span class="nl">color:</span> <span class="n">Colors</span><span class="p">.</span><span class="n">red</span><span class="p">,</span> <span class="nl">fontSize:</span> <span class="m">40</span><span class="p">),),</span>
+</span></span><span class="line"><span class="cl">    <span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="err">@</span><span class="n">override</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Widget</span> <span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span> <span class="n">context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// TODO: implement build
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">return</span> <span class="n">Scaffold</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">      <span class="nl">appBar:</span> <span class="n">AppBar</span><span class="p">(</span><span class="nl">title:</span> <span class="n">Text</span><span class="p">(</span><span class="s1">&#39;Next Page&#39;</span><span class="p">,)),</span>
+</span></span><span class="line"><span class="cl">      <span class="nl">body:</span> <span class="n">buildBody</span><span class="p">(</span><span class="n">context</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">    <span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h3 id="2-dot-命名路由跳转">2. 命名路由跳转</h3>
+<p>命名路由需要在入口程序 App 中注册路由表， <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-dart" data-lang="dart"><span class="line"><span class="cl"><span class="kd">class</span> <span class="nc">App</span> <span class="kd">extends</span> <span class="n">StatelessWidget</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="err">@</span><span class="n">override</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Widget</span> <span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span> <span class="n">context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// TODO: implement build
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">return</span> <span class="n">MaterialApp</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">      <span class="nl">title:</span> <span class="s1">&#39;Flutter Router Demo&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nl">home:</span> <span class="n">HomePage</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">      <span class="nl">routes:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="s2">&#34;Home&#34;</span><span class="o">:</span> <span class="p">(</span><span class="n">ctx</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">HomePage</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">	<span class="s2">&#34;Next&#34;</span><span class="o">:</span> <span class="p">(</span><span class="n">ctx</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">NextPage</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">      <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>在 HomePage 中跳转与传递参数方式已经改变 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-dart" data-lang="dart"><span class="line"><span class="cl"><span class="c1">// in HomePage class, 
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Widget</span> <span class="n">buildBody</span><span class="p">(</span><span class="n">BuildContext</span> <span class="n">context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="n">fnpress</span> <span class="o">=</span> <span class="p">(</span><span class="kt">String</span> <span class="n">message</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Navigator</span><span class="p">.</span><span class="n">pushNamed</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="s2">&#34;Next&#34;</span><span class="p">,</span> <span class="nl">arguments:</span> <span class="n">message</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">      <span class="p">};</span>
+</span></span><span class="line"><span class="cl">    <span class="p">};</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span></code></pre></div><p>参数的传递不通过构造方法， NextPage 接收参数的方式变为了 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-dart" data-lang="dart"><span class="line"><span class="cl"><span class="n">Widget</span> <span class="n">buildBody</span><span class="p">(</span><span class="n">BuildContext</span> <span class="n">context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">var</span> <span class="n">message</span> <span class="o">=</span> <span class="n">ModalRoute</span><span class="p">.</span><span class="n">of</span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="o">!</span><span class="p">.</span><span class="n">settings</span><span class="p">.</span><span class="n">arguments</span> <span class="o">as</span> <span class="kt">String</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">Center</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="nl">child:</span> <span class="n">Text</span><span class="p">(</span><span class="s1">&#39;the message from HomePage is &#39;</span> <span class="o">+</span> <span class="n">message</span><span class="p">,</span> <span class="nl">style:</span> <span class="n">TextStyle</span><span class="p">(</span><span class="nl">color:</span> <span class="n">Colors</span><span class="p">.</span><span class="n">red</span><span class="p">,</span> <span class="nl">fontSize:</span> <span class="m">40</span><span class="p">),),</span>
+</span></span><span class="line"><span class="cl">  <span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h2 id="与-html-类比">与 HTML 类比</h2>
+<p>类比 html 中的路由跳转，路由是从一个页面地址跳转到另一个页面地址，而不变的对象是浏览器的标签页 <!-- raw HTML omitted -->
+在 这个程序 中，页面地址可以看作 Scaffold ，而标签页看作 MaterialApp <!-- raw HTML omitted -->
+接下来是如何跳转的问题，在 html 中使用 &lt;a&gt; 标签跳转，flutter 则是 <!-- raw HTML omitted -->Navigator.push(context, MaterialPageRoute)<!-- raw HTML omitted --> <!-- raw HTML omitted -->
+还有就是跳转时如何传递参数，html 可以通过添加查询参数， <!-- raw HTML omitted -->
+flutter 则有两种情况，在非命名的路由中，只需修改 MaterialPageRoute 的 builder 方法，传递数据至组件的构造方法中即可 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-dart" data-lang="dart"><span class="line"><span class="cl"><span class="n">Navigator</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">MaterialPageRoute</span><span class="p">(</span><span class="nl">builder:</span> <span class="p">(</span><span class="n">ctx</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">NextPage</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="nl">data:</span> <span class="s2">&#34;Home Page Data&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}));</span>
+</span></span></code></pre></div><p>而在命名路由中，可以通过专门的参数 argument 来传递 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-dart" data-lang="dart"><span class="line"><span class="cl"><span class="n">Navigator</span><span class="p">.</span><span class="n">pushNamed</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="s2">&#34;NextPage&#34;</span><span class="p">,</span> <span class="nl">arguments:</span> <span class="s2">&#34;传值&#34;</span><span class="p">);</span>
+</span></span></code></pre></div><p>到目标路由后，通过 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-dart" data-lang="dart"><span class="line"><span class="cl"><span class="n">ModalRoute</span><span class="p">.</span><span class="n">of</span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="o">!</span><span class="p">.</span><span class="n">settings</span><span class="p">.</span><span class="n">arguments</span> <span class="o">as</span> <span class="s1">&#39;type you want&#39;</span><span class="p">;</span>
+</span></span></code></pre></div><p>来接收参数，同时要注意 <strong>null safety</strong></p>
+</div></div></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.101.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

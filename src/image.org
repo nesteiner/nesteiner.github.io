@@ -1,0 +1,50 @@
+#+title: 离散数学实践任务2
+
+* 说明
+这个实验在 *Linux* 系统中，找不到 __<graphics.h>__ 和 __<conio.h>__ 这两个标准库，又去 Google 了一番，一顿操作后，还是没用
+最后，只能先用 *Julia* 垫着了。 什么？ *Python* ？ 我都不知道找谁去问
+* 程序
+** 目标
+1. 利用幂函数 __f(x)=x^r__ 对自己拍摄的数字图像R\G\B通道的像素值进行变换
+2. f(x)是每个像素R\G\B通道的变换函数
+3. x是变换前某像素某个通道的值
+4. f(x)是变换后对应像素相应通道的值
+5. 编程并观察当r=0.1\0.4\0.6\0.8\1.0\1.2\1.5\1.8\2.0\2.5\5.0\10.0等值时幂函数对数字图像的处理效果
+** 材料
+这次用了一张 *330 x 300* 的图片来做实验，没办法，电脑里都是涩图
+[[file:./images/img_sd002.png]]
+顺带说一下，这张是背景透的明 __png__ 图片，单独用文件浏览器打开时背景是黑色
+** 代码
+#+begin_src julia
+  using Images, FileIO, ImageView
+
+  fullcolor = RGB(1,1,1)
+
+  imageConvert(image::Matrix{RGB{N0f8}}, r) = begin
+    f(x) = x ^ r
+    convertfn(pixel) = typeof(pixel)(f(red(pixel)), f(green(pixel)), f(blue(pixel)))
+
+    map(convertfn, image)
+  end
+
+  image = RGB.(load("/home/steiner/图片/img_sd002.png"))
+  r = [0.1, 0.4, 0.6, 0.8, 1.0, 1.2, 1.5, 1.8, 2.0, 2.5, 5.0, 10.0]
+  imshow(mosaicview(map(_r -> imageConvert(image, _r), r), ncol=length(r)))
+#+end_src
+
+** 一些补充
+1. 在 *[[https://juliaimages.org/stable/][Julia Image]]* 这个库中，可以把一张图片看作一个元素类型为 *RGB* 的矩阵
+2. 接下来的操作只需要操作矩阵（二维数组） 元素即可，对应的代码在 *imageConvert* 中
+3. 其中 *red, green, blue* 三个函数分别取出像素点的 *R, G, B* 的值
+4. 将 *RGB* 矩阵重新显示为图片，可以调用 __imshow__ 函数
+5. _mosaicview_ 这个函数是我去 *Slack* 上问的，要是不设后面的 __ncol__ 参数，展示的图片会变得很长，竖着的
+
+* 输出结果
+[[file:./images/shortcut2.png]]
+由此可以看出
+1. 在 __r__ 取 1 时对图像没有影响
+2. 在 __r__ 取小于 1 时，图像会越来越亮
+3. 在 __r__ 取大于 1 时，图像会越来越暗
+
+
+

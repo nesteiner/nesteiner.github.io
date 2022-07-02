@@ -1,0 +1,707 @@
+#+title: 企业级JavaEE案例分析及实战开发----博客系统的设计和实现
+* 系统简介
+这个项目参考自 https://github.com/lenve/VBlog ，对这个项目的功能进行了大幅度裁剪，删去了
+- 登录功能
+- 用户管理
+- 数据统计
+- 数据库删除文章
+- 时间戳
+前端从原来的代码修改了一点，后端大幅度修改，不得不说，这孙子前端写得跟屎一样
+* 需求分析
+项目有三个功能，
+- 文章管理
+- 发表文章
+- 栏目管理
+
+** HomeView 主页设计
+主页要包括三个页面，分别是
+- 文章管理
+  - 文章列表
+  - 发表文章
+- 栏目管理
+** ArticleList 文章列表
+*** 文章入口
+#+DOWNLOADED: screenshot @ 2022-05-19 16:46:23
+[[file:images/需求分析/2022-05-19_16-46-23_screenshot.png]]
+- 实现标签页
+- 实现表格，展示文章
+- 点击链接，跳转到文章内容
+
+*** 文章内容
+#+DOWNLOADED: screenshot @ 2022-05-19 16:57:16
+[[file:images/需求分析/2022-05-19_16-57-16_screenshot.png]]
+
+- 展示文章的 html 内容
+- 返回按钮
+
+*** 文章操作
+操作有两个，修改和删除，其中
+- 修改跳转到 =PostArticle=
+- 删除将文章放入回收站
+
+#+DOWNLOADED: screenshot @ 2022-05-19 16:59:32
+[[file:images/需求分析/2022-05-19_16-59-32_screenshot.png]]
+
+#+DOWNLOADED: screenshot @ 2022-05-19 16:59:59
+[[file:images/需求分析/2022-05-19_16-59-59_screenshot.png]]
+
+
+** PostArticle 文章上传
+#+DOWNLOADED: screenshot @ 2022-05-19 16:46:33
+[[file:images/需求分析/2022-05-19_16-46-33_screenshot.png]]
+
+- 左侧使用 =markdown= 语法
+- 右侧渲染 =html= 内容
+- 可以保存到草稿箱
+- 可以直接发表文章
+** CateManage 栏目管理
+#+DOWNLOADED: screenshot @ 2022-05-19 16:46:39
+[[file:images/需求分析/2022-05-19_16-46-39_screenshot.png]]
+- 显示编号
+- 显示栏目名称
+- 编辑和删除操作
+* 设计方案
+** 后端设计方案
+后端的项目结构如下
+- model
+  - Article
+  - Category
+
+- mapper
+  - ArticleMapper
+  - CategoryMapper
+
+- service
+  - ArticleService
+  - CategoryService
+
+- controller
+  - ArticleController
+  - CategoryController
+
+
+其中路由接口为
+| 请求方法 | 请求地址                                    | 请求参数                              | 说明                                 |
+|----------+---------------------------------------------+---------------------------------------+--------------------------------------|
+| GET      | http://localhost:8082/article/all           |                                       | 请求所有文章                         |
+| GET      | http://localhost:8082/article/{articleId}   | articleId: number                     | 请求id为articleId的文章              |
+| POST     | http://localhost:8082/article/              | article: Article                      | 添加一个文章数据                     |
+| PUT      | http://localhost:8082/article/dustbin       | {articleIds: number[], state: number} | 将id包含于articleIds的文章放入垃圾桶 |
+| PUT      | http://localhost:8082/article/restore       | {articleId: number}                   | 还原id为articleId的文章              |
+| GET      | http://localhost:8082/category/all          |                                       | 请求所有栏目                         |
+| DELETE   | http://localhost:8082/category/{categoryId} | categoryId: number                    | 请求id为categoryId的栏目             |
+| POST     | http://localhost:8082/cateogry              | category: Category                    | 添加一个栏目数据                     |
+| PUT      | http://localhost:8082/category              | category: Category                    | 修改一个category                     |
+** 前端设计方案
+*** 页面
+前端有1个大界面，5个小界面
+- HomeView
+  - ArticleList
+    - BlogTable
+    - BlogDetail
+  - PostArticle
+  - CateManage
+
+*** 与后端的交互
+**** ArticleService
+#+begin_src javascript
+  import axios from 'axios'
+  const instance = axios.create({
+    baseURL: 'http://localhost:8082/article',
+    timeout: 3000,
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8'
+    }
+  })
+
+  class Service {
+    static async insertOne(article) {
+      let response = await instance.post('/', JSON.stringify(article))
+      return response.data
+    }
+
+    static async findAllByState(state, page, count, keywords) {
+      let response = await instance.get('/all', {
+        params: {
+          state,
+          page,
+          count,
+          keywords
+        }
+      })
+
+      return response.data
+    }
+
+    static async findOne(id) {
+      let response = await instance.get(`/${id}`)
+
+      return response.data
+    }
+
+    static async updateAllWithState(ids, state) {
+      let response = await instance.put('/dustbin', JSON.stringify({
+        articleIds: ids,
+        state
+      }))
+
+      return response.data
+    }
+
+    static async restoreOne(id) {
+      let response = await instance.put('/restore', JSON.stringify({
+        articleId: id
+      }))
+
+      return response.data
+    }
+  }
+
+  export default Service
+#+end_src
+
+**** CategoryService
+#+begin_src javascript
+  import axios from 'axios'
+  const instance = axios.create({
+    baseURL: 'http://localhost:8082/category',
+    timeout: 3000,
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8'
+    }
+  })
+
+  class Service {
+    static async findAll() {
+      let response = await instance.get('/all')
+      return response.data
+    }
+
+    static async deleteOne(id) {
+      let response = await instance.delete(`/${id}`)
+      return response.data
+    }
+
+    static async insertOne(category) {
+      let response = await instance.post('/', JSON.stringify(category))
+      return response.data
+    }
+
+    static async updateOne(category) {
+      let response = await instance.put('/', JSON.stringify(category))
+      return response.data
+    }
+  }
+
+  export default Service
+#+end_src
+* 实现源码
+** Controller
+*** ArticleController
+#+begin_src java
+  @RestController
+  @RequestMapping("/article")
+  public class ArticleController {
+      @Autowired
+      ArticleService articleService;
+
+      @PostMapping("/")
+      public Response<String> insertOne(@RequestBody Article article) {
+          int result = articleService.insertOne(article);
+          return result != -1 ? Response.Ok("success", article.getId().toString())
+              : Response.Err("error", article.getState() == 0 ? "文章保存失败" : "文章发表失败");
+      }
+
+      @GetMapping("/all")
+      public Response<List<Article>> findAllByState(@RequestParam(value = "state", defaultValue = "-1") Integer state,
+                                                    @RequestParam(value = "page", defaultValue = "1") Integer page,
+                                                    @RequestParam(value = "count", defaultValue = "6") Integer count,
+                                                    String keywords) {
+          List<Article> articles = articleService.findAllByState(state, page, count, keywords);
+          System.out.println("fuck you: " + articles);
+          return Response.Ok("articles", articles);
+      }
+
+      @GetMapping("/{articleId}")
+      public Response<Article> findOne(@PathVariable Long articleId) {
+          return Response.Ok("article", articleService.findOne(articleId));
+      }
+
+      @PutMapping("/dustbin")
+      public Response<String> updateAllWithState(@RequestBody Map<String, Object> params) {
+          List<Long> aids = (List<Long>) params.get("articleIds");
+          Integer state = (Integer) params.get("state");
+
+          int result = articleService.updateAllWithState(aids, state);
+          if(result == aids.size()) {
+              return Response.Ok("success", "delete success");
+          } else {
+              return Response.Err("error", "delete failed");
+          }
+      }
+
+      @PutMapping("/restore")
+      public Response<String> restoreOne(@RequestBody Map<String, Long> params) {
+          Long articleId = params.get("articleId");
+          int result = articleService.restoreOne(articleId);
+          return result == 1 ? Response.Ok("success", "restore success")
+              : Response.Err("error", "restore failed");
+      }
+  }
+
+#+end_src
+
+*** CategoryController
+#+begin_src java
+  @RestController
+  @RequestMapping("/category")
+  public class CategoryController {
+      @Autowired
+      CategoryService categoryService;
+
+      @GetMapping("/all")
+      public Response<List<Category>> findAll() {
+          return Response.Ok("categories", categoryService.findAll());
+      }
+
+      @DeleteMapping("/{categoryId}")
+      public Response<String> deleteOne(@PathVariable Long categoryId) {
+          int result = categoryService.deleteOne(categoryId);
+          return result != -1 ? Response.Ok("success", "delete success")
+              : Response.Err("error", "delete failed");
+      }
+
+      @PostMapping
+      public Response<String> insertOne(@RequestBody Category category) {
+          if(category.getName().equals("") || category.getName() == null) {
+              return Response.Err("error", "there is no category name");
+          } else {
+              int result = categoryService.insertOne(category);
+              return result == 1 ? Response.Ok("success", "insert success")
+                  : Response.Err("error", "insert failed");
+          }
+
+      }
+
+      @PutMapping
+      public Response<String> updateOne(@RequestBody Category category) {
+          int result = categoryService.updateOne(category);
+          return result == 1 ? Response.Ok("success", "update success")
+              : Response.Err("error", "update failed");
+      }
+  }
+
+#+end_src
+** Service
+*** ArticleService
+#+begin_src java
+  @Service
+  @Transactional
+  public class ArticleService {
+      @Autowired
+      ArticleMapper articleMapper;
+
+      @Autowired
+      TagMapper tagMapper;
+
+      @Autowired
+      CategoryMapper categoryMapper;
+
+      public int insertOne(Article article) {
+          //处理文章摘要
+          if (article.getSummary() == null || "".equals(article.getSummary())) {
+              //直接截取
+              String stripHtml = stripHtml(article.getHtmlContent());
+              article.setSummary(stripHtml.substring(0, stripHtml.length() > 50 ? 50 : stripHtml.length()));
+          }
+          if (article.getId() == -1) {
+              //添加操作
+              Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+              if (article.getState() == 1) {
+                  //设置发表日期
+                  article.setPublishDate(timestamp);
+              }
+              article.setEditTime(timestamp);
+              //设置当前用户
+              int i = articleMapper.insertOne(article);
+
+              return i;
+          } else {
+              Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+              if (article.getState() == 1) {
+                  //设置发表日期
+                  article.setPublishDate(timestamp);
+              }
+              //更新
+              article.setEditTime(new Timestamp(System.currentTimeMillis()));
+              int i = articleMapper.updateOne(article);
+              //修改标签
+
+              return i;
+          }
+      }
+
+      private int insertToArticle(List<String> dynamicTags, Long aid) {
+          //1.删除该文章目前所有的标签
+          tagMapper.deleteOneByArticleId(aid);
+          //2.将上传上来的标签全部存入数据库
+          tagMapper.insertAll(dynamicTags);
+          //3.查询这些标签的id
+          List<Long> tIds = tagMapper.findAllIdByName(dynamicTags);
+          //4.重新给文章设置标签
+          int i = tagMapper.insertToArticle(tIds, aid);
+          return i == dynamicTags.size() ? i : -1;
+      }
+
+      public String stripHtml(String content) {
+          content = content.replaceAll("<p .*?>", "");
+          content = content.replaceAll("<br\\s*/?>", "");
+          content = content.replaceAll("\\<.*?>", "");
+          return content;
+      }
+
+      public List<Article> findAllByState(Integer state, Integer page, Integer count,String keywords) {
+          int start = (page - 1) * count;
+          List<Article> articles = articleMapper.findAllByState(state, start, count, keywords);
+          articles.forEach(article -> {
+                  Long categoryId = article.getCategoryId();
+                  Category category = categoryMapper.findOne(categoryId);
+                  article.setCategoryName(category.getName());
+              });
+          return articles;
+      }
+
+      public Article findOne(Long id) {
+          Article article = articleMapper.findOne(id);
+          articleMapper.increPageView(id);
+          return article;
+      }
+
+      public int updateAllWithState(List<Long> articleIds, Integer state) {
+          if(state == 2) {
+              return articleMapper.deleteAllWith(articleIds);
+          } else {
+              return articleMapper.updateAllWithState(articleIds, 2);
+          }
+      }
+
+      public int restoreOne(Long articleId) {
+          return articleMapper.updateOneWithState(articleId, 1);
+      }
+  }
+
+#+end_src
+
+*** CategoryService
+#+begin_src java
+  @Service
+  @Transactional
+  public class CategoryService {
+      @Autowired
+      CategoryMapper categoryMapper;
+
+      public List<Category> findAll() {
+          return categoryMapper.findAll();
+      }
+
+      public int deleteAll(List<Integer> ids) {
+          int result = categoryMapper.deleteAllWith(ids);
+          return result;
+      }
+
+      public int deleteOne(Long id) {
+          return categoryMapper.deleteOne(id);
+      }
+      public int updateOne(Category category) {
+          int result = categoryMapper.updateOne(category);
+          return result;
+      }
+
+      public int insertOne(Category category) {
+          int result = categoryMapper.insertOne(category);
+          return result;
+      }
+
+  }
+
+#+end_src
+** Mapper
+*** ArticleMapper
+#+begin_src java
+  @Mapper
+  public interface ArticleMapper {
+      int insertOne(Article article);
+      int updateOne(Article article);
+      List<Article> findAllByState(Integer state, Integer start, Integer count, String keywords);
+      int findCountByState(Integer state, String keywords);
+      int updateAllWithState(List<Long> articleIds, Integer state);
+      int updateOneWithState(Long articleId, Integer state);
+      int deleteAllWith(List<Long> ids);
+      Article findOne(Long id);
+      // List<String> findCategories();
+      void increPageView(Long articleId);
+  }
+
+#+end_src
+
+*** CategoryMapper
+#+begin_src java
+  @Mapper
+  public interface CategoryMapper {
+      List<Category> findAll();
+      Category findOne(Long id);
+      int deleteAllWith(List<Integer> ids);
+      int deleteOne(Long id);
+      int updateOne(Category category);
+      int insertOne(Category category);
+  }
+#+end_src
+** Model
+*** Article
+#+begin_src java
+  @Data
+  @AllArgsConstructor
+  @NoArgsConstructor
+  @ToString
+  public class Article {
+      Long id;
+      Long categoryId;
+
+      String title;
+      String markdownContent;
+      String htmlContent;
+      String summary;
+      String categoryName;
+      Timestamp publishDate;
+      Timestamp editTime;
+
+      Integer state;
+      Integer pageView;
+
+      List<Tag> tags;
+
+
+      public String getPublishDate() {
+          if(publishDate == null) {
+              return null;
+          } else {
+              SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+              return format.format(publishDate);
+          }
+      }
+
+      public String getEditTime() {
+          if(editTime == null) {
+              return null;
+          } else {
+              SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+              return format.format(editTime);
+          }
+      }
+
+      public void setPublishDate(String publishDateString) {
+          this.publishDate = Timestamp.valueOf(publishDateString);
+      }
+
+      public void setEditTime(String editTimeString) {
+          this.editTime = Timestamp.valueOf(editTimeString);
+      }
+
+      public void setPublishDate(Timestamp publishDate) {
+          this.publishDate = publishDate;
+      }
+
+      public void setEditTime(Timestamp editTime) {
+          this.editTime = editTime;
+      }
+  }
+
+#+end_src
+
+*** Category
+#+begin_src java
+  @Data
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public class Category {
+      Long id;
+      String name;
+  }
+
+#+end_src
+** mybatis mapper
+*** ArticleMapper.xml
+#+begin_src xml
+  <?xml version="1.0" encoding="UTF-8" ?>
+  <!DOCTYPE mapper
+          PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+          "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.example.backend.mapper.ArticleMapper">
+      <insert id="insertOne" parameterType="Article" useGeneratedKeys="true" keyProperty="id">
+          INSERT INTO Article(title, markdownContent, htmlContent, summary, categoryId, publishDate, state, editTime)
+          values (#{title},
+                  #{markdownContent},
+                  #{htmlContent},
+                  #{summary},
+                  #{categoryId},
+                  #{publishDate},
+                  #{state},
+                  #{editTime})
+      </insert>
+      <update id="increPageView" parameterType="Long">
+          UPDATE Article set pageView=pageView+1 WHERE id=#{articleId}
+      </update>
+      <update id="updateOne" parameterType="Article">
+          UPDATE article
+          SET
+              title=#{title},
+              markdownContent=#{markdownContent},
+              htmlContent=#{htmlContent},
+              summary=#{summary},
+              categoryId=#{categoryId},
+              editTime=#{editTime}
+          <if test="state==1">
+              ,state=1
+          </if>
+          <if test="publishDate!=null">
+              ,publishDate=#{publishDate}
+          </if>
+          WHERE id=#{id}
+      </update>
+      <select id="findAllByState" resultType="Article">
+          SELECT
+              a.id,
+              a.`title`,
+              a.`editTime`,
+              a.categoryId,
+              a.`pageView`,
+              a.`state`,
+              c.`name`
+          FROM
+              Article a,
+              Category c
+          WHERE a.`categoryId`=c.`id`
+          <if test="state!=-1 and state!=-2">
+              and a.state=#{state}
+          </if>
+          <if test="state==-2">
+              and a.state=1
+          </if>
+          <if test="keywords!=null">
+              AND title LIKE '%' || #{keywords} || '%'
+          </if>
+          ORDER BY a.editTime DESC limit #{start},#{count};
+      </select>
+
+  <!--    <select id="getArticleByStateByAdmin" resultType="org.sang.bean.Article">-->
+  <!--        SELECT a.id,a.`title`,a.`editTime`,a.`pageView`,a.`state`,u.`nickname`,c.`cateName`,a.uid FROM article a,user-->
+  <!--        u,category c WHERE a.`cid`=c.`id` AND a.`uid`=u.`id` and a.state=1-->
+  <!--        <if test="keywords!=null">-->
+  <!--            AND title LIKE concat('%',#{keywords},'%')-->
+  <!--        </if>-->
+  <!--        ORDER BY a.editTime DESC limit #{start},#{count};-->
+  <!--    </select>-->
+
+      <select id="findCountByState" resultType="int">
+          SELECT count(*) FROM Article
+          <where>
+              <if test="state!=-1">
+                  AND state=#{state}
+              </if>
+
+              <if test="keywords!=null">
+                  AND title LIKE concat('%',#{keywords},'%')
+              </if>
+          </where>
+      </select>
+
+      <update id="updateAllWithState">
+          UPDATE Article SET state=#{state} WHERE id IN
+          <foreach collection="articleIds" item="aid" separator="," open="(" close=")">
+              #{aid}
+          </foreach>
+      </update>
+      <update id="updateOneWithState" >
+          UPDATE Article SET state=#{state} WHERE id = #{articleId}
+      </update>
+      <delete id="deleteAllWith">
+          DELETE FROM article WHERE id IN
+          <foreach collection="ids" item="aid" open="(" close=")" separator=",">
+              #{aid}
+          </foreach>
+      </delete>
+
+      <select id="findOne" parameterType="Long" resultMap="BaseResultMap">
+          SELECT
+              a.*,
+              t.`name` as tagName,
+              t.`id` AS tagId,
+              c.`name` as categoryName
+          FROM
+              Article a
+              LEFT JOIN
+              `Article-Tags` ats
+              ON
+              a.`id`= ats.`articleId`
+              LEFT JOIN Tag t
+              ON ats.`tagId`= t.`id`
+              LEFT JOIN Category c
+              ON a.`categoryId`= c.`id`
+          WHERE a.id=#{aid}
+      </select>
+
+      <resultMap id="BaseResultMap" type="Article">
+          <id column="id" property="id"/>
+          <result column="title" property="title"/>
+          <result column="cid" property="cid"/>
+          <result column="publishDate" property="publishDate"/>
+          <result column="editTime" property="editTime"/>
+          <result column="state" property="state"/>
+          <result column="pageView" property="pageView"/>
+          <result column="markdownContent" property="markdownContent"/>
+          <result column="htmlContent" property="htmlContent"/>
+          <result column="summary" property="summary"/>
+          <result column="categoryId" property="categoryId"/>
+          <collection property="tags" ofType="Tag" column="tagName">
+              <id property="id" column="tagId"/>
+              <result property="name" column="name"/>
+          </collection>
+      </resultMap>
+
+  </mapper>
+#+end_src
+*** CategoryMapper.xml
+#+begin_src xml
+  <?xml version="1.0" encoding="UTF-8" ?>
+  <!DOCTYPE mapper
+          PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+          "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.example.backend.mapper.CategoryMapper">
+      <select id="findAll" resultType="Category">
+          SELECT * FROM Category
+      </select>
+
+      <select id="findOne" resultType="Category">
+          select * from Category where id = #{id}
+      </select>
+      <delete id="deleteAllWith">
+          DELETE FROM Category WHERE id IN
+          <foreach collection="ids" separator="," open="(" close=")" item="id">
+              #{id}
+          </foreach>
+      </delete>
+
+      <delete id="deleteOne" parameterType="long">
+          delete from Category where id = #{id}
+      </delete>
+
+      <update id="updateOne" parameterType="Category">
+          UPDATE Category SET name=#{name} WHERE id=#{id}
+      </update>
+      <insert id="insertOne" parameterType="Category">
+          INSERT INTO Category(name) values (#{name})
+      </insert>
+  </mapper>
+#+end_src
+
+

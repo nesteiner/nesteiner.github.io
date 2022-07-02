@@ -1,0 +1,15 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Flutter路由 - Tag - My New Hugo Site</title>
+        <link>http://example.org/tags/flutter%E8%B7%AF%E7%94%B1/</link>
+        <description>Flutter路由 - Tag - My New Hugo Site</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sat, 02 Jul 2022 01:43:00 &#43;0800</lastBuildDate><atom:link href="http://example.org/tags/flutter%E8%B7%AF%E7%94%B1/" rel="self" type="application/rss+xml" /><item>
+    <title>Flutter 中的Router</title>
+    <link>http://example.org/post/2022/07/router/</link>
+    <pubDate>Sat, 02 Jul 2022 01:43:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/post/2022/07/router/</guid>
+    <description><![CDATA[用你的应用来演示 路由用法 在这个演示里定义两个界面，HomePage 与 NextPage ，并从 HomePage 传递参数到 NextPage 中 接下来演示匿名路由和命名路由的情况 这是 HomePage 点击文字按钮后，跳转到 NextPage 1. 匿名路由跳转 首先是 HomePage class HomePage extends StatelessWidget { Widget buildBody(BuildContext context) { var fnpress = (String message) { return () { Navigator.push(context, MaterialPageRoute(builder: (builder) =&gt; NextPage(message: message))); }; }; return Center( child: Column( mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [ TextButton(onPressed: fnpress(&#39;Hello World&#39;), child: Text(&#39;goto the next page with status 1&#39;)), TextButton(onPressed: fnpress(&#39;Fuck You&#39;), child: Text(&#39;goto the next page with status 2&#39;)) ], ), ); } @override Widget build(BuildContext context) { // TODO: implement build return Scaffold( appBar: AppBar(title: Text(&#39;Home Page&#39;),), body: buildBody(context), ); } } 在跳转时通过构造函数来传递参数，其中 NextPage 为 class NextPage extends StatelessWidget { String message; NextPage({required this.]]></description>
+</item>
+</channel>
+</rss>

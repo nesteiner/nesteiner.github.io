@@ -1,0 +1,23 @@
+#+title: 条件概率与全概率公式推导
+
+* 条件概率
+#+begin_center
+[[file:images/条件概率/2022-02-24_23-40-19_screenshot.png]]
+$$ P(A|B) = \frac{P(AB)}{P(B)} $$
+#+end_center
+
+- 区域C表示 $P(AB)$
+- 区域C占区域B的比例表示 $P(A|B)$
+- $P(A|B) = \frac{P(C)}{P(B)}$
+- 即 $P(A|B) = \frac{P(AB)}{P(B)}$
+
+* 全概率
+
+#+begin_center
+[[file:images/全概率/2022-02-25_06-56-40_screenshot.png]]
+#+end_center
+
+整个大圆为样本空间，中间阴影面积为事件A，大圆的每一个切分代表每一个 $B_{i}$ , 那么
+$$P(A) = \sum_{i=1}^{n}P(A|B_{i})P(B_{i})$$
+又由 $P(A|B) = \frac{P(AB)}{P(B)}$
+$$ P(A) = \sum_{i=1}^{n}P(AB\_{i}) $$

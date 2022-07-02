@@ -1,0 +1,620 @@
+#+title: Android 项目总结报告
+
+* Android 项目总结报告
+** 项目介绍
+1. 名称
+   疫情查看
+2. 独立完成
+
+** 功能简介
+*** 1. 查看国内疫情
+- 国内疫情数据概况
+[[file:images/Android_项目总结报告/国内疫情数据概览.jpg]]
+- 疫情热点
+[[file:images/Android_项目总结报告/疫情热点.jpg]]
+- 各地疫情数据
+file:images/Android_项目总结报告/各省疫情数据.jpg
+*** 2. 查看国外疫情
+- 查看海外主要国家疫情数据
+  file:images/Android_项目总结报告/海外主要国家疫情.jpg
+** 实现思路
+*** 1. 数据获取
+整个应用有三类模型，分别是 *数据模型* ， *组件* 和 *页面*
+**** 数据模型
+应用中用到的数据来自于 服务器接口，定义 *数据模型* 来表示数据结构，其中
+# TODO use table
+1. 表示 国内疫情数据概况 =Overview=
+
+   | 数据名称          | 数据类型 | 是否能为空 | 字段名称              |
+   |-------------------+----------+------------+-----------------------|
+   | 现有确诊          | int      | false      | currentConfirmedCount |
+   | 累计确诊          | int      | false      | confirmedCount        |
+   | 疑似确诊          | int      | false      | suspectedCount        |
+   | 累计治愈          | int      | false      | curedCount            |
+   | 累计死亡          | int      | false      | deadCount             |
+   | 累计无症状        | int      | false      | seriousCount          |
+   | 较昨日 疑似确诊   | int      | true       | suspectedIncr         |
+   | 较昨日 现有确症   | int      | true       | currentConfirmedIncr  |
+   | 较昨日 累计确诊   | int      | true       | confirmedIncr         |
+   | 较昨日 累计治愈   | int      | true       | curedIncr             |
+   | 较昨日 累计死亡   | int      | true       | deadIncr              |
+   | 较昨日 累计无症状 | int      | true       | seriousIncr           |
+
+2. 表示 一条疫情热点 =News=
+   | 数据名称     | 数据类型 | 字段名称   |
+   |--------------+----------+------------|
+   | 发布日期     | int      | pubDate    |
+   | 发布时间     | string   | pubDateStr |
+   | 标题         | string   | title      |
+   | 内容         | string   | summary    |
+   | 消息来源     | string   | infoSource |
+   | 消息来源网址 | string   | sourceUrl  |
+3. 表示 一个省的疫情数据 =ProvinceDesc=
+   | 数据名称 | 数据类型 | 字段名称       | 对应JSON字段   |
+   |----------+----------+----------------+----------------|
+   | 省的名称 | string   | name           | childStatistic |
+   | 累计治愈 | int      | totalCured     | totalCured     |
+   | 累计死亡 | int      | totalDeath     | totalDeath     |
+   | 累计确诊 | int      | totalConfirmed | totalConfirmed |
+
+4. 表示 一条国外疫情数据热点 =AbroadNews=
+   | 数据名称 | 数据类型 | 字段名称              |
+   |----------+----------+-----------------------|
+   | 洲名称   | string   | continents            |
+   | 国家名称 | string   | provinceName          |
+   | 现有确诊 | int      | currentConfirmedCount |
+   | 累计确诊 | int      | confirmedCount        |
+   | 累计治愈 | int      | curedCount            |
+   | 累计死亡 | int      | deadCount             |
+
+5. 表示 国内疫情 =LocalDesc=
+   | 数据名称              | 数据类型   | 字段名称 |
+   |-----------------------+------------+----------|
+   | 新闻列表              | List<News> | newslist |
+   | 疫情数据概览          | Overview   | overview |
+   | 危险地区 *暂时未用到* | RiskArea   | riskArea |
+6. 表示 国外疫情 =AbroadDesc=
+   这里由于阿里云那个接口的JSON字段就是这个 =newslist= ，我就懒得改名了
+   | 数据名称                   | 数据类型         | 字段名称 |
+   |----------------------------+------------------+----------|
+   | 所有海外主要国家的疫情数据 | List<AbroadNews> | newslist |
+
+
+**** 数据获取
+数据获取发生在页面加载时，由于数据来源不同，需要用到两个不同的后端接口，不过都是返回 *JSON* 数据
+为各个数据模型定义静态构造方法 =fromJSON(dynamic json)=
+#+begin_src dart
+  static News fromJSON(Map<String, dynamic> json) {
+    return News(
+      json['id'],
+      json['pubDate'],
+      json['pubDateStr'],
+      json['title'],
+      json['summary'],
+      json['infoSource'],
+      json['sourceUrl']
+    );
+  }
+
+  static Overview fromJSON(Map<String, dynamic> json) {
+    return Overview(
+      json['currentConfirmedCount']!,
+      json['confirmedCount']!,
+      json['suspectedCount']!,
+      json['curedCount']!,
+      json['deadCount']!,
+      json['seriousCount']!,
+      json['suspectedIncr'],
+      json['currentConfirmedIncr'],
+      json['confirmedIncr'],
+      json['curedIncr'],
+      json['deadIncr'],
+      json['seriousIncr']
+    );
+  }
+
+  static ProvinceDesc fromJSON(dynamic json) {
+    // this json is part of `provinceArray`
+    var cityArray = json["cityArray"];
+    List<CityDesc> list = cityArray
+      .map<CityDesc>((city) => CityDesc(city["totalCured"], city["totalDeath"], city["childStatistic"], city["totalConfirmed"]))
+      .toList();
+
+    return ProvinceDesc(json["childStatistic"], json["totalCured"], json["totalDeath"], json["totalConfirmed"], list);
+  }
+
+  static AbroadNews fromJSON(dynamic json) {
+    return AbroadNews(
+      json['continents'],
+      json['provinceName'],
+      json['currentConfirmedCount'],
+      json['confirmedCount'],
+      json['curedCount'],
+      json['deadCount']
+    );
+  }
+#+end_src
+
+***** 国内疫情页面 NationwidePage 中
+1. 获取 *国内疫情* =LocalDesc=
+   #+begin_src dart
+     Future<LocalDesc> fetchLocalDesc() async {
+       Dio dio = Dio();
+       Response response = await dio.get(
+         "http://api.tianapi.com/ncov/index",
+         queryParameters: {"key": "822216440f57b9d9cbac5dfcdb856449"});
+
+       LocalDesc localDesc = LocalDesc.fromJSON(response.data);
+       return localDesc;
+     }
+   #+end_src
+
+   其中 =LocalDesc= 的静态构造方法为
+   #+begin_src dart
+     static LocalDesc fromJSON(dynamic responseJSON) {
+       // ATTENTION exception here, may the type error
+       Map<String, dynamic> json = responseJSON['newslist'][0];
+       //  create newslist from this list
+       List<News> newslist = json['news'].map<News>((e) => News.fromJSON(e)).toList();
+       Overview overview = Overview.fromJSON(json['desc']);
+       RiskArea riskArea = RiskArea.fromJSON(json['riskarea']);
+
+       return LocalDesc(newslist, overview, riskArea);
+     }
+   #+end_src
+
+2. 获取 *各省疫情数据* =List<ProvinceDesc>=
+   #+begin_src dart
+     Future<List<ProvinceDesc>> fetchProvinceDesc() async {
+       Dio dio = Dio();
+       const url = "http://ncovdata.market.alicloudapi.com/ncov/cityDiseaseInfoWithTrend";
+       dio.options.headers["Authorization"] = "APPCODE 66ae9e35defd4088994a8f35372001e6";
+
+       Response response = await dio.get(url);
+       return response.data["provinceArray"].map<ProvinceDesc>(ProvinceDesc.fromJSON).toList();
+     }
+
+   #+end_src
+
+   
+***** 国外疫情页面 AbroadwidePage 中
+获取 =AbroadDesc= 
+#+begin_src dart
+  Future<AbroadDesc> fetchAbroadDesc() async {
+    Dio dio = Dio();
+    Response response = await dio.get(
+      "http://api.tianapi.com/ncovabroad/index",
+      queryParameters: {"key": "822216440f57b9d9cbac5dfcdb856449"}
+    );
+
+    AbroadDesc abroadDesc = AbroadDesc.fromJSON(response.data);
+    return abroadDesc;
+  }
+#+end_src
+*** 2. 组件模型
+拥有数据还不够，需要定义组件来显示数据
+**** 表示新闻的组件 NewsCard
+一条新闻的显示有点特殊，一开始他不会把所有东西展示出来，需要你点击他的标题后，跳转到具体页面查看新闻内容，也就是页面 *NewsFullPage*
+
+组件中包含一个 *News* 数据
+#+begin_src dart
+  class NewsCard extends StatelessWidget {
+    late News news;
+    NewsCard(this.news);
+  }
+#+end_src
+通过 *news* 显示其新闻标题
+#+begin_src dart
+  Widget buildRow(BuildContext context) {
+    return SizedBox(
+      height: 50,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+            Text(news.title),
+            Icon(Icons.arrow_forward_ios),
+        ],
+      ),
+    );
+  }
+#+end_src
+
+再将其用按钮组件包裹，使其点击过后跳转到页面 *NewsFullPage* ，用 *news* 构造
+#+begin_src dart
+  Widget buildButton(BuildContext context) {
+    return OutlineButton(
+      onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => NewsFullPage(news)
+            ),
+        );
+      },
+      child: buildRow(context),
+    );
+  }
+
+#+end_src
+
+
+
+**** 表示国内疫情数据概况的组件 OverviewCard
+组件中包含数据类型 *Overview*
+#+begin_src dart
+  class OverviewCard extends StatelessWidget {
+    late Overview overview;
+    OverviewCard(this.overview);
+  }
+#+end_src
+在获取 *Overview* 数据时，我们发现一些 *较昨日* 的数据是没有的，因为相关数据还没有发布，这类数据不为空时需要显示，
+为此这里有两种显示方法，
+1. 相关数据为空时
+   调用函数 =buildOne=
+   #+begin_src dart
+     Widget buildOne(BuildContext context, String field, int count, Color color) {
+       return Column(
+         children: [
+           Text(count.toString(), style: TextStyle(fontSize: 30, fontWeight: FontWeight.w800, color: color),),
+           Text(field, style: TextStyle(color: Colors.black, fontWeight: FontWeight.w800),)
+         ],
+       );
+     }
+   #+end_src
+
+   构建组件列表
+   #+begin_src dart
+     widgets = [
+       buildOne(context, '现存确诊', overview.currentConfirmedCount, Colors.red),
+       buildOne(context, '境外输入', overview.suspectedCount, Colors.orange),
+       buildOne(context, '现存无症状', overview.seriousCount, Colors.brown),
+       buildOne(context, '累计确诊', overview.confirmedCount, Colors.red),
+       buildOne(context, '累计死亡', overview.deadCount, Colors.blueGrey),
+       buildOne(context, '累计确诊', overview.curedCount, Colors.green),
+     ];
+
+   #+end_src
+2. 相关数据不为空时
+   调用函数 =buildOneWithIncr=
+   #+begin_src dart
+     Widget buildOneWithIncr(BuildContext context, String field, int count, int incr, Color color) {
+       var text = Text.rich(TextSpan(
+           children: [
+             TextSpan(
+               text: "较昨日",
+               style: TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500)
+             ),
+
+             TextSpan(
+               text: incr > 0 ? "+" + incr.toString() : incr.toString(),
+               style: TextStyle(color: color, fontSize: 14, fontWeight: FontWeight.w500)
+             )
+           ]
+       ));
+
+       return Column(
+         children: [
+           text,
+           buildOne(context, field, count, color)
+         ],
+       );
+
+     }
+   #+end_src
+   构造组件列表
+   #+begin_src dart
+     widgets = [
+       buildOneWithIncr(context, '现存确诊', overview.currentConfirmedCount, overview.currentConfirmedIncr!, Colors.red),
+       buildOneWithIncr(context, '境外输入', overview.suspectedCount, overview.suspectedIncr!, Colors.orange),
+       buildOneWithIncr(context, '现存无症状', overview.seriousCount, overview.seriousIncr!, Colors.brown),
+       buildOneWithIncr(context, '累计确诊', overview.confirmedCount, overview.confirmedIncr!, Colors.red),
+       buildOneWithIncr(context, '累计死亡', overview.deadCount, overview.deadIncr!, Colors.blueGrey),
+       buildOneWithIncr(context, '累计确诊', overview.curedCount, overview.curedIncr!, Colors.green),
+     ];
+
+   #+end_src
+
+构造完成后，将组件列表以网格的形式显示，并将此用 =Padding= 包裹，另外由于网格组件的高度没有限制，用 =ConstrainedBox= 限制整个组件高度
+#+begin_src dart
+  @override
+  Widget build(BuildContext context) {
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxHeight: 240
+      ),
+      child: Center(
+        child: Padding(
+          padding: EdgeInsets.all(10),
+          child: buildGrid(context),
+        )
+      )
+    );
+  }
+
+  Widget buildGrid(BuildContext context) {
+    List<Widget> widgets = [];
+    if(overview.confirmedIncr == null) {
+      widgets = [
+        buildOne(context, '现存确诊', overview.currentConfirmedCount, Colors.red),
+        buildOne(context, '境外输入', overview.suspectedCount, Colors.orange),
+        buildOne(context, '现存无症状', overview.seriousCount, Colors.brown),
+        buildOne(context, '累计确诊', overview.confirmedCount, Colors.red),
+        buildOne(context, '累计死亡', overview.deadCount, Colors.blueGrey),
+        buildOne(context, '累计确诊', overview.curedCount, Colors.green),
+      ];
+    } else {
+      widgets = [
+        buildOneWithIncr(context, '现存确诊', overview.currentConfirmedCount, overview.currentConfirmedIncr!, Colors.red),
+        buildOneWithIncr(context, '境外输入', overview.suspectedCount, overview.suspectedIncr!, Colors.orange),
+        buildOneWithIncr(context, '现存无症状', overview.seriousCount, overview.seriousIncr!, Colors.brown),
+        buildOneWithIncr(context, '累计确诊', overview.confirmedCount, overview.confirmedIncr!, Colors.red),
+        buildOneWithIncr(context, '累计死亡', overview.deadCount, overview.deadIncr!, Colors.blueGrey),
+        buildOneWithIncr(context, '累计确诊', overview.curedCount, overview.curedIncr!, Colors.green),
+      ];
+    }
+
+
+    return GridView.count(
+      crossAxisCount: 3,
+      children: widgets,
+    );
+  }
+
+
+#+end_src
+
+**** 表示各地疫情数据的组件 ProvinceDescTable
+组件中包含一个 =List<ProvinceDesc> provinceDescList= 数据，通过他用一个数据表格 =DataTable= 显示每一个省的疫情数据
+其中数据列有
+#+begin_src dart
+  columns: [
+    DataColumn(label: Text('地区')),
+    DataColumn(label: Text('累计确诊'), numeric: true),
+    DataColumn(label: Text('死亡'), numeric: true),
+    DataColumn(label: Text('治愈'), numeric: true)
+  ],
+#+end_src
+
+每一行都是一个省的数据，这里用 =map= 函数式构造
+#+begin_src dart
+  rows: provinceDescList.map((province) => DataRow(cells: [
+        DataCell(Text(province.name, softWrap: true,)),
+        DataCell(Text(province.totalConfirmed.toString())),
+        DataCell(Text(province.totalDeath.toString())),
+        DataCell(Text(province.totalCured.toString()))
+  ])).toList(),
+
+#+end_src
+
+这样表格就搭建好了
+#+begin_src dart
+  Widget buildTable(BuildContext context) {
+    // TODO: implement build
+    return DataTable(
+      headingTextStyle: TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: Colors.black),
+      headingRowHeight: 50,
+      columns: [
+        DataColumn(label: Text('地区')),
+        DataColumn(label: Text('累计确诊'), numeric: true),
+        DataColumn(label: Text('死亡'), numeric: true),
+        DataColumn(label: Text('治愈'), numeric: true)
+      ],
+
+      rows: provinceDescList.map((province) => DataRow(cells: [
+            DataCell(Text(province.name, softWrap: true,)),
+            DataCell(Text(province.totalConfirmed.toString())),
+            DataCell(Text(province.totalDeath.toString())),
+            DataCell(Text(province.totalCured.toString()))
+      ])).toList(),
+    );
+  }
+
+#+end_src
+
+另外组件显示的时候发现数据太多，页面内容溢出，这里用嵌套的两个 =SingleChildScrollView= 包裹表格，使其能够上下左右拖动
+#+begin_src dart
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.vertical,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: buildTable(context),
+      )
+    );
+  }
+
+#+end_src
+
+
+**** 表示海外主要国家疫情数据的组件 AbroadDescTable
+同上，类似的方法搭建表格
+#+begin_src dart
+  class AbroadDescTable extends StatelessWidget {
+    late AbroadDesc abroadDesc;
+    AbroadDescTable(this.abroadDesc);
+
+
+    @override
+    Widget build(BuildContext context) {
+      return SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: buildTable(context),
+        )
+      );
+    }
+
+    Widget buildTable(BuildContext context) {
+      var tableItems = abroadDesc.newslist;
+      return DataTable(
+        headingRowHeight: 50,
+        headingTextStyle: TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: Colors.black),
+        columns: [
+          DataColumn(label: Text('地区')),
+          DataColumn(label: Text('累计确诊'), numeric: true),
+          DataColumn(label: Text('累计死亡'), numeric: true),
+          DataColumn(label: Text('死亡率'), numeric: true)
+        ],
+        rows: tableItems.map((item) => DataRow(cells: [
+              DataCell(Text(item.provinceName, softWrap: true,)),
+              DataCell(Text(item.confirmedCount.toString(), textAlign: TextAlign.right,)),
+              DataCell(Text(item.deadCount.toString(), textAlign: TextAlign.right,)),
+              DataCell(Text(((item.deadCount / item.confirmedCount) * 100)
+                  .toStringAsFixed(2) + "%", textAlign: TextAlign.right,)),
+        ])).toList(),
+
+      );
+    }
+
+  }
+#+end_src
+
+
+*** 3. 页面
+**** 页面概览
+应用中一共两个主页面
+- =NationwidePage= 国内疫情页面
+- =AbroadwidePage= 国外疫情页面
+
+由于点击新闻要查看完整内容，将所有新闻组件 =NewsCard= 组织在一起，构成小组件 =NewsShortcutPage=
+又将新闻的标题，内容，发布时间的字段在 =NewsFullPage= 中显示
+**** 页面加载时
+数据的请求我放在了页面加载的时候，加载数据时产生了 =Future= ，将其传递给 =FutureBuilder= 组件，构建页面内容
+如果数据还在请求中，返回 =Circularprogressindicator= 表示数据仍在加载中
+
+**** 构建全国疫情界面 NationwidePage
+由于获取数据用到两个不同的后端接口，这里将 *疫情数据概览* 和 *疫情热点* 合在一起构建，
+#+begin_src dart
+  Widget buildFutureLocalDesc(BuildContext context) {
+    final padding = EdgeInsets.only(left: 10, top: 10);
+    final title1 = Container(
+      padding: padding,
+      child: Text("国内疫情数据", style: TextStyle(fontSize: 30, fontWeight: FontWeight.w900, color: Colors.blue),),
+    );
+
+    final title2 = Container(
+      padding: padding,
+      child: Text("疫情热点", style: TextStyle(fontSize: 30, fontWeight: FontWeight.w900, color: Colors.red),),
+    );
+
+
+    return FutureBuilder(
+      future: fetchLocalDesc(),
+      builder: (context, AsyncSnapshot snapshot) {
+        List<Widget> firstchildren = [];
+        List<Widget> secondchildren = [];
+
+        if(snapshot.hasData && snapshot.data != null) {
+          LocalDesc localDesc = snapshot.data;
+          firstchildren = [title1, OverviewCard(localDesc.overview)];
+          secondchildren = [title2, NewsShortcutPage(localDesc.newslist)];
+        } else {
+          firstchildren = [title1, CircularProgressIndicator()];
+          secondchildren = [title2, CircularProgressIndicator()];
+        }
+
+        return Column(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: firstchildren,
+            ),
+
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: secondchildren,
+            )
+          ],
+        );
+      }
+    );
+  }
+
+#+end_src
+
+再将 *各省疫情数据* 独自构建
+#+begin_src dart
+  Widget buildFutureProvinceDesc(BuildContext context) {
+    final title = Container(
+      padding: EdgeInsets.only(left: 10, top: 10),
+      child: Text("各地疫情数据", style: TextStyle(fontSize: 30, fontWeight: FontWeight.w900, color: Colors.grey),),
+    );
+
+    return FutureBuilder(
+      future: fetchProvinceDesc(),
+      builder: (context, AsyncSnapshot snapshot) {
+        if(snapshot.hasData && snapshot.data != null) {
+          List<ProvinceDesc> provinceDescList = snapshot.data;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              title,
+              ProvinceDescTable(provinceDescList)
+            ],
+          );
+
+        } else {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              title,
+              CircularProgressIndicator()
+            ],
+          );
+
+        }
+      },
+    );
+  }
+#+end_src
+最后引入 =SingleChildscrollview= 添加滚动功能，并防止页面溢出
+#+begin_src dart
+  @override
+  Widget build(BuildContext context) {
+
+    // TODO: implement build
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          buildFutureLocalDesc(context),
+          buildFutureProvinceDesc(context)
+        ],
+      ),
+    );
+  }
+
+#+end_src
+
+**** 构建国外疫情界面 AbroadWidePage
+同上，只不过构建过程比较简单
+#+begin_src dart
+  class AbroadwidePage extends StatelessWidget {
+    @override
+    Widget build(BuildContext context) {
+      // TODO: implement build
+      return FutureBuilder(
+        future: fetchAbroadDesc(),
+        builder: (context, AsyncSnapshot snapshot) {
+          if(snapshot.hasData && snapshot.data != null) {
+            AbroadDesc abroadDesc = snapshot.data;
+            return AbroadDescTable(abroadDesc);
+          } else {
+            return CircularProgressIndicator();
+          }
+        }
+      );
+    }
+
+#+end_src
+
+** 项目心得
+真他娘的累，还好用的 *Flutter* ，这要用 *Android* 会伤到前列腺
+这里还是有几点遗憾没有解决
+1. 风险地区的没有显示
+   由于编程能力有限，地区的名称比较详细，有省到市，到区，到小区，我懒得把同一省的地区归纳到一起
+   所以这个功能就懒得做了
+2. 省的疫情数据显示了，市的没有
+   在 =ProvinceDescTable= 中，每一行的省字段可以点击扩展，然后看到所管辖的市的疫情数据，在 =Flutter= 中
+   我还没有调试好这个组件，所以先废弃

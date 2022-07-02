@@ -1,0 +1,47 @@
+#+title: This Page is Content of Table
+#+export_file_name: ../index.md
+#+options: toc:nil
+
+* My Project
+- [[https://github.com/nesteiner/BinaryTree.jl][Julia 二叉树]]
+- [[https://github.com/nesteiner/LinkedList.jl][Julia 链表]]
+- [[https://github.com/nesteiner/scratch][Vue Scratch]]
+* Document
+| 文件名                                | 分类    | 标签     |
+|---------------------------------------+---------+----------|
+| [[file:./html/counter.html][counter]]                               | Flutter |          |
+| [[./html/provider.html][provider]]                              | Flutter |          |
+| [[file:./html/router.html][router]]                                | Flutter | 路由     |
+| [[file:./html/flutter_database.html][flutter database]]                      | Flutter | 数据库   |
+| [[file:./html/titanic.html][Titanic 生存预测，使用Logistic分类]]    | Julia   | 数据分析 |
+| [[file:./html/linear_model.html][MLJ中 线性模型 在回归预测中的简单使用]] | Julia   | 数据分析 |
+| [[file:./html/cppwork.html][C++期末作业]]                           | C++     | 期末作业 |
+| [[file:./html/flutter-work.html][Android 高级应用开发]]                  | Flutter | 期末作业 |
+| [[file:./html/javaee.html][JavaEE 期末作业]]                       | Java    | 期末作业 |
+| [[file:./html/parse-logic.html][真值表计算程序]]                        | Julia   | 离散数学 |
+| [[file:./html/symbolics.html][Symbolics.jl 简单使用]]                 | Julia   | 符号计算 |
+| [[file:./html/scrapy-spider.html][Scrapy 简单使用]]                       | Scrapy  | 网络爬虫 |
+| [[file:./html/julia-calculus.html][Julia 微积分简要介绍]]                  | Julia   | 微积分   |
+| [[file:./html/mljflux.html][MLJFlux简单使用]]                       | Julia   | MLJFlux  |
+| [[file:./html/julia-regressor.html][Julia Regressor]]                       | Julia   | Julia Regressor |
+
+* Android
+| 文件名                          | 分类    | 标签         |
+| [[file:./html/fragment.html][Fragment简单使用]]                | Android | Fragment     |
+| [[file:./html/recycler-view.html][RecyclerView简单使用]]            | Android | RecyclerView |
+| [[file:./html/viewpager.html][ViewPager简单使用]]               | Android | ViewPager    |
+| [[file:./html/android-theme.html][Android style and theme]]         | Android | Style        |
+| [[file:./html/android-room.html][Android Room 简单使用]]           | Android | 数据库       |
+| [[file:./html/android-toolbar.html][Android Toolbar 简单使用]]        | Android | Toolbar      |
+| [[file:./html/android-communication.html][Android Activity, Fragment 通信]] | Android | 通信         |
+| [[file:./html/android-databinding.html][Android 数据绑定简单使用]]        | Android | 数据绑定         |
+
+
+
+* 学习笔记
+| 文件名                   | 分类   | 标签     |
+| [[file:./html/random-event.html][条件概率与全概率公式推导]] | 概率论 | 随机事件 |
+
+* 学校作业文档
+| 文件名             | 分类     | 标签 |
+| [[file:./html/operating-system.org][比较Linux与Android]] | 操作系统 | 操作系统 |
