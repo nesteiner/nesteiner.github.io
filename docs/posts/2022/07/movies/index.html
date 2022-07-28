@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title> - My New Hugo Site</title><meta name="Description" content="This is my cool site"><meta property="og:title" content="" />
+<meta property="og:description" content="数据可视化 电影数据分析 说明 这次的文章参考自 https://zhuanlan.zhihu.com/p/35453189 提出问题 简单分析制作一部电影时，应考虑哪些客观因素才能使电影成功? 为客户提供有效的数据一句，以便作出更准确 的决策 本次数据分析报告主要围绕一下几点进行分析 问题一：电影类型如何随时间发生变化？ 电影数量上的对比 电影收入的对比 问题二：影响电影收入的客观因素有哪些？ 这个不会，先放一放 问题三：两家电影公司Universal Pictures 和 Paramount Pictures之间的对比。 电影发行数量上的对比 电影产生的利润对比 问题四：改编电影和原创电影之间的对比。 电影发行数量上的对比 电影产生的利润对比 理解数据 重点关注的变量有： imdb_id IMDB 标识号 popularity 在 Movie Database 上的相对页面查看次数 budget 预算（美元） revenue 收入（美元） original_title 电影名称 cast 演员列表，按 | 分隔，最多 5 名演员 homepage 电影首页的 URL director 导演列表，按 | 分隔，最多 5 名导演 tagline 电影的标语 keywords 与电影相关的关键字，按 | 分隔，最多 5 个关键字 overview 剧情摘要 runtime 电影时长 genres 风格列表，按 | 分隔，最多 5 种风格 production_companies 制作公司列表，按 | 分隔，最多 5 家公司 release_date 首次上映日期 vote_count 评分次数 vote_average 平均评分 release_year 发行年份 budget_adj 根据通货膨胀调整的预算（2010 年，美元） revenue_adj 根据通货膨胀调整的收入（2010 年，美元） 导入数据 using MLJFlux, Flux, MLJ, DataFrames, CSV, StatsBase, Dates import JSON creditsdata = CSV." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/posts/2022/07/movies/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-07-28T14:23:00+08:00" />
+<meta property="article:modified_time" content="2022-07-28T14:23:30+08:00" /><meta property="og:site_name" content="My cool site" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content=""/>
+<meta name="twitter:description" content="数据可视化 电影数据分析 说明 这次的文章参考自 https://zhuanlan.zhihu.com/p/35453189 提出问题 简单分析制作一部电影时，应考虑哪些客观因素才能使电影成功? 为客户提供有效的数据一句，以便作出更准确 的决策 本次数据分析报告主要围绕一下几点进行分析 问题一：电影类型如何随时间发生变化？ 电影数量上的对比 电影收入的对比 问题二：影响电影收入的客观因素有哪些？ 这个不会，先放一放 问题三：两家电影公司Universal Pictures 和 Paramount Pictures之间的对比。 电影发行数量上的对比 电影产生的利润对比 问题四：改编电影和原创电影之间的对比。 电影发行数量上的对比 电影产生的利润对比 理解数据 重点关注的变量有： imdb_id IMDB 标识号 popularity 在 Movie Database 上的相对页面查看次数 budget 预算（美元） revenue 收入（美元） original_title 电影名称 cast 演员列表，按 | 分隔，最多 5 名演员 homepage 电影首页的 URL director 导演列表，按 | 分隔，最多 5 名导演 tagline 电影的标语 keywords 与电影相关的关键字，按 | 分隔，最多 5 个关键字 overview 剧情摘要 runtime 电影时长 genres 风格列表，按 | 分隔，最多 5 种风格 production_companies 制作公司列表，按 | 分隔，最多 5 家公司 release_date 首次上映日期 vote_count 评分次数 vote_average 平均评分 release_year 发行年份 budget_adj 根据通货膨胀调整的预算（2010 年，美元） revenue_adj 根据通货膨胀调整的收入（2010 年，美元） 导入数据 using MLJFlux, Flux, MLJ, DataFrames, CSV, StatsBase, Dates import JSON creditsdata = CSV."/>
+<meta name="application-name" content="My cool site">
+<meta name="apple-mobile-web-app-title" content="My cool site"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://example.org/posts/2022/07/movies/" /><link rel="prev" href="http://example.org/posts/2022/07/newyork/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/example.org\/posts\/2022\/07\/movies\/"
+        },"genre": "posts","keywords": "数据分析","wordcount":  942 ,
+        "url": "http:\/\/example.org\/posts\/2022\/07\/movies\/","datePublished": "2022-07-28T14:23:00+08:00","dateModified": "2022-07-28T14:23:30+08:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "Author"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="My New Hugo Site">My cool site</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="My New Hugo Site">My cool site</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX"></h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Author</a></span>&nbsp;<span class="post-category">included in <a href="/categories/julia/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Julia</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2022-07-28">2022-07-28</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;942 words&nbsp;
+                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;5 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#数据可视化-电影数据分析">数据可视化 电影数据分析</a>
+      <ul>
+        <li><a href="#说明">说明</a></li>
+        <li><a href="#提出问题">提出问题</a></li>
+        <li><a href="#理解数据">理解数据</a></li>
+        <li><a href="#导入数据">导入数据</a></li>
+        <li><a href="#数据清洗">数据清洗</a></li>
+        <li><a href="#问题分析">问题分析</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="数据可视化-电影数据分析">数据可视化 电影数据分析</h2>
+<h3 id="说明">说明</h3>
+<p>这次的文章参考自 <a href="https://zhuanlan.zhihu.com/p/35453189" target="_blank" rel="noopener noreffer ">https://zhuanlan.zhihu.com/p/35453189</a> <!-- raw HTML omitted --></p>
+<h3 id="提出问题">提出问题</h3>
+<p>简单分析制作一部电影时，应考虑哪些客观因素才能使电影成功? 为客户提供有效的数据一句，以便作出更准确 <!-- raw HTML omitted -->
+的决策 <!-- raw HTML omitted -->
+本次数据分析报告主要围绕一下几点进行分析 <!-- raw HTML omitted --></p>
+<ol>
+<li>
+<p>问题一：电影类型如何随时间发生变化？ <!-- raw HTML omitted --></p>
+<ul>
+<li>电影数量上的对比 <!-- raw HTML omitted --></li>
+<li>电影收入的对比 <!-- raw HTML omitted --></li>
+</ul>
+</li>
+<li>
+<p>问题二：影响电影收入的客观因素有哪些？ <strong>这个不会，先放一放</strong> <!-- raw HTML omitted --></p>
+</li>
+<li>
+<p>问题三：两家电影公司Universal Pictures 和 Paramount Pictures之间的对比。 <!-- raw HTML omitted --></p>
+<ul>
+<li>电影发行数量上的对比 <!-- raw HTML omitted --></li>
+<li>电影产生的利润对比 <!-- raw HTML omitted --></li>
+</ul>
+</li>
+<li>
+<p>问题四：改编电影和原创电影之间的对比。 <!-- raw HTML omitted --></p>
+<ul>
+<li>电影发行数量上的对比 <!-- raw HTML omitted --></li>
+<li>电影产生的利润对比 <!-- raw HTML omitted --></li>
+</ul>
+</li>
+</ol>
+<h3 id="理解数据">理解数据</h3>
+<p>重点关注的变量有： <!-- raw HTML omitted --></p>
+<ul>
+<li><code>imdb_id</code> IMDB 标识号 <!-- raw HTML omitted --></li>
+<li><code>popularity</code> 在 Movie Database 上的相对页面查看次数 <!-- raw HTML omitted --></li>
+<li><code>budget</code> 预算（美元） <!-- raw HTML omitted --></li>
+<li><code>revenue</code> 收入（美元） <!-- raw HTML omitted --></li>
+<li><code>original_title</code> 电影名称 <!-- raw HTML omitted --></li>
+<li><code>cast</code> 演员列表，按 | 分隔，最多 5 名演员 <!-- raw HTML omitted --></li>
+<li><code>homepage</code> 电影首页的 URL <!-- raw HTML omitted --></li>
+<li><code>director</code> 导演列表，按 | 分隔，最多 5 名导演 <!-- raw HTML omitted --></li>
+<li><code>tagline</code> 电影的标语 <!-- raw HTML omitted --></li>
+<li><code>keywords</code> 与电影相关的关键字，按 | 分隔，最多 5 个关键字 <!-- raw HTML omitted --></li>
+<li><code>overview</code> 剧情摘要 <!-- raw HTML omitted --></li>
+<li><code>runtime</code> 电影时长 <!-- raw HTML omitted --></li>
+<li><code>genres</code> 风格列表，按 | 分隔，最多 5 种风格 <!-- raw HTML omitted --></li>
+<li><code>production_companies</code> 制作公司列表，按 | 分隔，最多 5 家公司 <!-- raw HTML omitted --></li>
+<li><code>release_date</code> 首次上映日期 <!-- raw HTML omitted --></li>
+<li><code>vote_count</code> 评分次数 <!-- raw HTML omitted --></li>
+<li><code>vote_average</code> 平均评分 <!-- raw HTML omitted --></li>
+<li><code>release_year</code> 发行年份 <!-- raw HTML omitted --></li>
+<li><code>budget_adj</code> 根据通货膨胀调整的预算（2010 年，美元） <!-- raw HTML omitted --></li>
+<li><code>revenue_adj</code> 根据通货膨胀调整的收入（2010 年，美元） <!-- raw HTML omitted --></li>
+</ul>
+<h3 id="导入数据">导入数据</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">using</span> <span class="n">MLJFlux</span><span class="p">,</span> <span class="n">Flux</span><span class="p">,</span> <span class="n">MLJ</span><span class="p">,</span> <span class="n">DataFrames</span><span class="p">,</span> <span class="n">CSV</span><span class="p">,</span> <span class="n">StatsBase</span><span class="p">,</span> <span class="n">Dates</span>
+</span></span><span class="line"><span class="cl"><span class="k">import</span> <span class="n">JSON</span>
+</span></span><span class="line"><span class="cl"><span class="n">creditsdata</span> <span class="o">=</span> <span class="n">CSV</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&#34;data/movies/tmdb_5000_credits.csv&#34;</span><span class="p">,</span> <span class="n">DataFrame</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">moviesdata</span> <span class="o">=</span> <span class="n">CSV</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&#34;data/movies/tmdb_5000_movies.csv&#34;</span><span class="p">,</span> <span class="n">DataFrame</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">select!</span><span class="p">(</span><span class="n">creditsdata</span><span class="p">,</span> <span class="n">Not</span><span class="p">(</span><span class="ss">:title</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">fulldata</span> <span class="o">=</span> <span class="n">hcat</span><span class="p">(</span><span class="n">creditsdata</span><span class="p">,</span> <span class="n">moviesdata</span><span class="p">)</span>
+</span></span></code></pre></div><p>使用 excel 查看数据 <!-- raw HTML omitted --></p>
+<p><figure><img src="/ox-hugo/2022-07-28_13-45-25_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<p>查看缺失值情况 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">for</span> <span class="n">column</span> <span class="k">in</span> <span class="n">names</span><span class="p">(</span><span class="n">fulldata</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">missingcount</span> <span class="o">=</span> <span class="n">count</span><span class="p">(</span><span class="n">ismissing</span><span class="p">,</span> <span class="n">fulldata</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="n">column</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">  <span class="n">println</span><span class="p">(</span><span class="s">&#34;</span><span class="si">$column</span><span class="s">: </span><span class="se">\t</span><span class="s"> </span><span class="si">$missingcount</span><span class="s">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span></code></pre></div><p>发现只有以下字段有缺失值 <!-- raw HTML omitted --></p>
+<ul>
+<li><code>release_date</code> <!-- raw HTML omitted --></li>
+<li><code>runtime</code> <!-- raw HTML omitted --></li>
+</ul>
+<h3 id="数据清洗">数据清洗</h3>
+<h4 id="选择子集">选择子集</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="ss">:id</span><span class="p">,</span> <span class="ss">:title</span><span class="p">,</span> <span class="ss">:vote_average</span><span class="p">,</span> <span class="ss">:production_companies</span><span class="p">,</span> <span class="ss">:genres</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	   <span class="ss">:release_date</span><span class="p">,</span> <span class="ss">:keywords</span><span class="p">,</span> <span class="ss">:runtime</span><span class="p">,</span> <span class="ss">:budget</span><span class="p">,</span> <span class="ss">:revenue</span><span class="p">,</span> <span class="ss">:vote_count</span><span class="p">,</span> <span class="ss">:popularity</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">fulldata</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">fulldata</span><span class="p">,</span> <span class="n">columns</span><span class="p">)</span>
+</span></span></code></pre></div><h4 id="缺失值处理">缺失值处理</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">fillReleaseDate</span><span class="p">(</span><span class="n">dataframe</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">)</span> <span class="o">=</span> <span class="k">begin</span>
+</span></span><span class="line"><span class="cl">  <span class="n">mapdate</span><span class="p">(</span><span class="n">date</span><span class="o">::</span><span class="kt">Union</span><span class="p">{</span><span class="kt">Missing</span><span class="p">,</span> <span class="kt">Date</span><span class="p">})</span> <span class="o">=</span> <span class="k">begin</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">ismissing</span><span class="p">(</span><span class="n">date</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="n">Date</span><span class="p">(</span><span class="s">&#34;2014-06-01&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">else</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="n">date</span>
+</span></span><span class="line"><span class="cl">    <span class="k">end</span>
+</span></span><span class="line"><span class="cl">  <span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:release_date</span><span class="p">]</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">mapdate</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:release_date</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">dataframe</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">fillRuntime</span><span class="p">(</span><span class="n">dataframe</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">)</span> <span class="o">=</span> <span class="k">begin</span>
+</span></span><span class="line"><span class="cl">  <span class="n">meanvalue</span> <span class="o">=</span> <span class="n">mean</span><span class="p">(</span><span class="n">skipmissing</span><span class="p">(</span><span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:runtime</span><span class="p">]))</span>
+</span></span><span class="line"><span class="cl">  <span class="n">mapruntime</span><span class="p">(</span><span class="n">runtime</span><span class="o">::</span><span class="kt">Union</span><span class="p">{</span><span class="kt">Missing</span><span class="p">,</span> <span class="kt">Float64</span><span class="p">})</span> <span class="o">=</span> <span class="k">begin</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">ismissing</span><span class="p">(</span><span class="n">runtime</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="n">meanvalue</span>
+</span></span><span class="line"><span class="cl">    <span class="k">else</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="n">runtime</span>
+</span></span><span class="line"><span class="cl">    <span class="k">end</span>
+</span></span><span class="line"><span class="cl">  <span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:runtime</span><span class="p">]</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">mapruntime</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:runtime</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">dataframe</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span></code></pre></div><h4 id="数据类型转换">数据类型转换</h4>
+<!-- raw HTML omitted -->
+<ul>
+<li>
+<p>在时间序列中提取年份</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">generateReleaseYear</span><span class="p">(</span><span class="n">dataframe</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">)</span> <span class="o">=</span> <span class="k">begin</span>
+</span></span><span class="line"><span class="cl">  <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:release_year</span><span class="p">]</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:release_date</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">dataframe</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span></code></pre></div></li>
+</ul>
+<!-- raw HTML omitted -->
+<ul>
+<li>
+<p>将电影类型添加到列，需进行one-hot编码</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">function</span> <span class="n">generateGenreType</span><span class="p">(</span><span class="n">dataframe</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">len</span> <span class="o">=</span> <span class="n">first</span><span class="p">(</span><span class="n">size</span><span class="p">(</span><span class="n">dataframe</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="n">column</span> <span class="k">in</span> <span class="n">genrelist</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">len</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">row</span> <span class="k">in</span> <span class="n">eachrow</span><span class="p">(</span><span class="n">dataframe</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="n">contains</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">genres</span><span class="p">,</span> <span class="n">column</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">row</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">      <span class="k">end</span>
+</span></span><span class="line"><span class="cl">    <span class="k">end</span>
+</span></span><span class="line"><span class="cl">  <span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">dataframe</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span></code></pre></div></li>
+</ul>
+<!-- raw HTML omitted -->
+<ul>
+<li>
+<p>用年份索引</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">function</span> <span class="n">sortByReleaseYear</span><span class="p">(</span><span class="n">dataframe</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">sort</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="p">[</span><span class="ss">:release_year</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span></code></pre></div></li>
+</ul>
+<h4 id="数据转换">数据转换</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">featureSelector</span> <span class="o">=</span> <span class="n">FeatureSelector</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="n">features</span> <span class="o">=</span> <span class="p">[</span><span class="ss">:release_date</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ignore</span> <span class="o">=</span> <span class="nb">true</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">transformModel</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="n">fillReleaseDate</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="n">fillRuntime</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="n">generateReleaseYear</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="n">featureSelector</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="n">generateGenreType</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="n">sortByReleaseYear</span>
+</span></span><span class="line"><span class="cl">  <span class="c"># generateName</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">transformMachine</span> <span class="o">=</span> <span class="n">machine</span><span class="p">(</span><span class="n">transformModel</span><span class="p">,</span> <span class="n">fulldata</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">fit!</span><span class="p">(</span><span class="n">transformMachine</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">transformedData</span> <span class="o">=</span> <span class="n">MLJ</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">transformMachine</span><span class="p">,</span> <span class="n">fulldata</span><span class="p">)</span>
+</span></span></code></pre></div><h3 id="问题分析">问题分析</h3>
+<h4 id="电影类型随时间变化">电影类型随时间变化</h4>
+<!-- raw HTML omitted -->
+<ul>
+<li>
+<p>提取电影类型</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">function</span> <span class="n">fetchGenreList</span><span class="p">(</span><span class="n">dataframe</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">mapfn</span><span class="p">(</span><span class="n">array</span><span class="o">::</span><span class="kt">Vector</span><span class="p">{</span><span class="kt">Any</span><span class="p">})</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span><span class="p">[</span><span class="s">&#34;name&#34;</span><span class="p">],</span> <span class="n">array</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">genrelist</span> <span class="o">=</span> <span class="kt">Set</span><span class="p">{</span><span class="kt">String</span><span class="p">}()</span>
+</span></span><span class="line"><span class="cl">  <span class="n">jsons</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">JSON</span><span class="o">.</span><span class="n">parse</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:genres</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="n">json</span> <span class="k">in</span> <span class="n">jsons</span>
+</span></span><span class="line"><span class="cl">    <span class="n">names</span> <span class="o">=</span> <span class="n">mapfn</span><span class="p">(</span><span class="n">json</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">name</span> <span class="k">in</span> <span class="n">names</span>
+</span></span><span class="line"><span class="cl">      <span class="n">push!</span><span class="p">(</span><span class="n">genrelist</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">end</span>
+</span></span><span class="line"><span class="cl">  <span class="k">end</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">genrelist</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">const</span> <span class="n">genrelist</span> <span class="o">=</span> <span class="n">fetchGenreList</span><span class="p">(</span><span class="n">fulldata</span><span class="p">)</span>
+</span></span></code></pre></div></li>
+</ul>
+<!-- raw HTML omitted -->
+<ul>
+<li>
+<p>对每个类型的电影按年份求和</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">function</span> <span class="n">groupByReleaseYear</span><span class="p">(</span><span class="n">dataframe</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">dataframes</span> <span class="o">=</span> <span class="n">groupby</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="ss">:release_year</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">years</span> <span class="o">=</span> <span class="kt">Int</span><span class="p">[]</span>
+</span></span><span class="line"><span class="cl">  <span class="n">counts</span> <span class="o">=</span> <span class="kt">Int</span><span class="p">[]</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="n">_dataframe</span> <span class="k">in</span> <span class="n">dataframes</span>
+</span></span><span class="line"><span class="cl">    <span class="n">year</span> <span class="o">=</span> <span class="n">first</span><span class="p">(</span><span class="n">_dataframe</span><span class="o">.</span><span class="n">release_year</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">count</span> <span class="o">=</span> <span class="n">first</span><span class="p">(</span><span class="n">size</span><span class="p">(</span><span class="n">_dataframe</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">push!</span><span class="p">(</span><span class="n">years</span><span class="p">,</span> <span class="n">year</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">push!</span><span class="p">(</span><span class="n">counts</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">bar</span><span class="p">(</span><span class="n">years</span><span class="p">,</span> <span class="n">counts</span><span class="p">,</span> <span class="n">xticks</span> <span class="o">=</span> <span class="ss">:all</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="n">figuresize</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">groupByReleaseYear</span><span class="p">(</span><span class="n">transformedData</span><span class="p">)</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-07-28_14-05-28_screenshot.png"/>
+    </figure>
+ <!-- raw HTML omitted --></p>
+</li>
+</ul>
+<!-- raw HTML omitted -->
+<ul>
+<li>
+<p>汇总各电影类型的总量</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">function</span> <span class="n">groupByEachGenre</span><span class="p">(</span><span class="n">dataframe</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">record</span> <span class="o">=</span> <span class="kt">Dict</span><span class="p">{</span><span class="kt">String</span><span class="p">,</span> <span class="kt">Int</span><span class="p">}()</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="n">genre</span> <span class="k">in</span> <span class="n">genrelist</span>
+</span></span><span class="line"><span class="cl">    <span class="n">record</span><span class="p">[</span><span class="n">genre</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">  <span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="n">row</span> <span class="k">in</span> <span class="n">eachrow</span><span class="p">(</span><span class="n">dataframe</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">genre</span> <span class="k">in</span> <span class="n">genrelist</span>
+</span></span><span class="line"><span class="cl">      <span class="n">record</span><span class="p">[</span><span class="n">genre</span><span class="p">]</span> <span class="o">+=</span> <span class="n">row</span><span class="p">[</span><span class="n">genre</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="k">end</span>
+</span></span><span class="line"><span class="cl">  <span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">xs</span> <span class="o">=</span> <span class="n">collect</span><span class="p">(</span><span class="n">keys</span><span class="p">(</span><span class="n">record</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ys</span> <span class="o">=</span> <span class="n">collect</span><span class="p">(</span><span class="n">values</span><span class="p">(</span><span class="n">record</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">bar</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">xticks</span> <span class="o">=</span> <span class="ss">:all</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="n">figuresize</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">groupByEachGenre</span><span class="p">(</span><span class="n">transformedData</span><span class="p">)</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-07-28_14-07-31_screenshot.png"/>
+    </figure>
+ <!-- raw HTML omitted --></p>
+</li>
+</ul>
+<!-- raw HTML omitted -->
+<ul>
+<li>
+<p>电影类型随时间的变化</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">function</span> <span class="n">plotGenreAndTime</span><span class="p">(</span><span class="n">dataframe</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#34;Drama&#34;</span><span class="p">,</span><span class="s">&#34;Comedy&#34;</span><span class="p">,</span><span class="s">&#34;Thriller&#34;</span><span class="p">,</span><span class="s">&#34;Action&#34;</span><span class="p">,</span><span class="s">&#34;Romance&#34;</span><span class="p">,</span><span class="s">&#34;Adventure&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	     <span class="s">&#34;Crime&#34;</span><span class="p">,</span><span class="s">&#34;Science Fiction&#34;</span><span class="p">,</span><span class="s">&#34;Horror&#34;</span><span class="p">,</span><span class="s">&#34;Family&#34;</span><span class="p">,</span> <span class="s">&#34;release_year&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="n">_dataframes</span> <span class="o">=</span> <span class="n">groupby</span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">columns</span><span class="p">),</span> <span class="ss">:release_year</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="c"># p = plot()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c"># record: Dict{year, Dict{Name, Count}}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">record</span> <span class="o">=</span> <span class="kt">Dict</span><span class="p">{</span><span class="kt">Int</span><span class="p">,</span> <span class="kt">Dict</span><span class="p">{</span><span class="kt">String</span><span class="p">,</span> <span class="kt">Int</span><span class="p">}}()</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="n">_dataframe</span> <span class="k">in</span> <span class="n">_dataframes</span>
+</span></span><span class="line"><span class="cl">    <span class="c"># years</span>
+</span></span><span class="line"><span class="cl">    <span class="c"># counts</span>
+</span></span><span class="line"><span class="cl">    <span class="n">year</span> <span class="o">=</span> <span class="n">first</span><span class="p">(</span><span class="n">_dataframe</span><span class="o">.</span><span class="n">release_year</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">record</span><span class="p">[</span><span class="n">year</span><span class="p">]</span> <span class="o">=</span> <span class="kt">Dict</span><span class="p">{</span><span class="kt">String</span><span class="p">,</span> <span class="kt">Int</span><span class="p">}()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">column</span> <span class="k">in</span> <span class="n">columns</span><span class="p">[</span><span class="n">columns</span> <span class="o">.!=</span> <span class="s">&#34;release_year&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">      <span class="n">record</span><span class="p">[</span><span class="n">year</span><span class="p">][</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span><span class="o">+</span><span class="p">,</span> <span class="n">_dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="n">column</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">    <span class="k">end</span>
+</span></span><span class="line"><span class="cl">  <span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">_years</span> <span class="o">=</span> <span class="n">collect</span><span class="p">(</span><span class="n">keys</span><span class="p">(</span><span class="n">record</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">  <span class="n">_countmaps</span> <span class="o">=</span> <span class="n">collect</span><span class="p">(</span><span class="n">values</span><span class="p">(</span><span class="n">record</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">  <span class="n">indexs</span> <span class="o">=</span> <span class="n">sortperm</span><span class="p">(</span><span class="n">_years</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">years</span> <span class="o">=</span> <span class="n">_years</span><span class="p">[</span><span class="n">indexs</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="n">countmaps</span> <span class="o">=</span> <span class="n">_countmaps</span><span class="p">[</span><span class="n">indexs</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">p</span> <span class="o">=</span> <span class="n">plot</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="n">figuresize</span><span class="p">,</span> <span class="n">xticks</span> <span class="o">=</span> <span class="ss">:all</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="n">column</span> <span class="k">in</span> <span class="n">columns</span><span class="p">[</span><span class="n">columns</span> <span class="o">.!=</span> <span class="s">&#34;release_year&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">counts</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span><span class="p">[</span><span class="n">column</span><span class="p">],</span> <span class="n">countmaps</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">plot!</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">years</span><span class="p">,</span> <span class="n">counts</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="n">column</span><span class="p">,</span> <span class="n">xticks</span> <span class="o">=</span> <span class="ss">:all</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">plot</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">plotGenreAndTime</span><span class="p">(</span><span class="n">transformedData</span><span class="p">)</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-07-28_14-08-19_screenshot.png"/>
+    </figure>
+ <!-- raw HTML omitted --></p>
+</li>
+</ul>
+<h4 id="universal-pictures和paramount-pictures之间的对比">Universal Pictures和Paramount Pictures之间的对比</h4>
+<!-- raw HTML omitted -->
+<ul>
+<li>
+<p>电影发行量对比</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">function</span> <span class="n">plotCompareTotal</span><span class="p">(</span><span class="n">dataframe</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="s">&#34;Universal Pictures&#34;</span><span class="p">]</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">s</span> <span class="o">-&gt;</span> <span class="n">contains</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="s">&#34;Universal Pictures&#34;</span><span class="p">)</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:production_companies</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">  <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="s">&#34;Paramount Pictures&#34;</span><span class="p">]</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">s</span> <span class="o">-&gt;</span> <span class="n">contains</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="s">&#34;Paramount Pictures&#34;</span><span class="p">)</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:production_companies</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">universalTotal</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span><span class="o">+</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="s">&#34;Universal Pictures&#34;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">  <span class="n">paramountTotal</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span><span class="o">+</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="s">&#34;Paramount Pictures&#34;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">  <span class="n">total</span> <span class="o">=</span> <span class="n">universalTotal</span> <span class="o">+</span> <span class="n">paramountTotal</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">xs</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#34;Universal Pictures&#34;</span><span class="p">,</span> <span class="s">&#34;Paramount Pictures&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ys</span> <span class="o">=</span> <span class="p">[</span><span class="n">universalTotal</span> <span class="o">/</span> <span class="n">total</span><span class="p">,</span> <span class="n">paramountTotal</span> <span class="o">/</span> <span class="n">total</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="n">pie</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">aspect_ratio</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">companyDifference</span> <span class="o">=</span> <span class="n">groupby</span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">vcat</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="s">&#34;release_year&#34;</span><span class="p">)),</span> <span class="ss">:release_year</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="c"># record: Dict{Year, Dict{Company, Int}}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">record</span> <span class="o">=</span> <span class="kt">Dict</span><span class="p">{</span><span class="kt">Int</span><span class="p">,</span> <span class="kt">Dict</span><span class="p">{</span><span class="kt">String</span><span class="p">,</span> <span class="kt">Int</span><span class="p">}}()</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="n">_dataframe</span> <span class="k">in</span> <span class="n">companyDifference</span>
+</span></span><span class="line"><span class="cl">    <span class="n">year</span> <span class="o">=</span> <span class="n">first</span><span class="p">(</span><span class="n">_dataframe</span><span class="o">.</span><span class="n">release_year</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">record</span><span class="p">[</span><span class="n">year</span><span class="p">]</span> <span class="o">=</span> <span class="kt">Dict</span><span class="p">{</span><span class="kt">String</span><span class="p">,</span> <span class="kt">Int</span><span class="p">}()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">column</span> <span class="k">in</span> <span class="n">xs</span>
+</span></span><span class="line"><span class="cl">      <span class="n">count</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span><span class="o">+</span><span class="p">,</span> <span class="n">_dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="n">column</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">      <span class="n">record</span><span class="p">[</span><span class="n">year</span><span class="p">][</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">count</span>
+</span></span><span class="line"><span class="cl">    <span class="k">end</span>
+</span></span><span class="line"><span class="cl">  <span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">_years</span> <span class="o">=</span> <span class="n">collect</span><span class="p">(</span><span class="n">keys</span><span class="p">(</span><span class="n">record</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">  <span class="n">_countmaps</span> <span class="o">=</span> <span class="n">collect</span><span class="p">(</span><span class="n">values</span><span class="p">(</span><span class="n">record</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">  <span class="n">indexs</span> <span class="o">=</span> <span class="n">sortperm</span><span class="p">(</span><span class="n">_years</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">years</span> <span class="o">=</span> <span class="n">_years</span><span class="p">[</span><span class="n">indexs</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="n">countmaps</span> <span class="o">=</span> <span class="n">_countmaps</span><span class="p">[</span><span class="n">indexs</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">p</span> <span class="o">=</span> <span class="n">plot</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="n">figuresize</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="n">column</span> <span class="k">in</span> <span class="n">xs</span>
+</span></span><span class="line"><span class="cl">    <span class="n">counts</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span><span class="p">[</span><span class="n">column</span><span class="p">],</span> <span class="n">countmaps</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">plot!</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">years</span><span class="p">,</span> <span class="n">counts</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="n">column</span><span class="p">,</span> <span class="n">xticks</span> <span class="o">=</span> <span class="ss">:all</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">plot</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">plotCompareTotal</span><span class="p">(</span><span class="n">transformedData</span><span class="p">)</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-07-28_14-11-31_screenshot.png"/>
+    </figure>
+ <!-- raw HTML omitted --></p>
+<p><figure><img src="/ox-hugo/2022-07-28_14-11-46_screenshot.png"/>
+    </figure>
+ <!-- raw HTML omitted --></p>
+</li>
+</ul>
+<!-- raw HTML omitted -->
+<ul>
+<li>
+<p>利润对比</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">function</span> <span class="n">plotCompareProfit</span><span class="p">(</span><span class="n">dataframe</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:profit</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:revenue</span><span class="p">]</span> <span class="o">.-</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:budget</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="s">&#34;Universal Profit&#34;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="s">&#34;Universal Pictures&#34;</span><span class="p">]</span> <span class="o">.*</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:profit</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="s">&#34;Paramount Profit&#34;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="s">&#34;Paramount Pictures&#34;</span><span class="p">]</span> <span class="o">.*</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:profit</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">universalProfit</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span><span class="o">+</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="s">&#34;Universal Profit&#34;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">  <span class="n">paramountProfit</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span><span class="o">+</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="s">&#34;Paramount Profit&#34;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">  <span class="n">totalProfit</span> <span class="o">=</span> <span class="n">universalProfit</span> <span class="o">+</span> <span class="n">paramountProfit</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">xs</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#34;Universal Profit&#34;</span><span class="p">,</span> <span class="s">&#34;Paramount Profit&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ys</span> <span class="o">=</span> <span class="p">[</span><span class="n">universalProfit</span> <span class="o">/</span> <span class="n">totalProfit</span><span class="p">,</span> <span class="n">paramountProfit</span> <span class="o">/</span> <span class="n">totalProfit</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="n">pie</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">companyDifference</span> <span class="o">=</span> <span class="n">groupby</span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">vcat</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="s">&#34;release_year&#34;</span><span class="p">)),</span> <span class="ss">:release_year</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="c"># record: Dict{Year, Dict{Company, Number}}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">record</span> <span class="o">=</span> <span class="kt">Dict</span><span class="p">{</span><span class="kt">Int</span><span class="p">,</span> <span class="kt">Dict</span><span class="p">{</span><span class="kt">String</span><span class="p">,</span> <span class="kt">Number</span><span class="p">}}()</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="n">_dataframe</span> <span class="k">in</span> <span class="n">companyDifference</span>
+</span></span><span class="line"><span class="cl">    <span class="n">year</span> <span class="o">=</span> <span class="n">first</span><span class="p">(</span><span class="n">_dataframe</span><span class="o">.</span><span class="n">release_year</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">record</span><span class="p">[</span><span class="n">year</span><span class="p">]</span> <span class="o">=</span> <span class="kt">Dict</span><span class="p">{</span><span class="kt">String</span><span class="p">,</span> <span class="kt">Number</span><span class="p">}()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">column</span> <span class="k">in</span> <span class="n">xs</span>
+</span></span><span class="line"><span class="cl">      <span class="n">profit</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span><span class="o">+</span><span class="p">,</span> <span class="n">_dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="n">column</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">      <span class="n">record</span><span class="p">[</span><span class="n">year</span><span class="p">][</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">profit</span>
+</span></span><span class="line"><span class="cl">    <span class="k">end</span>
+</span></span><span class="line"><span class="cl">  <span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">_years</span> <span class="o">=</span> <span class="n">collect</span><span class="p">(</span><span class="n">keys</span><span class="p">(</span><span class="n">record</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">  <span class="n">_profitmaps</span> <span class="o">=</span> <span class="n">collect</span><span class="p">(</span><span class="n">values</span><span class="p">(</span><span class="n">record</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">  <span class="n">indexs</span> <span class="o">=</span> <span class="n">sortperm</span><span class="p">(</span><span class="n">_years</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">years</span> <span class="o">=</span> <span class="n">_years</span><span class="p">[</span><span class="n">indexs</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="n">profitmaps</span> <span class="o">=</span> <span class="n">_profitmaps</span><span class="p">[</span><span class="n">indexs</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">p</span> <span class="o">=</span> <span class="n">plot</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="n">figuresize</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="n">column</span> <span class="k">in</span> <span class="n">xs</span>
+</span></span><span class="line"><span class="cl">    <span class="n">profits</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span><span class="p">[</span><span class="n">column</span><span class="p">],</span> <span class="n">profitmaps</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">plot!</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">years</span><span class="p">,</span> <span class="n">profits</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="n">column</span><span class="p">,</span> <span class="n">xticks</span> <span class="o">=</span> <span class="ss">:all</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">plot</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">plotCompareProfit</span><span class="p">(</span><span class="n">transformedData</span><span class="p">)</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-07-28_14-13-34_screenshot.png"/>
+    </figure>
+ <!-- raw HTML omitted --></p>
+<p><figure><img src="/ox-hugo/2022-07-28_14-13-49_screenshot.png"/>
+    </figure>
+ <!-- raw HTML omitted --></p>
+</li>
+</ul>
+<h4 id="改编电影和原创电影的对比">改编电影和原创电影的对比</h4>
+<!-- raw HTML omitted -->
+<ul>
+<li>
+<p>数量对比</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">function</span> <span class="n">plotCompareOriginal</span><span class="p">(</span><span class="n">dataframe</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">column</span> <span class="o">=</span> <span class="s">&#34;is original&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">x</span> <span class="o">-&gt;</span> <span class="n">contains</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s">&#34;based on novel&#34;</span><span class="p">)</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:keywords</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">keycount</span> <span class="o">=</span> <span class="n">countmap</span><span class="p">(</span><span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="n">column</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">  <span class="n">total</span> <span class="o">=</span> <span class="n">keycount</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">keycount</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="n">xs</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#34;is original&#34;</span><span class="p">,</span> <span class="s">&#34;not original&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ys</span> <span class="o">=</span> <span class="p">[</span><span class="n">keycount</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">total</span><span class="p">,</span> <span class="n">keycount</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">total</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">pie</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">plotCompareOriginal</span><span class="p">(</span><span class="n">transformedData</span><span class="p">)</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-07-28_14-17-41_screenshot.png"/>
+    </figure>
+ <!-- raw HTML omitted --></p>
+<p><figure><img src="/ox-hugo/2022-07-28_14-18-02_screenshot.png"/>
+    </figure>
+ <!-- raw HTML omitted --></p>
+</li>
+</ul>
+<!-- raw HTML omitted -->
+<ul>
+<li>
+<p>平均利润对比</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">function</span> <span class="n">plotCompareProfit</span><span class="p">(</span><span class="n">dataframe</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">column</span> <span class="o">=</span> <span class="s">&#34;is original&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">(</span><span class="n">notoriginalDataframe</span><span class="p">,</span> <span class="n">originalDataframe</span><span class="p">)</span> <span class="o">=</span> <span class="n">groupby</span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="p">[</span><span class="n">column</span><span class="p">,</span> <span class="s">&#34;profit&#34;</span><span class="p">]),</span> <span class="n">column</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="c"># record: Dict{is original, profit}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">originalProfit</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span><span class="o">+</span><span class="p">,</span> <span class="n">originalDataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:profit</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">  <span class="n">notoriginalProfit</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span><span class="o">+</span><span class="p">,</span> <span class="n">notoriginalDataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:profit</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">  <span class="n">originalCount</span> <span class="o">=</span> <span class="n">first</span><span class="p">(</span><span class="n">size</span><span class="p">(</span><span class="n">originalDataframe</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">  <span class="n">notoriginalCount</span> <span class="o">=</span> <span class="n">first</span><span class="p">(</span><span class="n">size</span><span class="p">(</span><span class="n">notoriginalDataframe</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">  <span class="n">bar</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="p">[</span><span class="n">originalProfit</span> <span class="o">/</span> <span class="n">originalCount</span><span class="p">,</span> <span class="n">notoriginalProfit</span> <span class="o">/</span> <span class="n">notoriginalCount</span><span class="p">],</span> <span class="n">size</span> <span class="o">=</span> <span class="n">figuresize</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">plotCompareProfit</span><span class="p">(</span><span class="n">transformedData</span><span class="p">)</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-07-28_14-19-02_screenshot.png"/>
+    </figure>
+ <!-- raw HTML omitted --></p>
+</li>
+</ul>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2022-07-28</span>
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="http://example.org/posts/2022/07/movies/" data-title="" data-hashtags="数据分析"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="http://example.org/posts/2022/07/movies/" data-hashtag="数据分析"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="http://example.org/posts/2022/07/movies/" data-title=""><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="http://example.org/posts/2022/07/movies/" data-title=""><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.0.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="http://example.org/posts/2022/07/movies/" data-title=""><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw" aria-hidden="true"></i>&nbsp;<a href="/tags/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/">数据分析</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/2022/07/newyork/" class="prev" rel="prev" title=""><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.101.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

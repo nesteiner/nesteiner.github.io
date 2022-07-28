@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>Julia 简单爬虫编写 - My New Hugo Site</title><meta name="Description" content="This is my cool site"><meta property="og:title" content="Julia 简单爬虫编写" />
+<meta property="og:description" content="项目介绍 我想试试 do everything in Julia，所以这里我简单写了一个爬虫，来爬取涩图 https://github.com/nesteiner/WebCrawl.jl 安装包 以下的包先安装好 HTTP 用于获取 HTTP Gumbo 用于解析 HTTP Cascadia 使用 CSS Selector 解析 HTTP URIs 用于uri 的解析 我们要爬取的 url 在这里 未成年人请在父母陪同下点击 工具函数 Julia 原有的 joinpath 不能满足我们的需求，比如我们要合并这两个 url https://example.com/hello /hello/1 合并后的结果应该是 https://example.com/hello/1 ，可 joinpath 合并后的结果是 /hello/1 这里我们使用 URIs 中的 resolvereference 来简单写一个 urljoin function urljoin(base::AbstractString, ref::AbstractString) return string( resolvereference(base, ref) ) end 整体流程 首先我们定义一个全局的 CONFIG 对象，来设置一些参数，比如 代理地址 请求头 Cookie User-Agent 我们再定义解析函数 parse ，由于处理方式与 scrapy 不太一样，没有必要将接口设计成一样 parse(startpage::String, dict::Dict{String, T}) where T &lt;: Any 由于出现分页，我们需要开始递归解析页面，我们从 startpage 开始解析， dict 存储一些额外参数，如 存储的文件夹位置 图片的名称 调用解析函数时，我们还会处理图片下载请求 pipeline(image::String, path::String) 他将从 image 下载资源，存储到 path 中 详细代码 参考 test/runtests." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/posts/2022/07/julia-spider/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-07-23T17:58:00+08:00" />
+<meta property="article:modified_time" content="2022-07-23T18:04:18+08:00" /><meta property="og:site_name" content="My cool site" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Julia 简单爬虫编写"/>
+<meta name="twitter:description" content="项目介绍 我想试试 do everything in Julia，所以这里我简单写了一个爬虫，来爬取涩图 https://github.com/nesteiner/WebCrawl.jl 安装包 以下的包先安装好 HTTP 用于获取 HTTP Gumbo 用于解析 HTTP Cascadia 使用 CSS Selector 解析 HTTP URIs 用于uri 的解析 我们要爬取的 url 在这里 未成年人请在父母陪同下点击 工具函数 Julia 原有的 joinpath 不能满足我们的需求，比如我们要合并这两个 url https://example.com/hello /hello/1 合并后的结果应该是 https://example.com/hello/1 ，可 joinpath 合并后的结果是 /hello/1 这里我们使用 URIs 中的 resolvereference 来简单写一个 urljoin function urljoin(base::AbstractString, ref::AbstractString) return string( resolvereference(base, ref) ) end 整体流程 首先我们定义一个全局的 CONFIG 对象，来设置一些参数，比如 代理地址 请求头 Cookie User-Agent 我们再定义解析函数 parse ，由于处理方式与 scrapy 不太一样，没有必要将接口设计成一样 parse(startpage::String, dict::Dict{String, T}) where T &lt;: Any 由于出现分页，我们需要开始递归解析页面，我们从 startpage 开始解析， dict 存储一些额外参数，如 存储的文件夹位置 图片的名称 调用解析函数时，我们还会处理图片下载请求 pipeline(image::String, path::String) 他将从 image 下载资源，存储到 path 中 详细代码 参考 test/runtests."/>
+<meta name="application-name" content="My cool site">
+<meta name="apple-mobile-web-app-title" content="My cool site"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://example.org/posts/2022/07/julia-spider/" /><link rel="prev" href="http://example.org/posts/2022/07/android-databinding/" /><link rel="next" href="http://example.org/posts/2022/07/newyork/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Julia 简单爬虫编写",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/example.org\/posts\/2022\/07\/julia-spider\/"
+        },"genre": "posts","keywords": "爬虫","wordcount":  224 ,
+        "url": "http:\/\/example.org\/posts\/2022\/07\/julia-spider\/","datePublished": "2022-07-23T17:58:00+08:00","dateModified": "2022-07-23T18:04:18+08:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "Author"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="My New Hugo Site">My cool site</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="My New Hugo Site">My cool site</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Julia 简单爬虫编写</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Author</a></span>&nbsp;<span class="post-category">included in <a href="/categories/julia/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Julia</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2022-07-23">2022-07-23</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;224 words&nbsp;
+                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;2 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#项目介绍">项目介绍</a>
+      <ul>
+        <li><a href="#安装包">安装包</a></li>
+        <li><a href="#工具函数">工具函数</a></li>
+      </ul>
+    </li>
+    <li><a href="#整体流程">整体流程</a></li>
+    <li><a href="#详细代码">详细代码</a></li>
+    <li><a href="#疑问">疑问</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="项目介绍">项目介绍</h2>
+<p>我想试试 do everything in Julia，所以这里我简单写了一个爬虫，来爬取涩图 <!-- raw HTML omitted -->
+<a href="https://github.com/nesteiner/WebCrawl.jl" target="_blank" rel="noopener noreffer ">https://github.com/nesteiner/WebCrawl.jl</a> <!-- raw HTML omitted --></p>
+<h3 id="安装包">安装包</h3>
+<p>以下的包先安装好 <!-- raw HTML omitted --></p>
+<ul>
+<li>HTTP 用于获取 HTTP <!-- raw HTML omitted --></li>
+<li>Gumbo 用于解析 HTTP <!-- raw HTML omitted --></li>
+<li>Cascadia 使用 CSS Selector 解析 HTTP <!-- raw HTML omitted --></li>
+<li>URIs 用于uri 的解析 <!-- raw HTML omitted --></li>
+</ul>
+<p>我们要爬取的 url 在这里 <a href="https://www.meitu131.com/meinv/5287/index.html" target="_blank" rel="noopener noreffer ">未成年人请在父母陪同下点击</a> <!-- raw HTML omitted --></p>
+<h3 id="工具函数">工具函数</h3>
+<p>Julia 原有的 <code>joinpath</code> 不能满足我们的需求，比如我们要合并这两个 url <!-- raw HTML omitted --></p>
+<ul>
+<li><a href="https://example.com/hello" target="_blank" rel="noopener noreffer ">https://example.com/hello</a> <!-- raw HTML omitted --></li>
+<li>/hello/1 <!-- raw HTML omitted --></li>
+</ul>
+<p>合并后的结果应该是 <a href="https://example.com/hello/1" target="_blank" rel="noopener noreffer ">https://example.com/hello/1</a> ，可 <code>joinpath</code> 合并后的结果是 /hello/1 <!-- raw HTML omitted -->
+这里我们使用 URIs 中的 <code>resolvereference</code> 来简单写一个 <code>urljoin</code> <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">function</span> <span class="n">urljoin</span><span class="p">(</span><span class="n">base</span><span class="o">::</span><span class="kt">AbstractString</span><span class="p">,</span> <span class="n">ref</span><span class="o">::</span><span class="kt">AbstractString</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">string</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">resolvereference</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">ref</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span></code></pre></div><h2 id="整体流程">整体流程</h2>
+<p>首先我们定义一个全局的 <code>CONFIG</code> 对象，来设置一些参数，比如 <!-- raw HTML omitted --></p>
+<ul>
+<li>代理地址 <!-- raw HTML omitted --></li>
+<li>请求头 <!-- raw HTML omitted --></li>
+<li>Cookie <!-- raw HTML omitted --></li>
+<li>User-Agent <!-- raw HTML omitted --></li>
+</ul>
+<p>我们再定义解析函数 <code>parse</code> ，由于处理方式与 <code>scrapy</code> 不太一样，没有必要将接口设计成一样 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">parse</span><span class="p">(</span><span class="n">startpage</span><span class="o">::</span><span class="kt">String</span><span class="p">,</span> <span class="n">dict</span><span class="o">::</span><span class="kt">Dict</span><span class="p">{</span><span class="kt">String</span><span class="p">,</span> <span class="kt">T</span><span class="p">})</span> <span class="k">where</span> <span class="kt">T</span> <span class="o">&lt;:</span> <span class="kt">Any</span>
+</span></span></code></pre></div><p>由于出现分页，我们需要开始递归解析页面，我们从 <code>startpage</code> 开始解析， <code>dict</code> 存储一些额外参数，如 <!-- raw HTML omitted --></p>
+<ul>
+<li>存储的文件夹位置 <!-- raw HTML omitted --></li>
+<li>图片的名称 <!-- raw HTML omitted --></li>
+</ul>
+<p>调用解析函数时，我们还会处理图片下载请求 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">pipeline</span><span class="p">(</span><span class="n">image</span><span class="o">::</span><span class="kt">String</span><span class="p">,</span> <span class="n">path</span><span class="o">::</span><span class="kt">String</span><span class="p">)</span>
+</span></span></code></pre></div><p>他将从 <code>image</code> 下载资源，存储到 <code>path</code> 中 <!-- raw HTML omitted --></p>
+<h2 id="详细代码">详细代码</h2>
+<p>参考 <code>test/runtests.jl</code> ，我们这样调用接口 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="nd">@testset</span> <span class="s">&#34;test fetch meitulu&#34;</span> <span class="k">begin</span>
+</span></span><span class="line"><span class="cl">  <span class="n">dict</span> <span class="o">=</span> <span class="kt">Dict</span><span class="p">(</span><span class="s">&#34;startfrom&#34;</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	      <span class="s">&#34;startpath&#34;</span> <span class="o">=&gt;</span> <span class="s">&#34;/home/steiner/Downloads/evelyn/[MyGirl美媛馆] 性感嫩模Evelyn艾莉 - 女仆厨娘装制服诱惑系列写真 Vol.157&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">startpage</span> <span class="o">=</span> <span class="s">&#34;https://www.meitu131.com/meinv/5287/index.html&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">try</span>
+</span></span><span class="line"><span class="cl">    <span class="n">WebCrawl</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">startpage</span><span class="p">,</span> <span class="n">dict</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">catch</span> <span class="n">error</span>
+</span></span><span class="line"><span class="cl">    <span class="n">print</span><span class="p">(</span><span class="nb">stderr</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span></code></pre></div><p>接下来在包模式下，写下 <code>test</code> 即可，成品就不展示了，怕过不了审 <!-- raw HTML omitted --></p>
+<h2 id="疑问">疑问</h2>
+<p>在下载中，我们写下了如下代码 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="nd">@sync</span> <span class="k">for</span> <span class="n">image</span> <span class="k">in</span> <span class="n">images</span>
+</span></span><span class="line"><span class="cl">  <span class="n">directory</span> <span class="o">=</span> <span class="n">dict</span><span class="p">[</span><span class="s">&#34;startpath&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="o">!</span><span class="n">isdir</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">mkdir</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">path</span> <span class="o">=</span> <span class="n">joinpath</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">string</span><span class="p">(</span><span class="n">dict</span><span class="p">[</span><span class="s">&#34;startfrom&#34;</span><span class="p">])</span> <span class="o">*</span> <span class="s">&#34;.jpg&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">dict</span><span class="p">[</span><span class="s">&#34;startfrom&#34;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">url</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s">&#34;src&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="c"># @async pipeline(url, path)</span>
+</span></span><span class="line"><span class="cl">  <span class="nd">@async</span> <span class="n">pipeline</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span></code></pre></div><p>他的意思是将 <code>for</code> 中的 <code>@async</code> 操作全部同步处理，实际操作下来发现跟去除 <code>@sync</code>, <code>@async</code> <!-- raw HTML omitted -->
+没有多少区别，于是我又设计了这样的代码 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">tasks</span> <span class="o">=</span> <span class="kt">Task</span><span class="p">[]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">image</span> <span class="k">in</span> <span class="n">images</span>
+</span></span><span class="line"><span class="cl">  <span class="n">task</span> <span class="o">=</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="k">begin</span>
+</span></span><span class="line"><span class="cl">    <span class="n">directory</span> <span class="o">=</span> <span class="n">dict</span><span class="p">[</span><span class="s">&#34;startpath&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">!</span><span class="n">isdir</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="n">mkdir</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">path</span> <span class="o">=</span> <span class="n">joinpath</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">string</span><span class="p">(</span><span class="n">dict</span><span class="p">[</span><span class="s">&#34;startfrom&#34;</span><span class="p">])</span> <span class="o">*</span> <span class="s">&#34;.jpg&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dict</span><span class="p">[</span><span class="s">&#34;startfrom&#34;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">url</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s">&#34;src&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="c"># @async pipeline(url, path)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">pipeline</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">push!</span><span class="p">(</span><span class="n">tasks</span><span class="p">,</span> <span class="kt">Task</span><span class="p">(</span><span class="n">task</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">task</span> <span class="k">in</span> <span class="n">tasks</span>
+</span></span><span class="line"><span class="cl">  <span class="n">schedule</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">task</span> <span class="k">in</span> <span class="n">tasks</span>
+</span></span><span class="line"><span class="cl">  <span class="n">wait</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span></code></pre></div><p>其实效率还是一样的，我不知道如何通过异步加速下载过程，如果你了解的话，请务必告诉我</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2022-07-23</span>
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="http://example.org/posts/2022/07/julia-spider/" data-title="Julia 简单爬虫编写" data-hashtags="爬虫"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="http://example.org/posts/2022/07/julia-spider/" data-hashtag="爬虫"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="http://example.org/posts/2022/07/julia-spider/" data-title="Julia 简单爬虫编写"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="http://example.org/posts/2022/07/julia-spider/" data-title="Julia 简单爬虫编写"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.0.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="http://example.org/posts/2022/07/julia-spider/" data-title="Julia 简单爬虫编写"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw" aria-hidden="true"></i>&nbsp;<a href="/tags/%E7%88%AC%E8%99%AB/">爬虫</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/2022/07/android-databinding/" class="prev" rel="prev" title="Android 数据绑定简单使用"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>Android 数据绑定简单使用</a>
+            <a href="/posts/2022/07/newyork/" class="next" rel="next" title=""><i class="fas fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.101.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

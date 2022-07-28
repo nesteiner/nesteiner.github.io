@@ -3,7 +3,31 @@
         <title>All Posts - My New Hugo Site</title>
         <link>http://example.org/posts/</link>
         <description>All Posts | My New Hugo Site</description>
-        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sat, 02 Jul 2022 14:39:00 &#43;0800</lastBuildDate><atom:link href="http://example.org/posts/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Thu, 28 Jul 2022 14:23:00 &#43;0800</lastBuildDate><atom:link href="http://example.org/posts/" rel="self" type="application/rss+xml" /><item>
+    <title></title>
+    <link>http://example.org/posts/2022/07/movies/</link>
+    <pubDate>Thu, 28 Jul 2022 14:23:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/posts/2022/07/movies/</guid>
+    <description><![CDATA[数据可视化 电影数据分析 说明 这次的文章参考自 https://zhuanlan.zhihu.com/p/35453189 提出问题 简单分析制作一部电影时，应考虑哪些客观因素才能使电影成功? 为客户提供有效的数据一句，以便作出更准确 的决策 本次数据分析报告主要围绕一下几点进行分析 问题一：电影类型如何随时间发生变化？ 电影数量上的对比 电影收入的对比 问题二：影响电影收入的客观因素有哪些？ 这个不会，先放一放 问题三：两家电影公司Universal Pictures 和 Paramount Pictures之间的对比。 电影发行数量上的对比 电影产生的利润对比 问题四：改编电影和原创电影之间的对比。 电影发行数量上的对比 电影产生的利润对比 理解数据 重点关注的变量有： imdb_id IMDB 标识号 popularity 在 Movie Database 上的相对页面查看次数 budget 预算（美元） revenue 收入（美元） original_title 电影名称 cast 演员列表，按 | 分隔，最多 5 名演员 homepage 电影首页的 URL director 导演列表，按 | 分隔，最多 5 名导演 tagline 电影的标语 keywords 与电影相关的关键字，按 | 分隔，最多 5 个关键字 overview 剧情摘要 runtime 电影时长 genres 风格列表，按 | 分隔，最多 5 种风格 production_companies 制作公司列表，按 | 分隔，最多 5 家公司 release_date 首次上映日期 vote_count 评分次数 vote_average 平均评分 release_year 发行年份 budget_adj 根据通货膨胀调整的预算（2010 年，美元） revenue_adj 根据通货膨胀调整的收入（2010 年，美元） 导入数据 using MLJFlux, Flux, MLJ, DataFrames, CSV, StatsBase, Dates import JSON creditsdata = CSV.]]></description>
+</item>
+<item>
+    <title></title>
+    <link>http://example.org/posts/2022/07/newyork/</link>
+    <pubDate>Thu, 28 Jul 2022 14:23:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/posts/2022/07/newyork/</guid>
+    <description><![CDATA[New York City Airbnb Open Data Analysis 以下流程参考自 https://www.kaggle.com/code/chirag9073/airbnb-analysis-visualization-and-prediction 导入库 using MLJFlux, Flux, MLJ, DataFrames, CSV, StatsBase using WordCloud 加载数据 origindata = CSV.read(&#34;data/newyork-city-airbnb-open-data/AB_NYC_2019.csv&#34;, DataFrame) 观察数据 你可以像教程那样 也可以，像我一样，用 excel 打开 csv 文件 我写了一个表格，记录我观察到的结果 column missing count type type coerce fill/drop id 0 Int Count =&gt; Continuous None name 16 String? Multiclass Drop host_id 0 Int Count =&gt; Continuous None host_name 21 String? Multiclass Drop neighbourhood_group 0 String15 Multiclass =&gt; Count =&gt; Continuous None neighbourhood 0 String31 Multiclass =&gt; Count =&gt; Continuous None latitude 0 Float64 Continuous None longitude 0 Float64 Continuous =&gt; Multiclass =&gt; Continuous None room_type 0 String15 Multiclass =&gt; Count =&gt; Continuous None price 0 Int Count =&gt; Continuous None minimum_nights 0 Int Count =&gt; Continuous None number_of_reviews 0 Int Count =&gt; Continuous None last_review 10052 Date?]]></description>
+</item>
+<item>
+    <title>Julia 简单爬虫编写</title>
+    <link>http://example.org/posts/2022/07/julia-spider/</link>
+    <pubDate>Sat, 23 Jul 2022 17:58:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/posts/2022/07/julia-spider/</guid>
+    <description><![CDATA[项目介绍 我想试试 do everything in Julia，所以这里我简单写了一个爬虫，来爬取涩图 https://github.com/nesteiner/WebCrawl.jl 安装包 以下的包先安装好 HTTP 用于获取 HTTP Gumbo 用于解析 HTTP Cascadia 使用 CSS Selector 解析 HTTP URIs 用于uri 的解析 我们要爬取的 url 在这里 未成年人请在父母陪同下点击 工具函数 Julia 原有的 joinpath 不能满足我们的需求，比如我们要合并这两个 url https://example.com/hello /hello/1 合并后的结果应该是 https://example.com/hello/1 ，可 joinpath 合并后的结果是 /hello/1 这里我们使用 URIs 中的 resolvereference 来简单写一个 urljoin function urljoin(base::AbstractString, ref::AbstractString) return string( resolvereference(base, ref) ) end 整体流程 首先我们定义一个全局的 CONFIG 对象，来设置一些参数，比如 代理地址 请求头 Cookie User-Agent 我们再定义解析函数 parse ，由于处理方式与 scrapy 不太一样，没有必要将接口设计成一样 parse(startpage::String, dict::Dict{String, T}) where T &lt;: Any 由于出现分页，我们需要开始递归解析页面，我们从 startpage 开始解析， dict 存储一些额外参数，如 存储的文件夹位置 图片的名称 调用解析函数时，我们还会处理图片下载请求 pipeline(image::String, path::String) 他将从 image 下载资源，存储到 path 中 详细代码 参考 test/runtests.]]></description>
+</item>
+<item>
     <title>Android 数据绑定简单使用</title>
     <link>http://example.org/posts/2022/07/android-databinding/</link>
     <pubDate>Sat, 02 Jul 2022 14:39:00 &#43;0800</pubDate>
@@ -58,30 +82,6 @@
     <author>Author</author>
     <guid>http://example.org/posts/2022/07/fragment/</guid>
     <description><![CDATA[Fragment 这篇笔记大部分参考自 这篇教程 什么是 Fragment Fragment 是 Activity 界面中的一部分，可理解为模块化的 Activity Fragment 不能独立存在，必须嵌入到 Activity 中 Fragment 具有自己的生命周期，接收它自己的事件，并可以在 Activity 运行时被添加或删除 Fragment 的生命周期直接受所在的Activity的影响。如：当 Activity 暂停时，它拥有的所有 Fragment 们都暂停 Fragment 有什么用 支持动态，灵活的界面设计 如何使用 Fragment 相关回调 onAttach 方法 Fragment和Activity建立关联的时候调用（获得activity的传递的值） onCreateView 方法 为Fragment创建视图（加载布局）时调用（给当前的fragment绘制UI布局，可以使用线程更新UI） onActivityCreated 方法 当Activity中的onCreate方法执行完后调用（表示activity执行oncreate方法完成了的时候会调用此方法） onDestroyView 方法 Fragment中的布局被移除时调用（表示fragment销毁相关联的UI布局） onDetach 方法 Fragment和Activity解除关联的时候调用（脱离activity） 静态添加 Fragment 首先需要创建一个 fragment 类，并为其创建布局文件 example_fragment.xml ，再将其配置到 activity_main.xml 中 example_fragment.xml 布局文件 &lt;LinearLayout xmlns:android=&#34;http://schemas.android.com/apk/res/android&#34; xmlns:tools=&#34;http://schemas.android.com/tools&#34; android:layout_width=&#34;match_parent&#34; android:layout_height=&#34;match_parent&#34; android:orientation=&#34;vertical&#34; &gt; &lt;TextView android:text=&#34;@string/example_fragment&#34; android:layout_width=&#34;wrap_content&#34; android:layout_height=&#34;wrap_content&#34;/&gt; &lt;/LinearLayout&gt; FragmentLayoutTest.java 类文件 public class FragmentLayoutTest extends Fragment { @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) { return inflater.]]></description>
-</item>
-<item>
-    <title>RecyclerView 简单使用</title>
-    <link>http://example.org/posts/2022/07/recycler-view/</link>
-    <pubDate>Sat, 02 Jul 2022 14:36:00 &#43;0800</pubDate>
-    <author>Author</author>
-    <guid>http://example.org/posts/2022/07/recycler-view/</guid>
-    <description><![CDATA[RecyclerView 这个 View 的使用当初我用的不是很明白，现在有点懂了，我们自顶向下设计 View 代码总览 在 MainActivity 中， @Override protected void onCreate(Bundle savedInstanceState) { super.onCreate(savedInstanceState); setContentView(R.layout.activity_main); RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview); List&lt;Integer&gt; data = Stream.iterate(1, n -&gt; n + 1).limit(100).collect(Collectors.toList()); CustomAdapter adapter = new CustomAdapter(data); RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 4); recyclerView.setAdapter(adapter); recyclerView.setLayoutManager(layoutManager); } 我们 定义了一个 RecyclerView 定义了一个 CustomAdapter 为 CustomAdapter 提供了数据 为 RecyclerView 设置 adapter 为 RecyclerView 设置 layoutmanager 注意，这里我们没用到 ViewHolder 这个东西，这个东西由 Adapter 操纵，相当于 RecyclerView Adapter ViewHolder ViewHolder ViewHolder ViewHolder 有关Adapter 定义 Adapter 需要继承 RecyclerView.]]></description>
-</item>
-<item>
-    <title>MLJFlux 简单使用</title>
-    <link>http://example.org/posts/2022/07/mljflux/</link>
-    <pubDate>Sat, 02 Jul 2022 14:33:00 &#43;0800</pubDate>
-    <author>Author</author>
-    <guid>http://example.org/posts/2022/07/mljflux/</guid>
-    <description><![CDATA[介绍 MLJFlux 就是 MLJ 框架对 Flux 的封装，由于我学不会 Flux ，所以我就退而求其次，学别人装好的工具 同学们可以参照这个 PlayGround 来学习 MLJFlux 其中 features 表示特征 hidden layers 表示隐藏层 learning rate 设置学习率 activation 设置每个神经元的激活函数 regularzation 设置正则化方法 regularzation rate 设置正则化惩罚力度 但在 MLJ 和 MLJFlux 中，你是找不到任何有关学习率的参数设置的，因为已经有方法可以不设置学习率了，具体参考这篇文章 在 MLJFlux 中，有以下几种模型 model type prediction type scitype(x) &lt;: _ scitype(y) &lt;: _ NeuralNetworkRegressor Deterministic Tale{Continuous} with n_in columns AbstractVectir{&lt;:Continuous} n_out = 1 MultitargetNeuralNetworkRegressor Deterministic Table{Continuous} with n_in columns &lt;: Table(Continuous) with n_out columns NeuralNetworkClassifier Probabilistic &lt;:Table(Continuous) with n_in columns AbstractVector{&lt;:Finite} with n_out classes ImageClassifier Probabilistic AbstractVector(&lt;:Image{W,H}) with n_in = (W, H) AbstractVector{&lt;:Finite} with n_out classes 他们的参数有 builder : Default = MLJFlux.]]></description>
-</item>
-<item>
-    <title>有监督回归</title>
-    <link>http://example.org/posts/2022/07/julia-regressor/</link>
-    <pubDate>Sat, 02 Jul 2022 14:33:00 &#43;0800</pubDate>
-    <author>Author</author>
-    <guid>http://example.org/posts/2022/07/julia-regressor/</guid>
-    <description><![CDATA[算法介绍 这里简要介绍下各算法和他们之间的关系，详细理解请百度一下 基本算法 最小二乘法是众多机器学习算法中极为重要的一种基础算法 单纯的最小二乘法对于包含噪声的学习过程经常有过拟合的弱点，这往往是由于学习模型对于训练样本而言过于复杂 l2 约束 由此，引入带有约束条件的最小二乘法 &mdash;- Ridge 回归 带有约束条件的最小二乘法和交叉验证法的组合，在实际应用中是非常有效的回归方法 然而，当参数特别多的时候，求解各参数以及学习得到的函数的输出值的过程，都需要耗费大量的时间 l1 约束 由此，引入可以吧大部分参数都置为0的稀疏学习算法 因为大部分参数都变成了0，所以就可以快速地求解各参数以及学习得到的函数的输出值 l1 + l2 约束 虽然 l1 约束的最小二乘学习法是非常有用的学习方法，但是在实际应用中，经常会遇到些许限制 在 Lasso 回归求解路径中，对于 N×P 的设计矩阵来说，最多只能选出 min(N,p) 个变量 当 p&gt;N 的时候，最多只能选出N个预测变量．因此，对于 p∼N 的情况，Lasso方法不能够很好的选出真实的模型． 如果预测变量具有群组效应，则用Lasso回 归时，只能选出其中的一个预测变量 对于通常的 N&gt;P 的情形，如果预测变量中 存在很强的共线性，Lasso的预测表现受控于岭回归 基于以上几点Lasso回归的局限性，Zou和 Hastie在2005年提出了弹性网回归方法，回归系 数表达式为 \(\hat \beta^{ridge} =\mathop{\arg\min}_{\beta} \{\sum \limits _{i=1}^{N}(y_i-\beta_0-\sum\limits_{j=1}^px_{ij}\beta_j)^2+\lambda\sum \limits_{j=1}^{p}|\beta_{j}|+\lambda\sum \limits_{j=1}^{p}\beta_{j}^2\}\) MLJLinearModels 使用 Ridge \(J = \frac{1}{n}\sum_{i = 1}^n (f( x_i) - y_i)^2 + \lambda \|w\|_2^2\tag{1}\) RidgeRegressor RidgeRegression() RidgeRegression(λ; lambda, fit_intercept, penalize_intercept, scale_penalty_with_samples) Lasso \(J = \frac{1}{n}\sum_{i = 1}^n (f( x_i) - y_i)^2 + \lambda \|w\|_1\tag{2}\) LassoRegressor LassoRegression() LassoRegression(λ; lambda, fit_intercept, penalize_intercept, scale_penalty_with_samples) Elastic-Net \(\smash{\min_{w}}\sum_{i=1}^m(y_i-\sum_{j=1}^dx_{ij}w_j)^2 + \lambda\sum_{j=1}^d|w_j|+\lambda \sum_{j=1}^dw_j^2 \tag{3}\) ElasticNetRegression ElasticNetRegression() ElasticNetRegression(λ) ElasticNetRegression(λ, γ; lambda, gamma, fit_intercept, penalize_intercept, scale_penalty_with_samples) 说明 其实可以不用管 fit_intercept penalize_intercept 我也不知道这两个是干什么的，就先别管他们了 总之，只用设置 lambda 就行了 实例 波士顿房价预测 数据准备 竞赛数据来自 https://www.]]></description>
 </item>
 </channel>
 </rss>

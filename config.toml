@@ -3,6 +3,7 @@ languageCode = 'zh-CN'
 title = 'My New Hugo Site'
 theme = "LoveIt"
 publishDir = "docs"
+author = ["Steiner"]
 [params]
   # LoveIt 主题版本
   version = "0.2.X"
