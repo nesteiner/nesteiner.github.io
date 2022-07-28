@@ -6,20 +6,20 @@
         <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Thu, 28 Jul 2022 14:23:00 &#43;0800</lastBuildDate>
             <atom:link href="http://example.org/index.xml" rel="self" type="application/rss+xml" />
         <item>
-    <title></title>
-    <link>http://example.org/posts/2022/07/movies/</link>
-    <pubDate>Thu, 28 Jul 2022 14:23:00 &#43;0800</pubDate>
-    <author>Author</author>
-    <guid>http://example.org/posts/2022/07/movies/</guid>
-    <description><![CDATA[数据可视化 电影数据分析 说明 这次的文章参考自 https://zhuanlan.zhihu.com/p/35453189 提出问题 简单分析制作一部电影时，应考虑哪些客观因素才能使电影成功? 为客户提供有效的数据一句，以便作出更准确 的决策 本次数据分析报告主要围绕一下几点进行分析 问题一：电影类型如何随时间发生变化？ 电影数量上的对比 电影收入的对比 问题二：影响电影收入的客观因素有哪些？ 这个不会，先放一放 问题三：两家电影公司Universal Pictures 和 Paramount Pictures之间的对比。 电影发行数量上的对比 电影产生的利润对比 问题四：改编电影和原创电影之间的对比。 电影发行数量上的对比 电影产生的利润对比 理解数据 重点关注的变量有： imdb_id IMDB 标识号 popularity 在 Movie Database 上的相对页面查看次数 budget 预算（美元） revenue 收入（美元） original_title 电影名称 cast 演员列表，按 | 分隔，最多 5 名演员 homepage 电影首页的 URL director 导演列表，按 | 分隔，最多 5 名导演 tagline 电影的标语 keywords 与电影相关的关键字，按 | 分隔，最多 5 个关键字 overview 剧情摘要 runtime 电影时长 genres 风格列表，按 | 分隔，最多 5 种风格 production_companies 制作公司列表，按 | 分隔，最多 5 家公司 release_date 首次上映日期 vote_count 评分次数 vote_average 平均评分 release_year 发行年份 budget_adj 根据通货膨胀调整的预算（2010 年，美元） revenue_adj 根据通货膨胀调整的收入（2010 年，美元） 导入数据 using MLJFlux, Flux, MLJ, DataFrames, CSV, StatsBase, Dates import JSON creditsdata = CSV.]]></description>
-</item>
-<item>
-    <title></title>
+    <title>New York City Airbnb Open Data Analysis</title>
     <link>http://example.org/posts/2022/07/newyork/</link>
     <pubDate>Thu, 28 Jul 2022 14:23:00 &#43;0800</pubDate>
     <author>Author</author>
     <guid>http://example.org/posts/2022/07/newyork/</guid>
     <description><![CDATA[New York City Airbnb Open Data Analysis 以下流程参考自 https://www.kaggle.com/code/chirag9073/airbnb-analysis-visualization-and-prediction 导入库 using MLJFlux, Flux, MLJ, DataFrames, CSV, StatsBase using WordCloud 加载数据 origindata = CSV.read(&#34;data/newyork-city-airbnb-open-data/AB_NYC_2019.csv&#34;, DataFrame) 观察数据 你可以像教程那样 也可以，像我一样，用 excel 打开 csv 文件 我写了一个表格，记录我观察到的结果 column missing count type type coerce fill/drop id 0 Int Count =&gt; Continuous None name 16 String? Multiclass Drop host_id 0 Int Count =&gt; Continuous None host_name 21 String? Multiclass Drop neighbourhood_group 0 String15 Multiclass =&gt; Count =&gt; Continuous None neighbourhood 0 String31 Multiclass =&gt; Count =&gt; Continuous None latitude 0 Float64 Continuous None longitude 0 Float64 Continuous =&gt; Multiclass =&gt; Continuous None room_type 0 String15 Multiclass =&gt; Count =&gt; Continuous None price 0 Int Count =&gt; Continuous None minimum_nights 0 Int Count =&gt; Continuous None number_of_reviews 0 Int Count =&gt; Continuous None last_review 10052 Date?]]></description>
+</item>
+<item>
+    <title>数据可视化 电影数据分析</title>
+    <link>http://example.org/posts/2022/07/movies/</link>
+    <pubDate>Thu, 28 Jul 2022 14:23:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/posts/2022/07/movies/</guid>
+    <description><![CDATA[数据可视化 电影数据分析 说明 这次的文章参考自 https://zhuanlan.zhihu.com/p/35453189 提出问题 简单分析制作一部电影时，应考虑哪些客观因素才能使电影成功? 为客户提供有效的数据一句，以便作出更准确 的决策 本次数据分析报告主要围绕一下几点进行分析 问题一：电影类型如何随时间发生变化？ 电影数量上的对比 电影收入的对比 问题二：影响电影收入的客观因素有哪些？ 这个不会，先放一放 问题三：两家电影公司Universal Pictures 和 Paramount Pictures之间的对比。 电影发行数量上的对比 电影产生的利润对比 问题四：改编电影和原创电影之间的对比。 电影发行数量上的对比 电影产生的利润对比 理解数据 重点关注的变量有： imdb_id IMDB 标识号 popularity 在 Movie Database 上的相对页面查看次数 budget 预算（美元） revenue 收入（美元） original_title 电影名称 cast 演员列表，按 | 分隔，最多 5 名演员 homepage 电影首页的 URL director 导演列表，按 | 分隔，最多 5 名导演 tagline 电影的标语 keywords 与电影相关的关键字，按 | 分隔，最多 5 个关键字 overview 剧情摘要 runtime 电影时长 genres 风格列表，按 | 分隔，最多 5 种风格 production_companies 制作公司列表，按 | 分隔，最多 5 家公司 release_date 首次上映日期 vote_count 评分次数 vote_average 平均评分 release_year 发行年份 budget_adj 根据通货膨胀调整的预算（2010 年，美元） revenue_adj 根据通货膨胀调整的收入（2010 年，美元） 导入数据 using MLJFlux, Flux, MLJ, DataFrames, CSV, StatsBase, Dates import JSON creditsdata = CSV.]]></description>
 </item>
 <item>
     <title>Julia 简单爬虫编写</title>
