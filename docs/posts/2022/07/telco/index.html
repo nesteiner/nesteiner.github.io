@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>电信用户流失分析 - My New Hugo Site</title><meta name="Description" content="This is my cool site"><meta property="og:title" content="电信用户流失分析" />
+<meta property="og:description" content="电信用户流失分析 说明 这次文章的参考来自 https://zhuanlan.zhihu.com/p/68397317 提出问题 关于用户留存有这样一个观点，如果将用户流失率降低5%，公司利润将提升25%-85% 如今高居不下的获客成本让电信运营商遭遇“天花板”，甚至陷入获客难的窘境 随着市场饱和度上升，电信运营商亟待解决增加用户黏性，延长用户生命周期的问题 因此，电信用户流失分析与预测至关重要。 数据集来自 kaggle 理解数据 字段名 数据类型 字段描述 customerID String 顾客ID gender String 客户性别 SeniorCitizen Integer 客户是否为老年人 Partner String 客户是否有合作伙伴 Dependents String 客户是否有家属 tenure Integer 客户在公司停留的月数 PhoneService String 客户是否有电话服务 MultipleLines String 客户是否有多条路线 InternetService String 客户的互联网服务提供商 OnlineSecurity String 客户是否具有在线安全性 OnlineBackup String 客户是否有在线备份 DeviceProtection String 客户是否有设备保护 TechSupport String 客户是否有技术支持 StreamingTV String 客户是否有流媒体电视 StreamingMovies String 客户是否与流媒体电影 Contract String 客户的合同期限 PaperlessBilling String 客户是否有无纸化账单 PaymentMethod String 客户的支付方式 MonthlyCharges Integer 每月向客户收取的金额 TotalCharges Integer 向客户收取的总金额 Churn String 客户是否流失 数据清洗 首先导入数据 origindata = CSV." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/posts/2022/07/telco/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-07-30T21:43:00+08:00" />
+<meta property="article:modified_time" content="2022-07-30T21:44:11+08:00" /><meta property="og:site_name" content="My cool site" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="电信用户流失分析"/>
+<meta name="twitter:description" content="电信用户流失分析 说明 这次文章的参考来自 https://zhuanlan.zhihu.com/p/68397317 提出问题 关于用户留存有这样一个观点，如果将用户流失率降低5%，公司利润将提升25%-85% 如今高居不下的获客成本让电信运营商遭遇“天花板”，甚至陷入获客难的窘境 随着市场饱和度上升，电信运营商亟待解决增加用户黏性，延长用户生命周期的问题 因此，电信用户流失分析与预测至关重要。 数据集来自 kaggle 理解数据 字段名 数据类型 字段描述 customerID String 顾客ID gender String 客户性别 SeniorCitizen Integer 客户是否为老年人 Partner String 客户是否有合作伙伴 Dependents String 客户是否有家属 tenure Integer 客户在公司停留的月数 PhoneService String 客户是否有电话服务 MultipleLines String 客户是否有多条路线 InternetService String 客户的互联网服务提供商 OnlineSecurity String 客户是否具有在线安全性 OnlineBackup String 客户是否有在线备份 DeviceProtection String 客户是否有设备保护 TechSupport String 客户是否有技术支持 StreamingTV String 客户是否有流媒体电视 StreamingMovies String 客户是否与流媒体电影 Contract String 客户的合同期限 PaperlessBilling String 客户是否有无纸化账单 PaymentMethod String 客户的支付方式 MonthlyCharges Integer 每月向客户收取的金额 TotalCharges Integer 向客户收取的总金额 Churn String 客户是否流失 数据清洗 首先导入数据 origindata = CSV."/>
+<meta name="application-name" content="My cool site">
+<meta name="apple-mobile-web-app-title" content="My cool site"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://example.org/posts/2022/07/telco/" /><link rel="prev" href="http://example.org/posts/2022/07/newyork/" /><link rel="next" href="http://example.org/posts/2022/08/bike/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "电信用户流失分析",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/example.org\/posts\/2022\/07\/telco\/"
+        },"genre": "posts","keywords": "数据分析","wordcount":  583 ,
+        "url": "http:\/\/example.org\/posts\/2022\/07\/telco\/","datePublished": "2022-07-30T21:43:00+08:00","dateModified": "2022-07-30T21:44:11+08:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "Author"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="My New Hugo Site">My cool site</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="My New Hugo Site">My cool site</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">电信用户流失分析</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Author</a></span>&nbsp;<span class="post-category">included in <a href="/categories/julia/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Julia</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2022-07-30">2022-07-30</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;583 words&nbsp;
+                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;3 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#电信用户流失分析">电信用户流失分析</a>
+      <ul>
+        <li><a href="#说明">说明</a></li>
+        <li><a href="#提出问题">提出问题</a></li>
+        <li><a href="#理解数据">理解数据</a></li>
+        <li><a href="#数据清洗">数据清洗</a></li>
+        <li><a href="#可视化分析">可视化分析</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="电信用户流失分析">电信用户流失分析</h2>
+<h3 id="说明">说明</h3>
+<p>这次文章的参考来自 <a href="https://zhuanlan.zhihu.com/p/68397317" target="_blank" rel="noopener noreffer ">https://zhuanlan.zhihu.com/p/68397317</a> <!-- raw HTML omitted --></p>
+<h3 id="提出问题">提出问题</h3>
+<p>关于用户留存有这样一个观点，如果将用户流失率降低5%，公司利润将提升25%-85% <!-- raw HTML omitted -->
+如今高居不下的获客成本让电信运营商遭遇“天花板”，甚至陷入获客难的窘境 <!-- raw HTML omitted -->
+随着市场饱和度上升，电信运营商亟待解决增加用户黏性，延长用户生命周期的问题 <!-- raw HTML omitted -->
+因此，电信用户流失分析与预测至关重要。 <!-- raw HTML omitted --></p>
+<p>数据集来自 <a href="https://link.zhihu.com/?target=https%3A//www.kaggle.com/blastchar/telco-customer-churn" target="_blank" rel="noopener noreffer ">kaggle</a> <!-- raw HTML omitted --></p>
+<h3 id="理解数据">理解数据</h3>
+<table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>数据类型</th>
+<th>字段描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>customerID</td>
+<td>String</td>
+<td>顾客ID</td>
+</tr>
+<tr>
+<td>gender</td>
+<td>String</td>
+<td>客户性别</td>
+</tr>
+<tr>
+<td>SeniorCitizen</td>
+<td>Integer</td>
+<td>客户是否为老年人</td>
+</tr>
+<tr>
+<td>Partner</td>
+<td>String</td>
+<td>客户是否有合作伙伴</td>
+</tr>
+<tr>
+<td>Dependents</td>
+<td>String</td>
+<td>客户是否有家属</td>
+</tr>
+<tr>
+<td>tenure</td>
+<td>Integer</td>
+<td>客户在公司停留的月数</td>
+</tr>
+<tr>
+<td>PhoneService</td>
+<td>String</td>
+<td>客户是否有电话服务</td>
+</tr>
+<tr>
+<td>MultipleLines</td>
+<td>String</td>
+<td>客户是否有多条路线</td>
+</tr>
+<tr>
+<td>InternetService</td>
+<td>String</td>
+<td>客户的互联网服务提供商</td>
+</tr>
+<tr>
+<td>OnlineSecurity</td>
+<td>String</td>
+<td>客户是否具有在线安全性</td>
+</tr>
+<tr>
+<td>OnlineBackup</td>
+<td>String</td>
+<td>客户是否有在线备份</td>
+</tr>
+<tr>
+<td>DeviceProtection</td>
+<td>String</td>
+<td>客户是否有设备保护</td>
+</tr>
+<tr>
+<td>TechSupport</td>
+<td>String</td>
+<td>客户是否有技术支持</td>
+</tr>
+<tr>
+<td>StreamingTV</td>
+<td>String</td>
+<td>客户是否有流媒体电视</td>
+</tr>
+<tr>
+<td>StreamingMovies</td>
+<td>String</td>
+<td>客户是否与流媒体电影</td>
+</tr>
+<tr>
+<td>Contract</td>
+<td>String</td>
+<td>客户的合同期限</td>
+</tr>
+<tr>
+<td>PaperlessBilling</td>
+<td>String</td>
+<td>客户是否有无纸化账单</td>
+</tr>
+<tr>
+<td>PaymentMethod</td>
+<td>String</td>
+<td>客户的支付方式</td>
+</tr>
+<tr>
+<td>MonthlyCharges</td>
+<td>Integer</td>
+<td>每月向客户收取的金额</td>
+</tr>
+<tr>
+<td>TotalCharges</td>
+<td>Integer</td>
+<td>向客户收取的总金额</td>
+</tr>
+<tr>
+<td>Churn</td>
+<td>String</td>
+<td>客户是否流失</td>
+</tr>
+</tbody>
+</table>
+<h3 id="数据清洗">数据清洗</h3>
+<p>首先导入数据 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">origindata</span> <span class="o">=</span> <span class="n">CSV</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&#34;data/telco-customer-churn/data.csv&#34;</span><span class="p">,</span> <span class="n">DataFrame</span><span class="p">)</span>
+</span></span></code></pre></div><p>查看数据类型，发现 <code>TotalCharges</code> 为字符串，把他改为浮点型数据，但是发现他有几个空的数据，是 &quot; &quot; <!-- raw HTML omitted -->
+我们定义处理函数 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">function</span> <span class="n">transformTotalCharges</span><span class="p">(</span><span class="n">dataframe</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">indexs</span> <span class="o">=</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:TotalCharges</span><span class="p">]</span> <span class="o">.==</span> <span class="s">&#34; &#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:TotalCharges</span><span class="p">][</span><span class="n">indexs</span><span class="p">]</span> <span class="o">.=</span> <span class="n">string</span><span class="o">.</span><span class="p">(</span><span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:MonthlyCharges</span><span class="p">][</span><span class="n">indexs</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:TotalCharges</span><span class="p">]</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">x</span> <span class="o">-&gt;</span> <span class="n">parse</span><span class="p">(</span><span class="kt">Float64</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:TotalCharges</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">  <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:tenure</span><span class="p">][</span><span class="n">indexs</span><span class="p">]</span> <span class="o">.=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">dataframe</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span></code></pre></div><p>解释下最后几行代码， <code>TotalCharges</code> 为空的行中，其 <code>tenure</code> 入网时长为 0 个月，这样我们推测是当月新入用户 <!-- raw HTML omitted -->
+根据一般禁烟，用户即使在注册的当月流失，也需缴纳当月费用，因此将这种用户入网市场改为1，将总消费额填充为月消费额 <!-- raw HTML omitted --></p>
+<h3 id="可视化分析">可视化分析</h3>
+<p>首先我们查看流失用户和占比 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">function</span> <span class="n">plotChurn</span><span class="p">(</span><span class="n">dataframe</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">counts</span> <span class="o">=</span> <span class="n">countmap</span><span class="p">(</span><span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:Churn</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">yescount</span> <span class="o">=</span> <span class="n">counts</span><span class="p">[</span><span class="s">&#34;Yes&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="n">nocount</span> <span class="o">=</span> <span class="n">counts</span><span class="p">[</span><span class="s">&#34;No&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="n">total</span> <span class="o">=</span> <span class="n">yescount</span> <span class="o">+</span> <span class="n">nocount</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">xs</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#34;Yes&#34;</span><span class="p">,</span> <span class="s">&#34;No&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ys1</span> <span class="o">=</span> <span class="p">[</span><span class="n">yescount</span> <span class="o">/</span> <span class="n">total</span><span class="p">,</span> <span class="n">nocount</span> <span class="o">/</span> <span class="n">total</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ys2</span> <span class="o">=</span> <span class="p">[</span><span class="n">yescount</span><span class="p">,</span> <span class="n">nocount</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="n">pie</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys1</span><span class="p">,</span> <span class="n">aspect_ratio</span> <span class="o">=</span> <span class="ss">:equal</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">bar</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys2</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="n">figuresize</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">display</span> 
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">plotChurn</span><span class="p">(</span><span class="n">origindata</span><span class="p">)</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-07-30_21-13-22_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<p><figure><img src="/ox-hugo/2022-07-30_21-13-42_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<p>属于不平衡数据集，流失用户占比达 26.54% <!-- raw HTML omitted --></p>
+<h4 id="用户属性分析">用户属性分析</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">function</span> <span class="n">plotPercentages</span><span class="p">(</span><span class="n">dataframe</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">,</span> <span class="n">feature</span><span class="o">::</span><span class="kt">Symbol</span><span class="p">,</span> <span class="n">ymatrix</span><span class="o">::</span><span class="kt">Matrix</span><span class="p">{</span><span class="kt">Float64</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">  <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">feature</span><span class="p">,</span> <span class="ss">:Churn</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="n">groupDataframe</span> <span class="o">=</span> <span class="n">groupby</span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">columns</span><span class="p">),</span> <span class="n">feature</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">xs</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">let</span>
+</span></span><span class="line"><span class="cl">    <span class="n">index</span> <span class="o">=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">_dataframe</span> <span class="k">in</span> <span class="n">groupDataframe</span>
+</span></span><span class="line"><span class="cl">      <span class="n">x</span> <span class="o">=</span> <span class="n">first</span><span class="p">(</span><span class="n">_dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="n">feature</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">      <span class="n">push!</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="n">yescount</span> <span class="o">=</span> <span class="n">count</span><span class="p">(</span><span class="n">isequal</span><span class="p">(</span><span class="s">&#34;Yes&#34;</span><span class="p">),</span> <span class="n">_dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:Churn</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">      <span class="n">nocount</span> <span class="o">=</span> <span class="n">count</span><span class="p">(</span><span class="n">isequal</span><span class="p">(</span><span class="s">&#34;No&#34;</span><span class="p">),</span> <span class="n">_dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:Churn</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">      <span class="n">total</span> <span class="o">=</span> <span class="n">yescount</span> <span class="o">+</span> <span class="n">nocount</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="n">ymatrix</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="o">:</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">yescount</span> <span class="o">/</span> <span class="n">total</span><span class="p">,</span> <span class="n">nocount</span> <span class="o">/</span> <span class="n">total</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">      <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">    <span class="k">end</span>
+</span></span><span class="line"><span class="cl">  <span class="k">end</span>
+</span></span><span class="line"><span class="cl">  <span class="n">groupedbar</span><span class="p">(</span><span class="n">ymatrix</span><span class="p">,</span> <span class="n">xticks</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">:</span><span class="n">length</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="n">xs</span><span class="p">),</span> <span class="n">label</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#34;Yes&#34;</span> <span class="s">&#34;No&#34;</span><span class="p">])</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="nx">plotPercentages</span><span class="p">(</span><span class="nx">origindata</span><span class="p">,</span> <span class="o">:</span><span class="nx">SeniorCitizen</span><span class="p">,</span> <span class="nx">ones</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-07-30_21-16-00_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">plotPercentages</span><span class="p">(</span><span class="n">origindata</span><span class="p">,</span> <span class="ss">:gender</span><span class="p">,</span> <span class="n">ones</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-07-30_21-16-23_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">plotPercentages</span><span class="p">(</span><span class="n">origindata</span><span class="p">,</span> <span class="ss">:Partner</span><span class="p">,</span> <span class="n">ones</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-07-30_21-16-39_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">plotPercentages</span><span class="p">(</span><span class="n">origindata</span><span class="p">,</span> <span class="ss">:Dependents</span><span class="p">,</span> <span class="n">ones</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-07-30_21-16-55_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">density</span><span class="p">(</span><span class="n">origindata</span><span class="o">.</span><span class="n">tenure</span><span class="p">,</span> <span class="n">group</span> <span class="o">=</span> <span class="n">origindata</span><span class="o">.</span><span class="n">Churn</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="n">figuresize</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-07-30_21-17-38_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<p>可以看出 <!-- raw HTML omitted --></p>
+<ul>
+<li>用户流失与性别基本无关 <!-- raw HTML omitted --></li>
+<li>年老用户流失占比显著高于年轻用户 <!-- raw HTML omitted --></li>
+</ul>
+<h4 id="服务属性分析">服务属性分析</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">plotPercentages</span><span class="p">(</span><span class="n">origindata</span><span class="p">,</span> <span class="ss">:MultipleLines</span><span class="p">,</span> <span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+</span></span><span class="line"><span class="cl"><span class="n">plotPercentages</span><span class="p">(</span><span class="n">origindata</span><span class="p">,</span> <span class="ss">:InternetService</span><span class="p">,</span> <span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-07-30_21-20-52_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<p><figure><img src="/ox-hugo/2022-07-30_21-21-11_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">function</span> <span class="n">plotPaperlessBillingChurn</span><span class="p">(</span><span class="n">dataframe</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="ss">:PaperlessBilling</span><span class="p">,</span> <span class="ss">:Contract</span><span class="p">,</span> <span class="ss">:Churn</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="n">groupDataframe</span> <span class="o">=</span> <span class="n">groupby</span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">columns</span><span class="p">),</span> <span class="ss">:PaperlessBilling</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">array</span> <span class="o">=</span> <span class="n">unique</span><span class="p">(</span><span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:Contract</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="n">_dataframe</span> <span class="k">in</span> <span class="n">groupDataframe</span>
+</span></span><span class="line"><span class="cl">    <span class="n">_dataframe</span> <span class="o">=</span> <span class="n">filter</span><span class="p">(</span><span class="n">row</span> <span class="o">-&gt;</span> <span class="n">row</span><span class="o">.</span><span class="n">Churn</span> <span class="o">==</span> <span class="s">&#34;Yes&#34;</span><span class="p">,</span> <span class="n">_dataframe</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">paperlessbilling</span> <span class="o">=</span> <span class="n">first</span><span class="p">(</span><span class="n">_dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:PaperlessBilling</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">churn1</span> <span class="o">=</span> <span class="n">count</span><span class="p">(</span><span class="n">isequal</span><span class="p">(</span><span class="n">array</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">_dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:Contract</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">    <span class="n">churn2</span> <span class="o">=</span> <span class="n">count</span><span class="p">(</span><span class="n">isequal</span><span class="p">(</span><span class="n">array</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="n">_dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:Contract</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">    <span class="n">churn3</span> <span class="o">=</span> <span class="n">count</span><span class="p">(</span><span class="n">isequal</span><span class="p">(</span><span class="n">array</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span> <span class="n">_dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:Contract</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">total</span> <span class="o">=</span> <span class="n">churn1</span> <span class="o">+</span> <span class="n">churn2</span> <span class="o">+</span> <span class="n">churn3</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ys</span> <span class="o">=</span> <span class="p">[</span><span class="n">churn1</span> <span class="o">/</span> <span class="n">total</span><span class="p">,</span> <span class="n">churn2</span> <span class="o">/</span> <span class="n">total</span><span class="p">,</span> <span class="n">churn3</span> <span class="o">/</span> <span class="n">total</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">bar</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">title</span> <span class="o">=</span> <span class="s">&#34;PaperlessBilling = </span><span class="si">$paperlessbilling</span><span class="s">&#34;</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span><span class="line"><span class="cl">  <span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">plotPaperlessBillingChurn</span><span class="p">(</span><span class="n">origindata</span><span class="p">)</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-07-30_21-21-56_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">function</span> <span class="n">plotNumberOfCustomer</span><span class="p">(</span><span class="n">dataframe</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#34;PhoneService&#34;</span><span class="p">,</span> <span class="s">&#34;MultipleLines&#34;</span><span class="p">,</span> <span class="s">&#34;OnlineSecurity&#34;</span><span class="p">,</span> <span class="s">&#34;OnlineBackup&#34;</span><span class="p">,</span> <span class="s">&#34;DeviceProtection&#34;</span><span class="p">,</span> <span class="s">&#34;TechSupport&#34;</span><span class="p">,</span> <span class="s">&#34;StreamingTV&#34;</span><span class="p">,</span> <span class="s">&#34;StreamingMovies&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ymatrix</span> <span class="o">=</span> <span class="n">ones</span><span class="p">((</span><span class="n">length</span><span class="p">(</span><span class="n">columns</span><span class="p">),</span> <span class="mi">3</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">index</span> <span class="o">=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="n">column</span> <span class="k">in</span> <span class="n">columns</span>
+</span></span><span class="line"><span class="cl">    <span class="n">_dataframe</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">filter</span><span class="p">(</span><span class="n">row</span> <span class="o">-&gt;</span> <span class="n">row</span><span class="o">.</span><span class="n">InternetService</span> <span class="o">!=</span> <span class="s">&#34;No&#34;</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">),</span> <span class="p">[</span><span class="n">column</span><span class="p">,</span> <span class="s">&#34;Churn&#34;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">count1</span> <span class="o">=</span> <span class="n">count</span><span class="p">(</span><span class="n">isequal</span><span class="p">(</span><span class="s">&#34;Yes&#34;</span><span class="p">),</span> <span class="n">_dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="n">column</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">    <span class="n">count2</span>  <span class="o">=</span> <span class="n">count</span><span class="p">(</span><span class="n">isequal</span><span class="p">(</span><span class="s">&#34;No&#34;</span><span class="p">),</span>  <span class="n">_dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="n">column</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">column</span> <span class="o">!=</span> <span class="s">&#34;MultipleLines&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="n">ymatrix</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="o">:</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">count1</span><span class="p">,</span> <span class="n">count2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="k">else</span>
+</span></span><span class="line"><span class="cl">      <span class="n">ymatrix</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="o">:</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">count1</span><span class="p">,</span> <span class="n">count2</span><span class="p">,</span> <span class="n">count</span><span class="p">(</span><span class="n">isequal</span><span class="p">(</span><span class="s">&#34;No phone service&#34;</span><span class="p">),</span> <span class="n">_dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="n">column</span><span class="p">])]</span>
+</span></span><span class="line"><span class="cl">    <span class="k">end</span>
+</span></span><span class="line"><span class="cl">    <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">groupedbar</span><span class="p">(</span><span class="n">ymatrix</span><span class="p">,</span> <span class="n">xticks</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">:</span><span class="n">length</span><span class="p">(</span><span class="n">columns</span><span class="p">),</span> <span class="n">columns</span><span class="p">),</span> <span class="n">label</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#34;Has Service&#34;</span> <span class="s">&#34;No Service&#34;</span> <span class="s">&#34;No Service&#34;</span><span class="p">],</span> <span class="n">size</span> <span class="o">=</span> <span class="n">figuresize</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">plotNumberOfCustomer</span><span class="p">(</span><span class="n">origindata</span><span class="p">)</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-07-30_21-22-28_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">function</span> <span class="n">plotNumberOfChurnCustomer</span><span class="p">(</span><span class="n">dataframe</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#34;PhoneService&#34;</span><span class="p">,</span> <span class="s">&#34;MultipleLines&#34;</span><span class="p">,</span> <span class="s">&#34;OnlineSecurity&#34;</span><span class="p">,</span> <span class="s">&#34;OnlineBackup&#34;</span><span class="p">,</span> <span class="s">&#34;DeviceProtection&#34;</span><span class="p">,</span> <span class="s">&#34;TechSupport&#34;</span><span class="p">,</span> <span class="s">&#34;StreamingTV&#34;</span><span class="p">,</span> <span class="s">&#34;StreamingMovies&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ymatrix</span> <span class="o">=</span> <span class="n">ones</span><span class="p">((</span><span class="n">length</span><span class="p">(</span><span class="n">columns</span><span class="p">),</span> <span class="mi">2</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">index</span> <span class="o">=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="n">column</span> <span class="k">in</span> <span class="n">columns</span>
+</span></span><span class="line"><span class="cl">    <span class="n">_dataframe</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">filter</span><span class="p">(</span><span class="n">row</span> <span class="o">-&gt;</span> <span class="n">row</span><span class="o">.</span><span class="n">InternetService</span> <span class="o">!=</span> <span class="s">&#34;No&#34;</span> <span class="o">&amp;&amp;</span> <span class="n">row</span><span class="o">.</span><span class="n">Churn</span> <span class="o">==</span> <span class="s">&#34;Yes&#34;</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">),</span> <span class="p">[</span><span class="n">column</span><span class="p">,</span> <span class="s">&#34;Churn&#34;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">    <span class="c"># has service but churn</span>
+</span></span><span class="line"><span class="cl">    <span class="n">yescount</span> <span class="o">=</span> <span class="n">count</span><span class="p">(</span><span class="n">isequal</span><span class="p">(</span><span class="s">&#34;Yes&#34;</span><span class="p">),</span> <span class="n">_dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="n">column</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">    <span class="c"># has no service but churn</span>
+</span></span><span class="line"><span class="cl">    <span class="n">nocount</span> <span class="o">=</span> <span class="n">count</span><span class="p">(</span><span class="n">isequal</span><span class="p">(</span><span class="s">&#34;No&#34;</span><span class="p">),</span> <span class="n">_dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="n">column</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ymatrix</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="o">:</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">yescount</span><span class="p">,</span> <span class="n">nocount</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">  <span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">groupedbar</span><span class="p">(</span><span class="n">ymatrix</span><span class="p">,</span> <span class="n">xticks</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">:</span><span class="n">length</span><span class="p">(</span><span class="n">columns</span><span class="p">),</span> <span class="n">columns</span><span class="p">),</span> <span class="n">label</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#34;Has Service&#34;</span> <span class="s">&#34;No Service&#34;</span><span class="p">],</span> <span class="n">size</span> <span class="o">=</span> <span class="n">figuresize</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">plotNumberOfChurnCustomer</span><span class="p">(</span><span class="n">origindata</span><span class="p">)</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-07-30_21-23-00_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<p>可以看出 <!-- raw HTML omitted --></p>
+<ul>
+<li>电话服务整体对用户流失影响较小 <!-- raw HTML omitted --></li>
+<li>单光纤用户的流失占比较高 <!-- raw HTML omitted --></li>
+<li>光纤用户绑定了安全，备份，保护，技术支持服务的流失率较低 <!-- raw HTML omitted --></li>
+<li>光纤用户附加流媒体电视，电影服务的流失率占比较高 <!-- raw HTML omitted --></li>
+</ul>
+<h4 id="合同属性分析">合同属性分析</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">plotPercentages</span><span class="p">(</span><span class="n">origindata</span><span class="p">,</span> <span class="ss">:PaymentMethod</span><span class="p">,</span> <span class="n">ones</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-07-30_21-23-49_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">density</span><span class="p">(</span><span class="n">origindata</span><span class="o">.</span><span class="n">MonthlyCharges</span><span class="p">,</span> <span class="n">group</span> <span class="o">=</span> <span class="n">origindata</span><span class="o">.</span><span class="n">Churn</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="n">figuresize</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-07-30_21-24-21_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">density</span><span class="p">(</span><span class="n">origindata</span><span class="o">.</span><span class="n">TotalCharges</span><span class="p">,</span> <span class="n">group</span> <span class="o">=</span> <span class="n">origindata</span><span class="o">.</span><span class="n">Churn</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="n">figuresize</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-07-30_21-24-50_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<p>可以看出 <!-- raw HTML omitted --></p>
+<ul>
+<li>采用电子支票支付的用户流失率最高，推测该方式的使用体验较为一般 <!-- raw HTML omitted --></li>
+<li>签订合同方式对客户流失率影响为 按月签订 &gt; 按一年签订 &gt; 按两年签订，证明长期合同最能保留客户 <!-- raw HTML omitted --></li>
+<li>月消费额大约在 70 - 110 之间用户流失率较高 <!-- raw HTML omitted --></li>
+<li>长期来看，用户总消费越高，流失率月底，符合一般经验 <!-- raw HTML omitted --></li>
+</ul>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2022-07-30</span>
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="http://example.org/posts/2022/07/telco/" data-title="电信用户流失分析" data-hashtags="数据分析"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="http://example.org/posts/2022/07/telco/" data-hashtag="数据分析"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="http://example.org/posts/2022/07/telco/" data-title="电信用户流失分析"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="http://example.org/posts/2022/07/telco/" data-title="电信用户流失分析"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.0.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="http://example.org/posts/2022/07/telco/" data-title="电信用户流失分析"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw" aria-hidden="true"></i>&nbsp;<a href="/tags/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/">数据分析</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/2022/07/newyork/" class="prev" rel="prev" title="New York City Airbnb Open Data Analysis"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>New York City Airbnb Open Data Analysis</a>
+            <a href="/posts/2022/08/bike/" class="next" rel="next" title="共享单车">共享单车<i class="fas fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.101.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

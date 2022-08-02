@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>共享单车 - My New Hugo Site</title><meta name="Description" content="This is my cool site"><meta property="og:title" content="共享单车" />
+<meta property="og:description" content="共享单车 说明 这次的文章参考自 https://zhuanlan.zhihu.com/p/36776526 提出问题 某城市中共享单车出租的需求量如何 消费者的消费习惯 影响租车人数的因素 理解数据 导入数据 origindata = CSV.read(&#34;data/bike-sharing/train.csv&#34;, DataFrame) 查看数据集信息 describe(origindata) schema(data) 数据清洗 通过上面的数据查看，发现没有缺失值 数据类型转换 我们把 datetime 转换一下，转为 year month weekday day hour datetimes = map(x -&gt; DateTime(x, &#34;yyyy-mm-dd HH:MM:SS&#34;), dataframe[!, :datetime]) years = map(year, datetimes) months = map(month, datetimes) days = map(day, datetimes) weekdays = map(dayofweek, datetimes) hours = map(hour, datetimes) dataframe[!, :year] = years dataframe[!, :month] = months dataframe[!, :weekday] = weekdays dataframe[!, :day] = days dataframe[!" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/posts/2022/08/bike/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-08-02T19:38:00+08:00" />
+<meta property="article:modified_time" content="2022-08-02T19:39:02+08:00" /><meta property="og:site_name" content="My cool site" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="共享单车"/>
+<meta name="twitter:description" content="共享单车 说明 这次的文章参考自 https://zhuanlan.zhihu.com/p/36776526 提出问题 某城市中共享单车出租的需求量如何 消费者的消费习惯 影响租车人数的因素 理解数据 导入数据 origindata = CSV.read(&#34;data/bike-sharing/train.csv&#34;, DataFrame) 查看数据集信息 describe(origindata) schema(data) 数据清洗 通过上面的数据查看，发现没有缺失值 数据类型转换 我们把 datetime 转换一下，转为 year month weekday day hour datetimes = map(x -&gt; DateTime(x, &#34;yyyy-mm-dd HH:MM:SS&#34;), dataframe[!, :datetime]) years = map(year, datetimes) months = map(month, datetimes) days = map(day, datetimes) weekdays = map(dayofweek, datetimes) hours = map(hour, datetimes) dataframe[!, :year] = years dataframe[!, :month] = months dataframe[!, :weekday] = weekdays dataframe[!, :day] = days dataframe[!"/>
+<meta name="application-name" content="My cool site">
+<meta name="apple-mobile-web-app-title" content="My cool site"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://example.org/posts/2022/08/bike/" /><link rel="prev" href="http://example.org/posts/2022/07/telco/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "共享单车",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/example.org\/posts\/2022\/08\/bike\/"
+        },"genre": "posts","keywords": "数据分析","wordcount":  893 ,
+        "url": "http:\/\/example.org\/posts\/2022\/08\/bike\/","datePublished": "2022-08-02T19:38:00+08:00","dateModified": "2022-08-02T19:39:02+08:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "Author"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="My New Hugo Site">My cool site</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="My New Hugo Site">My cool site</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">共享单车</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Author</a></span>&nbsp;<span class="post-category">included in <a href="/categories/julia/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Julia</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2022-08-02">2022-08-02</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;893 words&nbsp;
+                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;5 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#共享单车">共享单车</a>
+      <ul>
+        <li><a href="#说明">说明</a></li>
+        <li><a href="#提出问题">提出问题</a></li>
+        <li><a href="#理解数据">理解数据</a></li>
+        <li><a href="#数据清洗">数据清洗</a></li>
+        <li><a href="#数据可视化">数据可视化</a></li>
+        <li><a href="#预测">预测</a></li>
+        <li><a href="#下一步">下一步</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="共享单车">共享单车</h2>
+<h3 id="说明">说明</h3>
+<p>这次的文章参考自 <a href="https://zhuanlan.zhihu.com/p/36776526" target="_blank" rel="noopener noreffer ">https://zhuanlan.zhihu.com/p/36776526</a> <!-- raw HTML omitted --></p>
+<h3 id="提出问题">提出问题</h3>
+<ol>
+<li>某城市中共享单车出租的需求量如何 <!-- raw HTML omitted --></li>
+<li>消费者的消费习惯 <!-- raw HTML omitted --></li>
+<li>影响租车人数的因素 <!-- raw HTML omitted --></li>
+</ol>
+<h3 id="理解数据">理解数据</h3>
+<h4 id="导入数据">导入数据</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">origindata</span> <span class="o">=</span> <span class="n">CSV</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&#34;data/bike-sharing/train.csv&#34;</span><span class="p">,</span> <span class="n">DataFrame</span><span class="p">)</span>
+</span></span></code></pre></div><h4 id="查看数据集信息">查看数据集信息</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">describe</span><span class="p">(</span><span class="n">origindata</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">schema</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-08-01_19-41-23_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<p><figure><img src="/ox-hugo/2022-08-01_19-41-40_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<h3 id="数据清洗">数据清洗</h3>
+<p>通过上面的数据查看，发现没有缺失值 <!-- raw HTML omitted --></p>
+<h4 id="数据类型转换">数据类型转换</h4>
+<p>我们把 datetime 转换一下，转为 <!-- raw HTML omitted --></p>
+<ul>
+<li><code>year</code> <!-- raw HTML omitted --></li>
+<li><code>month</code> <!-- raw HTML omitted --></li>
+<li><code>weekday</code> <!-- raw HTML omitted --></li>
+<li><code>day</code> <!-- raw HTML omitted --></li>
+<li><code>hour</code> <!-- raw HTML omitted --></li>
+</ul>
+<!-- raw HTML omitted -->
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">datetimes</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">x</span> <span class="o">-&gt;</span> <span class="n">DateTime</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s">&#34;yyyy-mm-dd HH:MM:SS&#34;</span><span class="p">),</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:datetime</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">years</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">datetimes</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">months</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">month</span><span class="p">,</span> <span class="n">datetimes</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">days</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">day</span><span class="p">,</span> <span class="n">datetimes</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">weekdays</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">dayofweek</span><span class="p">,</span> <span class="n">datetimes</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">hours</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">hour</span><span class="p">,</span> <span class="n">datetimes</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:year</span><span class="p">]</span> <span class="o">=</span> <span class="n">years</span>
+</span></span><span class="line"><span class="cl"><span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:month</span><span class="p">]</span> <span class="o">=</span> <span class="n">months</span>
+</span></span><span class="line"><span class="cl"><span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:weekday</span><span class="p">]</span> <span class="o">=</span> <span class="n">weekdays</span>
+</span></span><span class="line"><span class="cl"><span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:day</span><span class="p">]</span> <span class="o">=</span> <span class="n">days</span>
+</span></span><span class="line"><span class="cl"><span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:hour</span><span class="p">]</span> <span class="o">=</span> <span class="n">hours</span>
+</span></span></code></pre></div><p>再转换季节，工作日，天气 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">seasonmap</span> <span class="o">=</span> <span class="kt">Dict</span><span class="p">(</span><span class="mi">1</span> <span class="o">=&gt;</span> <span class="s">&#34;Spring&#34;</span><span class="p">,</span> <span class="mi">2</span> <span class="o">=&gt;</span> <span class="s">&#34;Summer&#34;</span><span class="p">,</span> <span class="mi">3</span> <span class="o">=&gt;</span> <span class="s">&#34;Autumn&#34;</span><span class="p">,</span> <span class="mi">4</span> <span class="o">=&gt;</span> <span class="s">&#34;Winter&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">holidaymap</span> <span class="o">=</span> <span class="kt">Dict</span><span class="p">(</span><span class="mi">1</span> <span class="o">=&gt;</span> <span class="s">&#34;Workingday&#34;</span><span class="p">,</span> <span class="mi">0</span> <span class="o">=&gt;</span> <span class="s">&#34;Weekday&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">weathermap</span> <span class="o">=</span> <span class="kt">Dict</span><span class="p">(</span><span class="mi">1</span> <span class="o">=&gt;</span> <span class="s">&#34;Sunny&#34;</span><span class="p">,</span> <span class="mi">2</span> <span class="o">=&gt;</span> <span class="s">&#34;Cloudy&#34;</span><span class="p">,</span> <span class="mi">3</span> <span class="o">=&gt;</span> <span class="s">&#34;Flurry&#34;</span><span class="p">,</span> <span class="mi">4</span> <span class="o">=&gt;</span> <span class="s">&#34;Heavy Snow&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:season</span><span class="p">]</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">x</span> <span class="o">-&gt;</span> <span class="n">seasonmap</span><span class="p">[</span><span class="n">x</span><span class="p">],</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:season</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:workingday</span><span class="p">]</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">x</span> <span class="o">-&gt;</span> <span class="n">holidaymap</span><span class="p">[</span><span class="n">x</span><span class="p">],</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:workingday</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:weather</span><span class="p">]</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">x</span> <span class="o">-&gt;</span> <span class="n">weathermap</span><span class="p">[</span><span class="n">x</span><span class="p">],</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:weather</span><span class="p">])</span>
+</span></span></code></pre></div><p>封装成函数 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">function</span> <span class="n">transformDataType!</span><span class="p">(</span><span class="n">dataframe</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="c"># 转换日期</span>
+</span></span><span class="line"><span class="cl">  <span class="n">datetimes</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">x</span> <span class="o">-&gt;</span> <span class="n">DateTime</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s">&#34;yyyy-mm-dd HH:MM:SS&#34;</span><span class="p">),</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:datetime</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">years</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">datetimes</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">months</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">month</span><span class="p">,</span> <span class="n">datetimes</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">days</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">day</span><span class="p">,</span> <span class="n">datetimes</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">weekdays</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">dayofweek</span><span class="p">,</span> <span class="n">datetimes</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">hours</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">hour</span><span class="p">,</span> <span class="n">datetimes</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:year</span><span class="p">]</span> <span class="o">=</span> <span class="n">years</span>
+</span></span><span class="line"><span class="cl">  <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:month</span><span class="p">]</span> <span class="o">=</span> <span class="n">months</span>
+</span></span><span class="line"><span class="cl">  <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:weekday</span><span class="p">]</span> <span class="o">=</span> <span class="n">weekdays</span>
+</span></span><span class="line"><span class="cl">  <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:day</span><span class="p">]</span> <span class="o">=</span> <span class="n">days</span>
+</span></span><span class="line"><span class="cl">  <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:hour</span><span class="p">]</span> <span class="o">=</span> <span class="n">hours</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c"># 转换季节，工作日，天气</span>
+</span></span><span class="line"><span class="cl">  <span class="n">seasonmap</span> <span class="o">=</span> <span class="kt">Dict</span><span class="p">(</span><span class="mi">1</span> <span class="o">=&gt;</span> <span class="s">&#34;Spring&#34;</span><span class="p">,</span> <span class="mi">2</span> <span class="o">=&gt;</span> <span class="s">&#34;Summer&#34;</span><span class="p">,</span> <span class="mi">3</span> <span class="o">=&gt;</span> <span class="s">&#34;Autumn&#34;</span><span class="p">,</span> <span class="mi">4</span> <span class="o">=&gt;</span> <span class="s">&#34;Winter&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">holidaymap</span> <span class="o">=</span> <span class="kt">Dict</span><span class="p">(</span><span class="mi">1</span> <span class="o">=&gt;</span> <span class="s">&#34;Workingday&#34;</span><span class="p">,</span> <span class="mi">0</span> <span class="o">=&gt;</span> <span class="s">&#34;Weekday&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">weathermap</span> <span class="o">=</span> <span class="kt">Dict</span><span class="p">(</span><span class="mi">1</span> <span class="o">=&gt;</span> <span class="s">&#34;Sunny&#34;</span><span class="p">,</span> <span class="mi">2</span> <span class="o">=&gt;</span> <span class="s">&#34;Cloudy&#34;</span><span class="p">,</span> <span class="mi">3</span> <span class="o">=&gt;</span> <span class="s">&#34;Flurry&#34;</span><span class="p">,</span> <span class="mi">4</span> <span class="o">=&gt;</span> <span class="s">&#34;Heavy Snow&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:season</span><span class="p">]</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">x</span> <span class="o">-&gt;</span> <span class="n">seasonmap</span><span class="p">[</span><span class="n">x</span><span class="p">],</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:season</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">  <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:workingday</span><span class="p">]</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">x</span> <span class="o">-&gt;</span> <span class="n">holidaymap</span><span class="p">[</span><span class="n">x</span><span class="p">],</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:workingday</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">  <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:weather</span><span class="p">]</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">x</span> <span class="o">-&gt;</span> <span class="n">weathermap</span><span class="p">[</span><span class="n">x</span><span class="p">],</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:weather</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">dataframe</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span></code></pre></div><h3 id="数据可视化">数据可视化</h3>
+<h4 id="查看特征之间的关联程度">查看特征之间的关联程度</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">function</span> <span class="n">plotHeatmap</span><span class="p">(</span><span class="n">dataframe</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">_schema</span> <span class="o">=</span> <span class="n">schema</span><span class="p">(</span><span class="n">dataframe</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">columns</span> <span class="o">=</span> <span class="n">collect</span><span class="p">(</span><span class="n">_schema</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">scitypes</span> <span class="o">=</span> <span class="n">collect</span><span class="p">(</span><span class="n">_schema</span><span class="o">.</span><span class="n">scitypes</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">columns</span> <span class="o">=</span> <span class="n">columns</span><span class="p">[</span><span class="n">scitypes</span> <span class="o">.!=</span> <span class="n">Textual</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">cormatrix</span> <span class="o">=</span> <span class="n">cor</span><span class="p">(</span><span class="kt">Matrix</span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">columns</span><span class="p">)))</span>
+</span></span><span class="line"><span class="cl">  <span class="n">heatmap</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="p">(</span><span class="n">columns</span><span class="p">),</span> <span class="n">string</span><span class="o">.</span><span class="p">(</span><span class="n">columns</span><span class="p">),</span> <span class="n">cormatrix</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">plotHeatmap</span><span class="p">(</span><span class="n">origindata</span><span class="p">)</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-08-01_19-48-45_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<h4 id="查看共享单车计划进展情况">查看共享单车计划进展情况</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">function</span> <span class="n">plotYearAndCount</span><span class="p">(</span><span class="n">dataframe</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">groupDataframe</span> <span class="o">=</span> <span class="n">groupby</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="ss">:year</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">years</span> <span class="o">=</span> <span class="kt">Int</span><span class="p">[]</span>
+</span></span><span class="line"><span class="cl">  <span class="n">counts</span> <span class="o">=</span> <span class="kt">Int</span><span class="p">[]</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="n">_dataframe</span> <span class="k">in</span> <span class="n">groupDataframe</span>
+</span></span><span class="line"><span class="cl">    <span class="n">year</span> <span class="o">=</span> <span class="n">first</span><span class="p">(</span><span class="n">_dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:year</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">    <span class="n">count</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span><span class="o">+</span><span class="p">,</span> <span class="n">_dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:count</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">push!</span><span class="p">(</span><span class="n">years</span><span class="p">,</span> <span class="n">year</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">push!</span><span class="p">(</span><span class="n">counts</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">bar</span><span class="p">(</span><span class="n">years</span><span class="p">,</span> <span class="n">counts</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">plotYearAndCount</span><span class="p">(</span><span class="n">origindata</span><span class="p">)</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-08-01_19-51-04_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">function</span> <span class="n">plotPieOfCount</span><span class="p">(</span><span class="n">dataframe</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">totalcount</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span><span class="o">+</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:count</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">  <span class="n">casualcount</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span><span class="o">+</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:casual</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">  <span class="n">registeredcount</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span><span class="o">+</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:registered</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">xs</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#34;Casual&#34;</span><span class="p">,</span> <span class="s">&#34;Registered&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ys</span> <span class="o">=</span> <span class="p">[</span><span class="n">casualcount</span> <span class="o">/</span> <span class="n">totalcount</span><span class="p">,</span> <span class="n">registeredcount</span> <span class="o">/</span> <span class="n">totalcount</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">pie</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">plotPieOfCount</span><span class="p">(</span><span class="n">origindata</span><span class="p">)</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-08-01_19-52-13_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<h4 id="日期和时间与平均租车数关系">日期和时间与平均租车数关系</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">function</span> <span class="n">plotTimeAndCount</span><span class="p">(</span><span class="n">dataframe</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">,</span> <span class="n">feature</span><span class="o">::</span><span class="kt">Symbol</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">features</span> <span class="o">=</span> <span class="p">[</span><span class="ss">:hour</span><span class="p">,</span> <span class="n">feature</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="n">groupDataframe</span> <span class="o">=</span> <span class="n">groupby</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">features</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">hours</span> <span class="o">=</span> <span class="kt">Int</span><span class="p">[]</span>
+</span></span><span class="line"><span class="cl">  <span class="n">counts</span> <span class="o">=</span> <span class="kt">Float64</span><span class="p">[]</span>
+</span></span><span class="line"><span class="cl">  <span class="n">features</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="n">_dataframe</span> <span class="k">in</span> <span class="n">groupDataframe</span>
+</span></span><span class="line"><span class="cl">    <span class="n">hour</span> <span class="o">=</span> <span class="n">first</span><span class="p">(</span><span class="n">_dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:hour</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">    <span class="n">count</span> <span class="o">=</span> <span class="n">mean</span><span class="p">(</span><span class="n">_dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:count</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">    <span class="n">_feature</span> <span class="o">=</span> <span class="n">first</span><span class="p">(</span><span class="n">_dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="n">feature</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">    <span class="n">push!</span><span class="p">(</span><span class="n">hours</span><span class="p">,</span> <span class="n">hour</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">push!</span><span class="p">(</span><span class="n">counts</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">push!</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">_feature</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">partcount</span> <span class="o">=</span> <span class="mi">24</span>
+</span></span><span class="line"><span class="cl">  <span class="n">p</span> <span class="o">=</span> <span class="n">plot</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="p">(</span><span class="n">_hours</span><span class="p">,</span> <span class="n">_counts</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span> <span class="k">in</span> <span class="n">Iterators</span><span class="o">.</span><span class="n">zip</span><span class="p">(</span><span class="n">Iterators</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="n">hours</span><span class="p">,</span> <span class="n">partcount</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">						<span class="n">Iterators</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="n">counts</span><span class="p">,</span> <span class="n">partcount</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">						<span class="n">Iterators</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">partcount</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">indexs</span> <span class="o">=</span> <span class="n">sortperm</span><span class="p">(</span><span class="n">_hours</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">xs</span> <span class="o">=</span> <span class="n">_hours</span><span class="p">[</span><span class="n">indexs</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ys</span> <span class="o">=</span> <span class="n">_counts</span><span class="p">[</span><span class="n">indexs</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">plot!</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="n">first</span><span class="p">(</span><span class="n">labels</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">  <span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">display</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">plotTimeAndCount</span><span class="p">(</span><span class="n">origindata</span><span class="p">,</span> <span class="ss">:season</span><span class="p">)</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-08-01_20-12-50_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">plotTimeAndCount</span><span class="p">(</span><span class="n">origindata</span><span class="p">,</span> <span class="ss">:workingday</span><span class="p">)</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-08-01_20-13-07_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">plotTimeAndCount</span><span class="p">(</span><span class="n">origindata</span><span class="p">,</span> <span class="ss">:weather</span><span class="p">)</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-08-01_20-13-28_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<h4 id="箱线图">箱线图</h4>
+<p>查看每个小时租车数的箱线图 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">boxplot</span><span class="p">(</span><span class="n">origindata</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:hour</span><span class="p">],</span> <span class="n">origindata</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:count</span><span class="p">])</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-08-01_20-19-53_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<p>查看每周租车数的箱线图 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">boxplot</span><span class="p">(</span><span class="n">origindata</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:weekday</span><span class="p">],</span> <span class="n">origindata</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:count</span><span class="p">])</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span></code></pre></div><p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/ox-hugo/2022-08-01_20-20-09_screenshot.png"
+        data-srcset="/ox-hugo/2022-08-01_20-20-09_screenshot.png, /ox-hugo/2022-08-01_20-20-09_screenshot.png 1.5x, /ox-hugo/2022-08-01_20-20-09_screenshot.png 2x"
+        data-sizes="auto"
+        alt="/ox-hugo/2022-08-01_20-20-09_screenshot.png"
+        title="/ox-hugo/2022-08-01_20-20-09_screenshot.png" /> <!-- raw HTML omitted -->
+查看每种天气租车数的箱线图 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">boxplot</span><span class="p">(</span><span class="n">origindata</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:weather</span><span class="p">],</span> <span class="n">origindata</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:count</span><span class="p">])</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span></code></pre></div><p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/ox-hugo/2022-08-01_20-20-29_screenshot.png"
+        data-srcset="/ox-hugo/2022-08-01_20-20-29_screenshot.png, /ox-hugo/2022-08-01_20-20-29_screenshot.png 1.5x, /ox-hugo/2022-08-01_20-20-29_screenshot.png 2x"
+        data-sizes="auto"
+        alt="/ox-hugo/2022-08-01_20-20-29_screenshot.png"
+        title="/ox-hugo/2022-08-01_20-20-29_screenshot.png" /> <!-- raw HTML omitted -->
+查看每个季节租车数的箱线图 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">boxplot</span><span class="p">(</span><span class="n">origindata</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:season</span><span class="p">],</span> <span class="n">origindata</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:count</span><span class="p">])</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-08-01_20-20-48_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<h3 id="预测">预测</h3>
+<h4 id="数据读取">数据读取</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="n">traindata</span> <span class="o">=</span> <span class="n">CSV</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&#34;data/bike-sharing/train.csv&#34;</span><span class="p">,</span> <span class="n">DataFrame</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">testdata</span> <span class="o">=</span> <span class="n">CSV</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&#34;data/bike-sharing/test.csv&#34;</span><span class="p">,</span> <span class="n">DataFrame</span><span class="p">)</span>
+</span></span></code></pre></div><h4 id="数据转换">数据转换</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">function</span> <span class="n">fetchTransformedTrainData</span><span class="p">(</span><span class="n">traindata</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">function</span> <span class="n">transformDateTime!</span><span class="p">(</span><span class="n">dataframe</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">datetimes</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">x</span> <span class="o">-&gt;</span> <span class="n">DateTime</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s">&#34;yyyy-mm-dd HH:MM:SS&#34;</span><span class="p">),</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:datetime</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">years</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">datetimes</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">months</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">month</span><span class="p">,</span> <span class="n">datetimes</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">days</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">day</span><span class="p">,</span> <span class="n">datetimes</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">weekdays</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">dayofweek</span><span class="p">,</span> <span class="n">datetimes</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">hours</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">hour</span><span class="p">,</span> <span class="n">datetimes</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:year</span><span class="p">]</span> <span class="o">=</span> <span class="n">years</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:month</span><span class="p">]</span> <span class="o">=</span> <span class="n">months</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:weekday</span><span class="p">]</span> <span class="o">=</span> <span class="n">weekdays</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:day</span><span class="p">]</span> <span class="o">=</span> <span class="n">days</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:hour</span><span class="p">]</span> <span class="o">=</span> <span class="n">hours</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">dataframe</span>
+</span></span><span class="line"><span class="cl">  <span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">featureSelector</span> <span class="o">=</span> <span class="n">FeatureSelector</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">features</span> <span class="o">=</span> <span class="p">[</span><span class="ss">:datetime</span><span class="p">,</span> <span class="ss">:casual</span><span class="p">,</span> <span class="ss">:registered</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ignore</span> <span class="o">=</span> <span class="nb">true</span>
+</span></span><span class="line"><span class="cl">  <span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">onehotEncoder</span> <span class="o">=</span> <span class="n">OneHotEncoder</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">features</span> <span class="o">=</span> <span class="p">[</span><span class="ss">:season</span><span class="p">,</span> <span class="ss">:holiday</span><span class="p">,</span> <span class="ss">:workingday</span><span class="p">,</span> <span class="ss">:weather</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">function</span> <span class="n">coerceCount!</span><span class="p">(</span><span class="n">dataframe</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">coerce!</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">Count</span> <span class="o">=&gt;</span> <span class="n">Continuous</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">dataframe</span>
+</span></span><span class="line"><span class="cl">  <span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">transformModel</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">transformDateTime!</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">featureSelector</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">onehotEncoder</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">coerceCount!</span>
+</span></span><span class="line"><span class="cl">  <span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">transformMachine</span> <span class="o">=</span> <span class="n">machine</span><span class="p">(</span><span class="n">transformModel</span><span class="p">,</span> <span class="n">traindata</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">fit!</span><span class="p">(</span><span class="n">transformMachine</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="c"># TODO 转换 traindata testdata</span>
+</span></span><span class="line"><span class="cl">  <span class="n">transformedTrainData</span> <span class="o">=</span> <span class="n">MLJ</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">transformMachine</span><span class="p">,</span> <span class="n">copy</span><span class="p">(</span><span class="n">traindata</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">transformedTrainData</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">function</span> <span class="n">fetchTransformedTestData</span><span class="p">(</span><span class="n">testdata</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">function</span> <span class="n">transformDateTime!</span><span class="p">(</span><span class="n">dataframe</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">datetimes</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">x</span> <span class="o">-&gt;</span> <span class="n">DateTime</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s">&#34;yyyy-mm-dd HH:MM:SS&#34;</span><span class="p">),</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:datetime</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">years</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">datetimes</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">months</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">month</span><span class="p">,</span> <span class="n">datetimes</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">days</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">day</span><span class="p">,</span> <span class="n">datetimes</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">weekdays</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">dayofweek</span><span class="p">,</span> <span class="n">datetimes</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">hours</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">hour</span><span class="p">,</span> <span class="n">datetimes</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:year</span><span class="p">]</span> <span class="o">=</span> <span class="n">years</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:month</span><span class="p">]</span> <span class="o">=</span> <span class="n">months</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:weekday</span><span class="p">]</span> <span class="o">=</span> <span class="n">weekdays</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:day</span><span class="p">]</span> <span class="o">=</span> <span class="n">days</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:hour</span><span class="p">]</span> <span class="o">=</span> <span class="n">hours</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">dataframe</span>
+</span></span><span class="line"><span class="cl">  <span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">featureSelector</span> <span class="o">=</span> <span class="n">FeatureSelector</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">features</span> <span class="o">=</span> <span class="p">[</span><span class="ss">:datetime</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ignore</span> <span class="o">=</span> <span class="nb">true</span>
+</span></span><span class="line"><span class="cl">  <span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">function</span> <span class="n">coerceCount!</span><span class="p">(</span><span class="n">dataframe</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">coerce!</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">Count</span> <span class="o">=&gt;</span> <span class="n">Continuous</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">dataframe</span>
+</span></span><span class="line"><span class="cl">  <span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">transformModel</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">transformDateTime!</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">featureSelector</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">onehotEncoder</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">coerceCount!</span>
+</span></span><span class="line"><span class="cl">  <span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">transformMachine</span> <span class="o">=</span> <span class="n">machine</span><span class="p">(</span><span class="n">transformModel</span><span class="p">,</span> <span class="n">testdata</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">fit!</span><span class="p">(</span><span class="n">transformMachine</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">transformedTestData</span>  <span class="o">=</span> <span class="n">MLJ</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">transformMachine</span><span class="p">,</span> <span class="n">copy</span><span class="p">(</span><span class="n">testdata</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">transformedTestData</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span></code></pre></div><h4 id="模型训练">模型训练</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">using</span> <span class="n">MLJFlux</span><span class="p">,</span> <span class="n">Flux</span><span class="p">,</span> <span class="n">StableRNGs</span>
+</span></span><span class="line"><span class="cl"><span class="k">mutable struct</span> <span class="kt">NetworkBuilder</span> <span class="o">&lt;:</span> <span class="kt">MLJFlux</span><span class="o">.</span><span class="n">Builder</span>
+</span></span><span class="line"><span class="cl">  <span class="n">n1</span><span class="o">::</span><span class="kt">Int</span>
+</span></span><span class="line"><span class="cl">  <span class="n">n2</span><span class="o">::</span><span class="kt">Int</span>
+</span></span><span class="line"><span class="cl">  <span class="n">n3</span><span class="o">::</span><span class="kt">Int</span>
+</span></span><span class="line"><span class="cl">  <span class="n">n4</span><span class="o">::</span><span class="kt">Int</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">function</span> <span class="n">MLJFlux</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">model</span><span class="o">::</span><span class="kt">NetworkBuilder</span><span class="p">,</span> <span class="n">rng</span><span class="p">,</span> <span class="n">nin</span><span class="p">,</span> <span class="n">nout</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">init</span> <span class="o">=</span> <span class="n">Flux</span><span class="o">.</span><span class="n">glorot_uniform</span><span class="p">(</span><span class="n">rng</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">Chain</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Dense</span><span class="p">(</span><span class="n">nin</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">n1</span><span class="p">,</span> <span class="n">relu</span><span class="p">,</span> <span class="n">init</span> <span class="o">=</span> <span class="n">init</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Dense</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">n1</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">n2</span><span class="p">,</span> <span class="n">relu</span><span class="p">,</span> <span class="n">init</span> <span class="o">=</span> <span class="n">init</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Dense</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">n2</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">n3</span><span class="p">,</span> <span class="n">relu</span><span class="p">,</span> <span class="n">init</span> <span class="o">=</span> <span class="n">init</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Dense</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">n3</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">n4</span><span class="p">,</span> <span class="n">relu</span><span class="p">,</span> <span class="n">init</span> <span class="o">=</span> <span class="n">init</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Dense</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">n4</span><span class="p">,</span> <span class="n">nout</span><span class="p">,</span> <span class="n">relu</span><span class="p">,</span> <span class="n">init</span> <span class="o">=</span> <span class="n">init</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">function</span> <span class="n">fetchMachine</span><span class="p">(</span><span class="n">inputdata</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">rng</span> <span class="o">=</span> <span class="n">StableRNG</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">regressor</span> <span class="o">=</span> <span class="n">NeuralNetworkRegressor</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">lambda</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">builder</span> <span class="o">=</span> <span class="n">NetworkBuilder</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">    <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">epochs</span> <span class="o">=</span> <span class="mi">600</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.4</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">rng</span> <span class="o">=</span> <span class="n">rng</span>
+</span></span><span class="line"><span class="cl">  <span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">y</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="n">inputdata</span><span class="p">,</span> <span class="n">colname</span> <span class="o">-&gt;</span> <span class="n">colname</span> <span class="o">==</span> <span class="ss">:count</span><span class="p">,</span> <span class="n">colname</span> <span class="o">-&gt;</span> <span class="nb">true</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">trainrow</span><span class="p">,</span> <span class="n">testrow</span> <span class="o">=</span> <span class="n">partition</span><span class="p">(</span><span class="n">eachindex</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="mf">0.7</span><span class="p">,</span> <span class="n">rng</span> <span class="o">=</span> <span class="n">rng</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">regressorMachine</span> <span class="o">=</span> <span class="n">machine</span><span class="p">(</span><span class="n">regressor</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">fit!</span><span class="p">(</span><span class="n">regressorMachine</span><span class="p">,</span> <span class="n">rows</span> <span class="o">=</span> <span class="n">trainrow</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">measure</span> <span class="o">=</span> <span class="n">evaluate!</span><span class="p">(</span><span class="n">regressorMachine</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		      <span class="n">resampling</span> <span class="o">=</span> <span class="n">CV</span><span class="p">(</span><span class="n">nfolds</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span> <span class="n">rng</span> <span class="o">=</span> <span class="n">rng</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">		      <span class="n">measure</span> <span class="o">=</span> <span class="p">[</span><span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">		      <span class="n">rows</span> <span class="o">=</span> <span class="n">testrow</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">println</span><span class="p">(</span><span class="n">measure</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">regressorMachine</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span></code></pre></div><h4 id="输出预测结果">输出预测结果</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">function</span> <span class="n">predictOuput</span><span class="p">(</span><span class="n">inputdata</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">,</span> <span class="n">inputtest</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">mach</span> <span class="o">=</span> <span class="n">fetchMachine</span><span class="p">(</span><span class="n">inputdata</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">output</span> <span class="o">=</span> <span class="n">MLJ</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">mach</span><span class="p">,</span> <span class="n">inputtest</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">outputdataframe</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="n">outputdataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:datetime</span><span class="p">]</span> <span class="o">=</span> <span class="n">testdata</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:datetime</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="n">outputdataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:count</span><span class="p">]</span> <span class="o">=</span> <span class="n">output</span>
+</span></span><span class="line"><span class="cl">  <span class="n">CSV</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#34;data/bike-sharing/submissing.csv&#34;</span><span class="p">,</span> <span class="n">outputdataframe</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">predictOutput</span><span class="p">(</span><span class="n">transformedTrainData</span><span class="p">,</span> <span class="n">transformedTestData</span><span class="p">)</span>
+</span></span></code></pre></div><h4 id="查看图线">查看图线</h4>
+<p>这里我们看看预测的值与实际的值相差多少 <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-julia" data-lang="julia"><span class="line"><span class="cl"><span class="k">function</span> <span class="n">plotPrediction</span><span class="p">(</span><span class="n">dataframe</span><span class="o">::</span><span class="kt">DataFrame</span><span class="p">,</span> <span class="n">output</span><span class="o">::</span><span class="kt">Vector</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">difference</span> <span class="o">=</span> <span class="n">output</span> <span class="o">.-</span> <span class="n">dataframe</span><span class="p">[</span><span class="o">!</span><span class="p">,</span> <span class="ss">:count</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="n">plot</span><span class="p">(</span><span class="n">difference</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">display</span>
+</span></span><span class="line"><span class="cl"><span class="k">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">regressor</span> <span class="o">=</span> <span class="n">fetchMachine</span><span class="p">(</span><span class="n">transformedTrainData</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">columns</span> <span class="o">=</span> <span class="n">names</span><span class="p">(</span><span class="n">transformedTrainData</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">columns</span> <span class="o">=</span> <span class="n">columns</span><span class="p">[</span><span class="n">columns</span> <span class="o">.!=</span> <span class="s">&#34;count&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">plotPrediction</span><span class="p">(</span><span class="n">transformedTrainData</span><span class="p">,</span> <span class="n">MLJ</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">regressor</span><span class="p">,</span> <span class="n">select</span><span class="p">(</span><span class="n">transformedTrainData</span><span class="p">,</span> <span class="n">columns</span><span class="p">)))</span>
+</span></span></code></pre></div><p><figure><img src="/ox-hugo/2022-08-02_18-49-20_screenshot.png"/>
+</figure>
+ <!-- raw HTML omitted --></p>
+<h4 id="提交-查看成绩">提交，查看成绩</h4>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/ox-hugo/2022-08-02_18-50-00_screenshot.png"
+        data-srcset="/ox-hugo/2022-08-02_18-50-00_screenshot.png, /ox-hugo/2022-08-02_18-50-00_screenshot.png 1.5x, /ox-hugo/2022-08-02_18-50-00_screenshot.png 2x"
+        data-sizes="auto"
+        alt="/ox-hugo/2022-08-02_18-50-00_screenshot.png"
+        title="/ox-hugo/2022-08-02_18-50-00_screenshot.png" /> <!-- raw HTML omitted -->
+很遗憾，成绩不怎么样，别人都是0.3多少的 <!-- raw HTML omitted --></p>
+<h3 id="下一步">下一步</h3>
+<p>由于神经网络的训练速度实在太慢，调试参数要花费大量时间 <!-- raw HTML omitted -->
+下一步是寻找加速的方法，为训练加速</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2022-08-02</span>
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="http://example.org/posts/2022/08/bike/" data-title="共享单车" data-hashtags="数据分析"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="http://example.org/posts/2022/08/bike/" data-hashtag="数据分析"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="http://example.org/posts/2022/08/bike/" data-title="共享单车"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="http://example.org/posts/2022/08/bike/" data-title="共享单车"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.0.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="http://example.org/posts/2022/08/bike/" data-title="共享单车"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw" aria-hidden="true"></i>&nbsp;<a href="/tags/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/">数据分析</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/2022/07/telco/" class="prev" rel="prev" title="电信用户流失分析"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>电信用户流失分析</a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.101.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

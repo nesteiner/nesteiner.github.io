@@ -3,9 +3,25 @@
         <title>My New Hugo Site</title>
         <link>http://example.org/</link>
         <description>This is my cool site</description>
-        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Thu, 28 Jul 2022 14:23:00 &#43;0800</lastBuildDate>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Tue, 02 Aug 2022 19:38:00 &#43;0800</lastBuildDate>
             <atom:link href="http://example.org/index.xml" rel="self" type="application/rss+xml" />
         <item>
+    <title>共享单车</title>
+    <link>http://example.org/posts/2022/08/bike/</link>
+    <pubDate>Tue, 02 Aug 2022 19:38:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/posts/2022/08/bike/</guid>
+    <description><![CDATA[共享单车 说明 这次的文章参考自 https://zhuanlan.zhihu.com/p/36776526 提出问题 某城市中共享单车出租的需求量如何 消费者的消费习惯 影响租车人数的因素 理解数据 导入数据 origindata = CSV.read(&#34;data/bike-sharing/train.csv&#34;, DataFrame) 查看数据集信息 describe(origindata) schema(data) 数据清洗 通过上面的数据查看，发现没有缺失值 数据类型转换 我们把 datetime 转换一下，转为 year month weekday day hour datetimes = map(x -&gt; DateTime(x, &#34;yyyy-mm-dd HH:MM:SS&#34;), dataframe[!, :datetime]) years = map(year, datetimes) months = map(month, datetimes) days = map(day, datetimes) weekdays = map(dayofweek, datetimes) hours = map(hour, datetimes) dataframe[!, :year] = years dataframe[!, :month] = months dataframe[!, :weekday] = weekdays dataframe[!, :day] = days dataframe[!]]></description>
+</item>
+<item>
+    <title>电信用户流失分析</title>
+    <link>http://example.org/posts/2022/07/telco/</link>
+    <pubDate>Sat, 30 Jul 2022 21:43:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/posts/2022/07/telco/</guid>
+    <description><![CDATA[电信用户流失分析 说明 这次文章的参考来自 https://zhuanlan.zhihu.com/p/68397317 提出问题 关于用户留存有这样一个观点，如果将用户流失率降低5%，公司利润将提升25%-85% 如今高居不下的获客成本让电信运营商遭遇“天花板”，甚至陷入获客难的窘境 随着市场饱和度上升，电信运营商亟待解决增加用户黏性，延长用户生命周期的问题 因此，电信用户流失分析与预测至关重要。 数据集来自 kaggle 理解数据 字段名 数据类型 字段描述 customerID String 顾客ID gender String 客户性别 SeniorCitizen Integer 客户是否为老年人 Partner String 客户是否有合作伙伴 Dependents String 客户是否有家属 tenure Integer 客户在公司停留的月数 PhoneService String 客户是否有电话服务 MultipleLines String 客户是否有多条路线 InternetService String 客户的互联网服务提供商 OnlineSecurity String 客户是否具有在线安全性 OnlineBackup String 客户是否有在线备份 DeviceProtection String 客户是否有设备保护 TechSupport String 客户是否有技术支持 StreamingTV String 客户是否有流媒体电视 StreamingMovies String 客户是否与流媒体电影 Contract String 客户的合同期限 PaperlessBilling String 客户是否有无纸化账单 PaymentMethod String 客户的支付方式 MonthlyCharges Integer 每月向客户收取的金额 TotalCharges Integer 向客户收取的总金额 Churn String 客户是否流失 数据清洗 首先导入数据 origindata = CSV.]]></description>
+</item>
+<item>
     <title>New York City Airbnb Open Data Analysis</title>
     <link>http://example.org/posts/2022/07/newyork/</link>
     <pubDate>Thu, 28 Jul 2022 14:23:00 &#43;0800</pubDate>
@@ -68,22 +84,6 @@
     <author>Author</author>
     <guid>http://example.org/posts/2022/07/android-theme/</guid>
     <description><![CDATA[Android 样式与主题 设置样式 假设我们给一个按钮设置样式，在 res/values/style.xml 中 &lt;style name=&#34;BeatBoxButton&#34;&gt; &lt;item name=&#34;android:background&#34;&gt;@color/dark_blue&lt;/item&gt; &lt;/style&gt; 在需要设置的按钮布局中 &lt;Button style=&#34;@style/BeatBoxButton&#34;/&gt; 这样就完成了样式的设置 继承样式 样式支持继承，我们来继承上面的样式，创建一个新的样式 &lt;style name=&#34;BeatBoxButton.Strong&#34;&gt; &lt;item name=&#34;android:textStyle&#34;&gt;bold&lt;/item&gt; &lt;/style&gt; 也可以使用 &lt;style name=&#34;StrongBeatBoxButton&#34; parent=&#34;@style/BeatBoxButton&#34;&gt; &lt;item name=&#34;android:textStyle&#34;&gt;bold&lt;/item&gt; &lt;/style&gt; 使用主题 主题也是一种样式，他必须继承自 Theme 下的主题，这里定义一个 style &lt;style name=&#34;BoxButtonTheme&#34; parent=&#34;Theme.MaterialComponents.DayNight.DarkActionBar&#34;&gt; &lt;item name=&#34;android:background&#34;&gt;@color/black&lt;/item&gt; &lt;item name=&#34;android:textColor&#34;&gt;@color/white&lt;/item&gt; &lt;item name=&#34;android:textStyle&#34;&gt;bold&lt;/item&gt; &lt;/style&gt; 在 AndroidManifest.xml 中，在 activity 标签添加 &lt;activity android:name=&#34;.MainActivity&#34; android:theme=&#34;@style/BoxButtonTheme&#34;&gt; 这样以后，在 .MainActivity 下的所有控件都会使用 BoxButtontheme 主题中定义的样式 同理，在 application 标签添加主题，旗下的 activity 都会使用该主题 ]]></description>
-</item>
-<item>
-    <title>ViewPager 简单使用</title>
-    <link>http://example.org/posts/2022/07/viewpager/</link>
-    <pubDate>Sat, 02 Jul 2022 14:37:00 &#43;0800</pubDate>
-    <author>Author</author>
-    <guid>http://example.org/posts/2022/07/viewpager/</guid>
-    <description><![CDATA[ViewPager ViewPager 简单来说就是一个能滑动切换视图的控件，由一个 Activity 包裹，总体结构是 Activity adapter fragment fragment fragment 其中 Activity 通过 adapter 来操作 fragment 显示 Activity 布局 activity_pageview.xml &lt;RelativeLayout xmlns:android=&#34;http://schemas.android.com/apk/res/android&#34; xmlns:tools=&#34;http://schemas.android.com/tools&#34; android:layout_width=&#34;match_parent&#34; android:layout_height=&#34;match_parent&#34; &gt; &lt;androidx.viewpager.widget.ViewPager android:id=&#34;@+id/viewpager&#34; android:layout_width=&#34;fill_parent&#34; android:layout_height=&#34;fill_parent&#34; /&gt; &lt;/RelativeLayout&gt; PageViewActivity.java public class PageViewActivity extends FragmentActivity { MyPageAdapter pageAdapter; @Override public void onCreate(Bundle savedInstanceState) { super.onCreate(savedInstanceState); setContentView(R.layout.activity_page_view); List&lt;Fragment&gt; fragments = getFragments(); pageAdapter = new MyPageAdapter(getSupportFragmentManager(), fragments); ViewPager pager = (ViewPager) findViewById(R.id.viewpager); pager.setAdapter(pageAdapter); } private List&lt;Fragment&gt; getFragments() { List&lt;Fragment&gt; fList = new ArrayList&lt;Fragment&gt;(); fList.]]></description>
-</item>
-<item>
-    <title>Android Fragment 简单使用</title>
-    <link>http://example.org/posts/2022/07/fragment/</link>
-    <pubDate>Sat, 02 Jul 2022 14:36:00 &#43;0800</pubDate>
-    <author>Author</author>
-    <guid>http://example.org/posts/2022/07/fragment/</guid>
-    <description><![CDATA[Fragment 这篇笔记大部分参考自 这篇教程 什么是 Fragment Fragment 是 Activity 界面中的一部分，可理解为模块化的 Activity Fragment 不能独立存在，必须嵌入到 Activity 中 Fragment 具有自己的生命周期，接收它自己的事件，并可以在 Activity 运行时被添加或删除 Fragment 的生命周期直接受所在的Activity的影响。如：当 Activity 暂停时，它拥有的所有 Fragment 们都暂停 Fragment 有什么用 支持动态，灵活的界面设计 如何使用 Fragment 相关回调 onAttach 方法 Fragment和Activity建立关联的时候调用（获得activity的传递的值） onCreateView 方法 为Fragment创建视图（加载布局）时调用（给当前的fragment绘制UI布局，可以使用线程更新UI） onActivityCreated 方法 当Activity中的onCreate方法执行完后调用（表示activity执行oncreate方法完成了的时候会调用此方法） onDestroyView 方法 Fragment中的布局被移除时调用（表示fragment销毁相关联的UI布局） onDetach 方法 Fragment和Activity解除关联的时候调用（脱离activity） 静态添加 Fragment 首先需要创建一个 fragment 类，并为其创建布局文件 example_fragment.xml ，再将其配置到 activity_main.xml 中 example_fragment.xml 布局文件 &lt;LinearLayout xmlns:android=&#34;http://schemas.android.com/apk/res/android&#34; xmlns:tools=&#34;http://schemas.android.com/tools&#34; android:layout_width=&#34;match_parent&#34; android:layout_height=&#34;match_parent&#34; android:orientation=&#34;vertical&#34; &gt; &lt;TextView android:text=&#34;@string/example_fragment&#34; android:layout_width=&#34;wrap_content&#34; android:layout_height=&#34;wrap_content&#34;/&gt; &lt;/LinearLayout&gt; FragmentLayoutTest.java 类文件 public class FragmentLayoutTest extends Fragment { @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) { return inflater.]]></description>
 </item>
 </channel>
 </rss>
