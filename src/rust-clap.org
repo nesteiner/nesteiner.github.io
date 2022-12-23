@@ -1,0 +1,243 @@
+#+OPTIONS: author:nil ^:{}
+#+HUGO_BASE_DIR: ../../ChiniBlogs
+#+HUGO_SECTION: posts/2022/12
+#+HUGO_CUSTOM_FRONT_MATTER: :toc true
+#+HUGO_AUTO_SET_LASTMOD: t
+#+HUGO_DRAFT: false
+#+DATE: [2022-12-23 Fri 16:33]
+#+TITLE: Clap 简单使用
+#+HUGO_TAGS: 命令行解析
+#+HUGO_CATEGORIES: Rust
+
+* 添加参数
+** Basic
+以 =myapp run app --release --message hello= 为例
+这里的参数分为几种
+1. =run= 子命令
+2. =app= 固定位置参数
+3. =--release= flag 参数
+4. =--message hello= 命名选项参数
+
+*** 子命令
+#+begin_src rust
+  use clap::{Parser, Subcommand};
+
+  #[derive(Parser)]
+  #[command(author, version, about, long_about = None)]
+  struct Cli {
+      #[command(subcommand)]
+      command: Commands
+  }
+
+  #[derive(Subcommand)]
+  enum Commands {
+      Add {
+          name: Option<String>
+      }
+  }
+
+  fn main() {
+      let cli = Cli::parse();
+      match &cli.command {
+          Commands::Add {name} => {
+              println!("myapp add was used, name is: {:?}", name)
+          }
+      }
+  }
+#+end_src
+
+1. 在结构中使用 =#[command(subcommand)]= 表示以下结构是一个子命令
+2. 用 =#[derive(Subcommand)]= 来声明一个子命令结构
+3. 调用的时候，使用 =myapp add hello= 即可
+*** 固定位置参数
+#+begin_src rust
+  use clap::Parser;
+
+  #[derive(Debug, Parser)]
+  struct Cli {
+      a: u32,
+      b: u32,
+      c: u32,
+      name: String
+  }
+
+  fn main() {
+      let cli = Cli::parse();
+      println!("{:?}", cli);
+  }
+#+end_src
+
+程序的解析顺序好像是按照结构体中字段的声明顺序决定的
+这个程序应该这样调用
+#+begin_src bash
+  myapp 1 2 3 hello
+#+end_src
+
+*** 命名选项参数
+使用这个的时候，需要在字段上添加一个 =#[arg(short, long)]= ，就可以生成短选项和长选项
+#+begin_src rust
+  use clap::Parser;
+
+  #[derive(Debug, Parser)]
+  struct Cli {
+      a: u32,
+      b: u32,
+      c: u32,
+      #[arg(long)]
+      name: String
+  }
+
+  fn main() {
+      let cli = Cli::parse();
+      println!("{:?}", cli);
+  }
+#+end_src
+
+这样调用程序
+#+begin_src bash
+  myapp 1 2 3 --name hello
+#+end_src
+*** Flag 参数
+#+begin_src rust
+  use clap::Parser;
+
+  #[derive(Debug, Parser)]
+  struct Cli {
+      a: u32,
+      b: u32,
+      c: u32,
+      #[arg(long)]
+      name: String,
+
+      #[arg(long)]
+      verbose: bool
+  }
+
+  fn main() {
+      let cli = Cli::parse();
+      println!("{:?}", cli);
+  }
+#+end_src
+
+这个很简单，先添加 =#[arg(long)]= 或者 =#[arg(short)]= 宏，再将字段类型改为 =bool= 即可
+这样调用程序
+#+begin_src bash
+  myapp 1 2 3 --name hello --verbose
+#+end_src
+*** 可选的参数
+这个也很简单，将字段类型改为 =Option= 即可，这样程序找不到匹配的项时，会将值设置为 =None=
+#+begin_src rust
+  use clap::Parser;
+
+  #[derive(Debug, Parser)]
+  struct Cli {
+      a: u32,
+      b: u32,
+      c: Option<u32>,
+
+      #[arg(long)]
+      name: String,
+
+      #[arg(long)]
+      verbose: bool,
+  }
+
+  fn main() {
+      let cli = Cli::parse();
+      println!("{:?}", cli);
+  }
+#+end_src
+
+这样调用程序
+#+begin_src bash
+  myapp 1 2 --name hello --verbose
+#+end_src
+** Advanced
+更进一步的，我们可以对参数进行验证和添加默认值
+*** 默认值
+根据文档上的描述，只需要在字段上加上 =#[arg(default_value_t = ?)]=
+#+begin_src rust
+  use clap::Parser;
+
+  #[derive(Parser)]
+  struct Cli {
+      #[arg(default_value_t = 2020)]
+      port: u16
+  }
+
+  fn main() {
+      let cli = Cli::parse();
+      println!("port: {:?}", cli.port);
+  }
+#+end_src
+*** 验证
+我们手动制定一个验证器函数，这个函数要返回一个 =Result= 类型，接受一个 =&str= 参数
+#+begin_src rust
+  use std::ops::RangeInclusive;
+
+  const PORT_RANGE: RangeInclusive<usize> = 1..=65535;
+
+  fn port_in_range(s: &str) -> Result<u16, String> {
+      let port: usize = s
+          .parse()
+          .map_err(|_| format!("`{}` isn't a port number", s))?;
+
+      if PORT_RANGE.contains(&port) {
+          Ok(port as u16)
+      } else {
+          Err(format!(
+              "Port not in range {} - {}",
+              PORT_RANGE.start(),
+              PORT_RANGE.end()
+          ))
+      }
+  }
+#+end_src
+
+=Result= 的左值类型要与字段类型匹配
+#+begin_src rust
+  #[derive(Debug)]
+  struct Cli {
+      #[arg(value_parser = port_in_range)]
+      port: u16
+  }
+
+  fn main() {
+      let cli = Cli::parse();
+      println!("port = {}", cli.port);
+  }
+#+end_src
+
+想必你也发现了，这个验证器不仅是个验证器，他也是个转换器，我们自己做个转换器，把输入数字的负数打印出来
+#+begin_src rust
+  use clap::Parser;
+
+  #[derive(Debug, Parser)]
+  struct Cli {
+      a: u32,
+      b: u32,
+      #[arg(value_parser = convert)]
+      c: i32,
+
+      #[arg(long)]
+      name: String,
+
+      #[arg(long)]
+      verbose: bool,
+    
+  }
+
+  fn convert(s: &str) -> Result<i32, String> {
+      let number: i32 = s
+          .parse()
+          .map_err(|_| format!("`{}` isn't a valid number", s))?;
+
+      return -number as i32;
+  }
+
+  fn main() {
+      let cli = Cli::parse();
+      println!("{:?}", cli);
+  }
+#+end_src
+

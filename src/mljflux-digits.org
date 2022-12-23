@@ -1,0 +1,194 @@
+#+OPTIONS: author:nil ^:{}
+#+HUGO_BASE_DIR: ../../ChiniBlogs
+#+HUGO_SECTION: posts/2022/10
+#+HUGO_CUSTOM_FRONT_MATTER: :toc true
+#+HUGO_AUTO_SET_LASTMOD: t
+#+HUGO_DRAFT: false
+#+DATE: [2022-10-25 Tue 14:47]
+#+TITLE: MLJFlux 数字识别 初探
+#+HUGO_TAGS: 深度学习
+#+HUGO_CATEGORIES: Julia
+
+* 介绍
+这次我们来试试数字识别
+kaggele 地址在 https://www.kaggle.com/competitions/digit-recognizer/overview
+
+* 数据加载
+#+begin_src julia
+  function transformDataType!(dataframe::DataFrame)
+    coerce!(dataframe, Count => Continuous)
+    if in(:label, names(dataframe))
+      coerce!(dataframe, :label => Multiclass)
+    end
+
+    return dataframe
+  end
+
+
+  function loaddata(path::AbstractString)
+    origindata = CSV.read(path, DataFrame)
+    transformDataType!(origindata)
+    y, X = unpack(origindata, colname -> colname == :label, colname -> true)
+    images = reshape(transpose(Matrix(X)) ./ 255.0, (28, 28, :))
+
+    labels = coerce(y, Multiclass)
+    images = coerce(images, GrayImage)
+
+    return labels, images
+  end
+
+  function loadtestdata(path::AbstractString)
+    testdata = CSV.read(path, DataFrame)
+    transformDataType!(testdata)
+    images = reshape(transpose(Matrix(testdata)) ./ 255.0, (28, 28, :))
+    images = coerce(images, GrayImage)
+    return images
+  end
+#+end_src
+
+这里需要先把X转置，再 reshape 成 28 * 28 * ? 的多维数组，每个元素除以 255, 再转换成 GrayImage
+1. 为什么要转置
+   来看一个例子
+   #+begin_src julia
+     julia> m = reshape(1:16, (4, 4))
+     4×4 reshape(::UnitRange{Int64}, 4, 4) with eltype Int64:
+      1  5   9  13
+      2  6  10  14
+      3  7  11  15
+      4  8  12  16
+   #+end_src
+
+   我们发现 Julia 是竖着将一个一维数组 reshape 的，同样的道理，reshape 一个 Matrix 的时候也是竖着优先的
+   我们想要的数据是 *将一行所有的 pixel* reshape 成矩阵，所以要先转置
+   ps: 我这是什么表达能力
+2. 为什么要除以 255
+   灰度在 0-1 之间，数据在0-255之间，转换一下
+
+* 搭建模型
+#+DOWNLOADED: screenshot @ 2022-10-25 14:56:07
+[[file:images/搭建模型/2022-10-25_14-56-07_screenshot.png]]
+
+上面的是 Tensorflow Playground ，他的 LeNet5 网络搭建是
+#+begin_src python
+  model = tf.keras.models.Sequential([
+      tf.keras.layers.Conv2D(filters=6, kernel_size=(5, 5), activation='sigmoid'),
+      tf.keras.layers.MaxPool2D(pool_size=(2, 2), strides=2),
+      tf.keras.layers.Conv2D(filters=16, kernel_size=(5, 5), activation='sigmoid'),
+      tf.keras.layers.MaxPool2D(pool_size=(2, 2), strides=2),
+      tf.keras.layers.Flatten(),
+      tf.keras.layers.Dense(120, activation='sigmoid'),
+      tf.keras.layers.Dense(84, activation='sigmoid'),
+      tf.keras.layers.Dense(10, activation='softmax')
+  ])
+#+end_src
+
+对比 Flux LeNet5
+#+begin_src julia
+  function LeNet5(; imgsize=(28,28,1), nclasses=10) 
+    out_conv_size = (imgsize[1]÷4 - 3, imgsize[2]÷4 - 3, 16)
+  
+    return Chain(
+      Conv((5, 5), imgsize[end]=>6, relu),
+      MaxPool((2, 2)),
+      Conv((5, 5), 6=>16, relu),
+      MaxPool((2, 2)),
+      flatten,
+      Dense(prod(out_conv_size), 120, relu), 
+      Dense(120, 84, relu), 
+      Dense(84, nclasses)
+    )
+  end
+#+end_src
+
+可以发现
+1. Tensorflow 的 Dense 是表示一层全连接层
+2. Flux 的 Dense
+   #+begin_src julia
+     Dense(in => out, σ=identity; bias=true, init=glorot_uniform)
+   #+end_src
+   包含了上一层的神经元个数和本层的神经元个数，这就需要知道上一层神经元个数，而在 Tensorflow 中却不需要
+   为了解决上述的问题，我们 add 下 *Flux#master* 包，这个版本还没有正式发布
+   #+begin_src julia
+     # pkg 模式下
+     add Flux#master
+   #+end_src
+   这个版本中有 =@autosize= 这个宏可以解决这个问题
+   #+begin_src julia
+     struct LeNet5 end
+
+     function MLJFlux.build(::LeNet5, rng, nin, nout, nchannels)
+         array = (nin..., nchannels, 32)
+         # this is ok
+         return @autosize (nin..., nchannels, 32) Chain(
+           Conv((5, 5), _ => 6, relu),
+           MaxPool((2, 2)),
+           Conv((5, 5), _ => 16, relu),
+           MaxPool((2, 2)),
+           Flux.flatten,
+           Dense(_ => 120, relu),
+           Dense(120 => 84, relu),
+           Dense(84 => nout)
+         )
+     end
+   #+end_src
+   注意
+   - 传入的数组表示 =(width, height, channels, batch)=
+   - 使用 _ 表示上一层的神经元数，大概是这样
+3. Flux 中最后一层怎么没有 =softmax= 激活函数？
+   #+begin_src julia
+     classifier = ImageClassifier(
+       builder = LeNet5(5, 16, 32, 32),
+       batch_size = 50,
+       epochs = 1,
+       rng = StableRNG(1234),
+       lambda = 0.01,
+       alpha = 0.4
+     )
+   #+end_src
+
+   不需要在最后一层设置 *激活函数* ，ImageClassifier 模型中有一个参数叫做 *finalizer* 正好是 *softmax*
+   
+* 预测
+#+begin_src julia
+  function buildmodel()
+    return ImageClassifier(
+      builder = LeNet5(),
+      batch_size = 32,
+      epochs = 5,
+      rng = StableRNG(1234),
+      lambda = 0.01,
+      alpha = 0.4
+    )
+  end
+
+  function makepredict(pathtrain::AbstractString, pathtest::AbstractString, pathsubmission::AbstractString)
+    rng = StableRNG(1234)
+    y, X = loaddata(pathtrain)
+    # trainrow, testrow = partition(eachindex(y), 0.7, rng = rng)
+    model = buildmodel()
+    mach = machine(model, X, y)
+    fit!(mach; verbosity = 2)
+
+    testdata = loadtestdata(pathtest)
+    output = map(x -> convert(Int, x), mode.(predict(mach, testdata)))
+
+    outputdataframe = DataFrame()
+    outputdataframe[!, :ImageId] = 1:length(output);
+    outputdataframe[!, :Label] = output
+    CSV.write(pathsubmission, outputdataframe)
+  end
+
+  makepredict("data/digits-recognizer/train.csv", "data/digits-recognizer/test.csv", "data/digits-recognizer/submission.csv")
+  
+#+end_src
+在 =makepredict= 中传入
+1. 训练集的路径
+2. 测试集的路径
+3. 保存预测结果的路径
+即可
+
+
+#+DOWNLOADED: screenshot @ 2022-10-25 16:06:59
+[[file:images/预测/2022-10-25_16-06-59_screenshot.png]]
+这是我设置 =epochs=200= ，训练一个多小时的结果，大家不要作死尝试
+

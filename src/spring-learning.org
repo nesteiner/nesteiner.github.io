@@ -1,0 +1,525 @@
+#+OPTIONS: author:nil ^:{}
+#+HUGO_BASE_DIR: ../../ChiniBlogs
+#+HUGO_SECTION: posts/2022/08
+#+HUGO_CUSTOM_FRONT_MATTER: :toc true
+#+HUGO_AUTO_SET_LASTMOD: t
+#+HUGO_DRAFT: false
+#+DATE: [2022-08-18 Thu 23:33]
+#+TITLE: Spring 基础巩固学习
+#+HUGO_TAGS: Spring
+#+HUGO_CATEGORIES: Java
+
+* URL 映射
+** 请求头匹配
+*** Content-Type 匹配
+需要注意的是， =charset=UTF-8= 这个东西好像是默认的
+也就是说，接受 =Content-Type: application/json= 和 =Content-Type: application/json; charset=UTF8= 的请求时，
+后端都会调用 =getJSON=
+#+begin_src java
+  @RestController
+  @RequestMapping("/hello")
+  public class HelloController {
+      @GetMapping
+      public String hello() {
+          return "Hello World";
+      }
+
+      @GetMapping(consumes = "application/json; charset=UTF-8")
+      public String getJSON() {
+          return "application/json; charset=UTF-8";
+      }
+
+      @GetMapping(consumes = "text/html; charset=UTF-8")
+      public String getHtml() {
+          return "text/html; charset=UTF-8";
+      }
+
+      @GetMapping(consumes = "application/json")
+      public String getJSON2() {
+          return "application/json";
+      }
+
+      @GetMapping(consumes = "text/html")
+      public String getHtml2() {
+          return "text/html";
+      }
+  }
+#+end_src
+*** Accept 匹配
+#+begin_src java
+  @GetMapping(produces = "image/gif")
+  public String getGif() {
+      return "gif";
+  }
+
+  @GetMapping(produces = "image/jpeg")
+  public String getJpeg() {
+      return "Jpeg";
+  }
+
+  @GetMapping(produces = "text/html")
+  public String getHtml3() {
+      return "<h1> Hello World </h1>";
+  }
+#+end_src
+新发现，你只要设置了HTTP头的 =Accept= 类型，数据返回给前端的时候，数据类型就是什么类型
+*** URL 参数匹配
+1. params={"username"}，存在“username”参数时通过
+2. params={"!password"}，不存在“password”参数时通过
+3. params={"age=20"}，参数age等于20时通过
+
+#+begin_src java
+  @GetMapping(params = {"username", "password"})
+  public String getUsernameAndPassword() {
+      return "Has Username and Password";
+  }
+
+  @GetMapping(params = {"username", "!password"})
+  public String getUsername() {
+      return "Has Username";
+  }
+#+end_src
+
+前端发起请求
+- =http://localhost:8082/hello?username=hello&password=world=
+- =http://localhost:8082/hello?username=
+- =http://localhost:8082/hello?username=hello&password=
+- =http://localhost:8082/hello?username&password=
+
+* 参数传递
+** Path Variable with Regex
+后端处理
+#+begin_src java
+  @GetMapping("/{username:[a-zA-Z0-9_]+}")
+  public String getUsernameRegex(@PathVariable String username) {
+      return username;
+  }
+#+end_src
+
+前端对 =localhost:8082/hello/hello_world= 发起请求
+注意，正则表达式那里四周不要有 *空格*
+** @RequestBody
+@RequestBody主要是将前端传入的JSON数据对象映射成后端的实体对象
+* 数据校验
+** 校验规则
+| 注解               | 作用目标                           | 检查规则                 |
+|--------------------+------------------------------------+--------------------------|
+| @NotNull           | 属性                               | 检查值是否为空           |
+| @NotBlank          | 属性, String                       | 检查值是否为空字符串或空 |
+| @Max(value=)       | 属性, Numeric 或 String 表示的数字 | value <=max              |
+| @Min(value=)       | 属性, Numeric 或 String 表示的数字 | value >= min             |
+| @Size(min=,max=)   | 属性, array, collection, map       | 长度 between [min, max]  |
+| @Range(min=,max=)  | 属性, Numeric 或 String 表示的数字 | value between [min, max] |
+| @Length(min=,max=) | 属性, String                       | 字符串长度 between [min, max]  |
+** 应用范围
+*** URL 参数
+要设置 URL 参数校验，首先为 =Controller= 添加 =@Validated= 注解
+#+begin_src java
+  @RestController
+  @RequestMapping("/hello")
+  @Validated
+  public class HelloController {
+#+end_src
+
+然后，设置校验方法
+#+begin_src java
+  @GetMapping("/query")
+  public String query(@Length(min = 2, max = 10, message = "name length error, must be 2-10")
+                      @RequestParam(name = "name", required = true)
+                      String name,
+                      @Range(min = 1, max = 99, message = "age must between 1-99")
+                      @RequestParam(name = "age", required = true)
+                      int age) {
+      System.out.println(name + "," + age);
+      return name + "," + age;
+  }
+#+end_src
+*** @RequestBody
+首先设置校验规则
+#+begin_src java
+  public class User {
+      @NotBlank(message = "姓名不允许为空！")
+      @Length(min = 2,max = 10,message = "姓名长度错误，姓名长度2-10！")
+      private String name;
+
+      @NotNull(message = "年龄不能为空！")
+      @Min(18)
+      private int age;
+
+      @NotBlank(message = "地址不能为空！")
+      private String address;
+
+      @Pattern(regexp = "^((13[0-9])|(14[5,7,9])|(15([0-3]|[5-9]))|(166)|(17[0,1,3,5,6,7,8])|(18[0-9])|(19[8|9]))\\d{8}$", message = "手机号格式错误")
+      private String phone;
+
+      @Email(message = "邮箱格式错误")
+      private String email;        // 省略get和set方法}
+  }
+#+end_src
+
+然后，添加校验方法
+#+begin_src java
+  @PostMapping(path = "/check")
+  public String check(@RequestBody @Valid User user, BindingResult result) {
+      String name = user.getName();
+      if(result.hasErrors()) {
+          List<ObjectError> list = result.getAllErrors();
+          for (ObjectError error : list) {
+              System.out.println(error.getCode()+ "-" + error.getDefaultMessage());        }
+      }
+      return name;
+  }
+#+end_src
+
+*一定要加 =BindingResult= 参数，否则请求的时候会报 400 Bad Request 代码*
+*** 级联
+#+begin_src java
+  public class User {
+      @Size(min = 3,max = 5,message = "list的Size在[3,5]")
+      private List<String> list;
+
+      @NotNull
+      @Valid
+      private Demo3 demo3;
+  }
+#+end_src
+
+** 错误处理
+上面的操作中校验 URL 参数时，如果校验错误，会报 500 Internal Error 代码，我们需要定义全局错误处理器
+#+begin_src java
+  @RestControllerAdvice
+  public class GlobalExceptionHandler {
+      @ExceptionHandler(value = ConstraintViolationException.class)
+      public Response<String> handler(ConstraintViolationException exception) {
+          StringBuilder msg = new StringBuilder();
+          Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
+          constraintViolations.forEach(constraintViolation -> {
+              PathImpl pathImpl = (PathImpl) constraintViolation.getPropertyPath();
+              String paramName = pathImpl.getLeafNode().getName();
+              String message = constraintViolation.getMessage();
+              msg.append("[").append(message).append("]");
+          });
+
+          return new Response<>(1, msg.toString(), null);
+      }
+  }
+#+end_src
+
+这样以后，如果 =@RequestBody= 校验出错，全局处理器也会抓取异常，对 =BindingResult= 的操作也会失效，这点要注意
+
+* Swagger3 简单使用
+** 引入依赖
+#+begin_src xml
+  <dependency>
+    <groupId>io.springfox</groupId>
+    <artifactId>springfox-boot-starter</artifactId>
+    <version>3.0.0</version>
+  </dependency>
+#+end_src
+** 配置类
+#+begin_src java
+  @Configuration
+  public class SwaggerConfigure {
+      @Bean
+      public Docket createRestApi() {
+          return new Docket(DocumentationType.OAS_30)
+              .apiInfo(apiInfo())
+              .select()
+              .apis(RequestHandlerSelectors.basePackage("com.example.springtutorial.controller"))
+              .paths(PathSelectors.any())
+              .build();
+      }
+
+      private ApiInfo apiInfo() {
+          return new ApiInfoBuilder()
+              .title("use swaggernn to build RESTful APIs in spring boot")
+              .description("description")
+              .termsOfServiceUrl("https://nesteiner.github.io")
+              .contact(new Contact("Steiner", "nesteiner.github.io", "steiner3044@164.com"))
+              .version("1.0")
+              .build();
+      }
+
+  }
+
+#+end_src
+** 开启 Swagger
+#+begin_src java
+  @SpringBootApplication
+  @EnableOpenApi
+  public class SpringTutorialApplication {
+
+#+end_src
+** 编写说明
+*** 实例
+#+begin_src java
+  @ApiOperation(value = "username", notes = "username is path variable")
+  @ApiImplicitParam(name = "username", value = "用户名", dataTypeClass = String.class, paramType = "query")
+  @GetMapping("/{username:\\w+}")
+  public String getUsernameRegex(@PathVariable String username) {
+      return username;
+  }
+#+end_src
+*** 说明
+- =@Api= 用在请求的类上，表示对类的说明
+  - =tags= 说明该类的作用
+- =@ApiOperation= 用在请求的方法上
+  - =value= 说明方法的用途，作用
+  - =notes= 方法的备注说明
+
+- =@ApiImplicitParams= 用在请求的方法上，表示一组参数说明
+  - =@ApiImplicitParam= 用在 =@ApiImplicitParams= 注解中，或是请求方法上
+    - =name=
+    - =value=
+    - =required=
+    - =paramType=
+      - =header= =@RequestHeader=
+      - =query= =@RequestParam=
+      - =path= =@PathVariable=
+    - =dataTypeClass=
+    - =defaultValue=
+
+- =@ApiResponses= 用在请求的方法上，表示一组响应
+  - =@ApiResponse= 用在 =@ApiResponses= 注解中，或在请求方法上
+    - =code=
+    - =message=
+    - =response= 抛出异常的类
+
+- =@ApiModel= 用在响应类上，表示一个返回响应数据的信息
+  - =@ApiModelProperty= 用在属性上，描述属性类的属性
+** 解决错误
+访问 =localhost:8080/swagger-ui/= ，会发现500 Internal Error
+参考这篇帖子 https://stackoverflow.com/questions/72301571/swagger-error-springboot-could-not-resolve-view-with-name-forward-swagger-ui-i
+在 =SwaggerConfigure= 中添加资源
+#+begin_src java
+  @Bean
+  public InternalResourceViewResolver defaultViewResolver() {
+      return new InternalResourceViewResolver();
+  }
+#+end_src
+
+* JPA
+** 开始
+使用 JPA 前需要设置好配置项
+#+begin_src java
+  spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+  spring.datasource.url=jdbc:mysql://localhost:3306/runoob
+  spring.datasource.username=username
+  spring.datasource.password=password
+
+  spring.jpa.show-sql=true
+  spring.jpa.properties.hibernate.hbm2ddl.auto=create
+  spring.jpa.properties.hibernate.format_sql=true
+#+end_src
+
+** 设置数据模型
+#+begin_src java
+  @Entity(name = "User2")
+  @Data
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public class User2 {
+      @Id
+      @GeneratedValue(strategy = GenerationType.IDENTITY)
+      Long id;
+
+      @Column(length = 64, nullable = false)
+      String name;
+
+      @Column(length = 64, nullable = false)
+      String password;
+  }
+#+end_src
+
+** 分页
+首先在 =Repository= 中设置方法
+#+begin_src java
+  Page<User2> findByNameLike(String name, Pageable pageable);
+#+end_src
+
+在测试方法中
+#+begin_src java
+  int pageIndex = 0, pageSize = 2;
+  Pageable pageable = PageRequest.of(pageIndex, pageSize);
+  Page<User2> pageInfo = user2Repository.findByNameLike("h%", pageable);
+
+  System.out.println("当前页:"+pageInfo.getNumber() +
+                     ",总记录数:"+pageInfo.getTotalElements() +
+                     ",总页数:"+pageInfo.getTotalPages() +
+                     ",是否有上一页:"+pageInfo.hasPrevious() +
+                     ",是否有下一页:"+pageInfo.hasNext());
+  for (User2 u : pageInfo.getContent()){
+      System.out.println(u);
+  }
+#+end_src
+
+其中
+- =PageRequest= 是控制分页的辅助类，可知设置页码，每页的数据条数，排序等
+- =pageInfo= 可以调用
+  - =getContent= 当前页数据
+  - =getNumber= 获取当前页码
+  - =getTotalElements= 获取总记录数
+  - =getTotalPages= 获取总页数
+  - =hasPrevious= 是否有上一页
+  - =hasNext= 是否有下一页
+** 排序
+#+begin_src java
+  User2 findFirstByOrderByName();
+  User2 findFirstByOrderByNameDesc();
+#+end_src
+
+** 限制
+#+begin_src java
+  List<User2> findFirst10ByName(String name);
+  List<User2> findFirst10ByName(String name, Sort sort);
+  List<User2> findFirst10ByName(String name, Pageable pageable);
+#+end_src
+** 多表查询
+注解 =@OneToOne= 等使用的时候是双方关联的，当然我也可以选择不
+*** 表的 join
+**** Author
+#+begin_src java
+  @Entity(name = "Author")
+  @Data
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public class Author {
+      @Id
+      @GeneratedValue(strategy = GenerationType.IDENTITY)
+      Long id;
+
+      @Column
+      String name;
+
+      @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+      @JoinTable(name = "Author_Book",
+                 joinColumns = @JoinColumn(name = "authorid", referencedColumnName = "id"),
+                 inverseJoinColumns = @JoinColumn(name = "bookid", referencedColumnName = "id"))
+      Set<Book> books;
+  }
+
+#+end_src
+**** Book
+#+begin_src java
+  @Entity(name = "Book")
+  @Data
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public class Book {
+      @Id
+      @GeneratedValue(strategy = GenerationType.IDENTITY)
+      Long id;
+
+      @Column
+      String name;
+  }
+
+#+end_src
+**** AuthorBook
+#+begin_src java
+  @Entity(name = "Author_Book")
+  @IdClass(AuthorBookUPK.class)
+  public class AuthorBook implements Serializable {
+      @Id
+      Long authorid;
+
+      @Id
+      Long bookid;
+  }
+
+#+end_src
+**** 联合主键
+#+begin_src java
+  @Data
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public class AuthorBookUPK implements Serializable {
+      Long authorid;
+      Long bookid;
+  }
+
+#+end_src
+**** 注意
+- =Author= 表中是没有关于 =Book= 的字段的，两个表之间通过 =AuthorBook= 来关联
+- 在创建 =AuthorBook= 的 =Repository= 是需要指定主见类型，这个时候要用到 =AuthorBookUPK= 来作为联合主键类型
+- =Author= 对象中的 =books= 字段更改时，也许要对应的 =Book= 对象更改，这时候需要制定级联类型，也就是 =cascade=
+- =@JoinTable= 指定中间表，其中
+  - =joinColumns= 指定主表的主键
+  - =inverseJoinColumns= 指定副表的主键
+- =@JoinColumn= 中
+  - =name= 表示字段名称
+  - =referencedColumnName= 表示字段在关联的表中的名称
+
+
+*** 外键
+以 =Student= 和 =School= 为例，他们的关系是 =@ManyToOne=
+#+begin_src java
+  public class User {
+      @Id
+      @GeneratedValue(strategy = GenerationType.IDENTITY)
+      Long id;
+
+      String name;
+
+      @ManyToOne
+      @JoinColumn(name = "school_fk")
+      School school;
+  }
+#+end_src
+=@JoinColumn(name = “school_fk”)= 指明School类的主键id在student表中的字段名， jpa 会帮你生成
+另外 =school= 字段在数据表中的表现为 =school_fk= 的外键
+#+begin_src java
+  public class School {
+      @Id
+      @GeneratedValue(strategy = GenerationType.IDENTITY)
+      Long id;
+
+      String name;
+
+      @OneToMany(mappedBy = "school", cascade = CascadeType.PERSIST)
+      List<Student> students;
+  }
+#+end_src
+
+在数据表中没有任何关于 =students= 的字段， =students= 都是用 =Student= 中的 =school_fk= 组织的
+** 补充
+*** 表名大小写
+#+begin_src java
+  spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+#+end_src
+
+* CORS
+#+begin_src java
+  @Configuration
+  @EnableWebMvc
+  public class WebConfigure implements WebMvcConfigurer {
+      @Override
+      public void addCorsMappings(CorsRegistry registry) {
+          registry.addMapping("/**")
+              .allowedMethods("GET", "OPTIONS", "PUT", "POST", "DELETE")
+              .allowHeaders("Origin", "Content-Type", "Accept")
+              .allowedHeaders("Content-Type")
+              .allowedOrigins("http://localhost:8081");
+              }
+
+  }
+
+#+end_src
+别忘了， =addMapping= 那里是两个 =*=
+另外别忘了，别加这个
+#+begin_src java
+  .allowedHeaders("Access-Control-Allow-Origin", "http://localhost:8081");
+#+end_src
+下次用这个来解决 CORS 问题
+#+begin_src java
+  @Bean
+  public CorsFilter corsFilter() {
+      UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+      CorsConfiguration corsConfiguration = new CorsConfiguration();
+      corsConfiguration.addAllowedOrigin("http://localhost:8081");
+      corsConfiguration.addAllowedHeader("*");
+      corsConfiguration.addAllowedMethod("*");
+      source.registerCorsConfiguration("/**", corsConfiguration);
+      return new CorsFilter(source);
+  }
+#+end_src

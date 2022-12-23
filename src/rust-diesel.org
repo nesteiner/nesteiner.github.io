@@ -1,0 +1,218 @@
+#+OPTIONS: author:nil ^:{}
+#+HUGO_BASE_DIR: ../../ChiniBlogs
+#+HUGO_SECTION: posts/2022/09
+#+HUGO_CUSTOM_FRONT_MATTER: :toc true
+#+HUGO_AUTO_SET_LASTMOD: t
+#+HUGO_DRAFT: false
+#+DATE: [2022-09-27 Tue 20:58]
+#+HUGO_TAGS: diesel
+#+HUGO_CATEGORIES: Rust
+#+title: Rust diesel 简单使用, 以mysql为例
+
+* 依赖配置
+in =Cargo.toml= 中
+#+begin_src toml
+  [dependencies]
+  diesel = { version = "2.0.0", features = ["postgres"] }
+  dotenvy = "0.15"
+#+end_src
+
+* 环境配置
+** 安装 Diesel 脚手架
+#+begin_src bash
+  cargo install diesel_cli --no-default-features --features mysql
+#+end_src
+** 设置 Diesel
+在项目根目录下创建 =.env= 文件
+#+begin_src bash
+  mysql://username:password@localhost:3306/database-name
+#+end_src
+
+再运行
+#+begin_src bash
+  diesel setup
+#+end_src
+
+#+begin_src bash
+  diesel migration generate create_posts
+#+end_src
+
+** SQL 语句 与 Rust 语句
+在 =migrations/../up.sql= 中
+#+begin_src sql
+  -- Your SQL goes here
+  create table posts (
+         `id` integer auto_increment primary key,
+         `title` varchar(255) not null,
+         `body` text not null,
+         `published` boolean not null default false
+  );
+#+end_src
+
+在 =migrations/../down.sql= 中
+#+begin_src sql
+  drop table posts;
+#+end_src
+
+执行 =up.sql= 中的代码
+#+begin_src bash
+  diesel migration run
+#+end_src
+
+执行 =down.sql= 中的代码
+#+begin_src bash
+  diesel migration redo
+#+end_src
+
+在 =src/schema.rs= 中，写下
+#+begin_src rust
+  diesel::table! {
+      posts (id) {
+          id -> Integer,
+          title -> Varchar,
+          body -> Text,
+          published -> Bool,
+      }
+  }
+#+end_src
+在 =src/models.rs= 中，写下
+#+begin_src rust
+  use diesel::prelude::*;
+
+  #[derive(Queryable)]
+  pub struct Post {
+      pub id: i32,
+      pub title: String,
+      pub body: String,
+      pub published: bool
+  }
+
+#+end_src
+* 编写代码
+** 设置连接 src/lib.rs
+#+begin_src rust
+  pub fn establish_connection() -> MysqlConnection {
+      dotenv().ok();
+
+      let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+      MysqlConnection::establish(&database_url)
+          .unwrap_or_else(|_| panic!("error connection to {}", database_url))
+  }
+  
+#+end_src
+
+** 设置添加方法 src/lib.rs
+#+begin_src rust
+  pub fn create_post(conn: &mut MysqlConnection, title: &str, body: &str) -> Post {
+      use crate::schema::posts;
+
+      let new_post = NewPost {title, body};
+      diesel::insert_into(posts::table)
+          .values(&new_post)
+          .execute(conn)
+          .expect("Error saving post");
+
+      posts::table.order(posts::id.desc()).first(conn).unwrap()
+  }
+#+end_src
+** 查看 src/bin/show_posts.rs
+#+begin_src rust
+  use self::models::*;
+  use diesel::prelude::*;
+  use diesel_demo::*;
+
+  fn main() {
+      use self::schema::posts::dsl::*;
+    
+      let connection = &mut establish_connection();
+      let result = posts
+          .limit(5)
+          .load::<Post>(connection)
+          .expect("Error loading posts");
+
+      println!("Displaying {} posts", result.len());
+
+      for post in result {
+          println!("{}", post.title);
+          println!("--------\n");
+          println!("{}", post.body);
+      }
+  }
+#+end_src
+** 添加 src/bin/write_post.rs
+#+begin_src rust
+  use diesel_demo::*;
+  use std::io::{stdin, Read};
+
+  #[cfg(not(windows))]
+  const EOF: &str = "CTRL+D";
+
+  #[cfg(windows)]
+  const EOF: &str = "CTRL+Z";
+
+  fn main() {
+      let connection = &mut establish_connection();
+      let mut title = String::new();
+      let mut body = String::new();
+
+      println!("Whate would you like your title to be?");
+      stdin().read_line(&mut title).unwrap();
+      let title = title.trim_end();
+
+      println!("\nOk! Let's write {} (Press {} when finished)\n", title, EOF);
+      stdin().read_to_string(&mut body).unwrap();
+
+      let post = create_post(connection, title, &body);
+      println!("\nSaved draft {} with id {}", title, post.id);
+  }
+#+end_src
+** 修改 src/bin/publish_post.rs
+#+begin_src rust
+  use self::models::Post;
+  use diesel::prelude::*;
+  use diesel_demo::*;
+  use std::env::args;
+
+  fn main() {
+      use self::schema::posts::dsl::{posts, published};
+
+      let id = args()
+          .nth(1)
+          .expect("publish post required a post id")
+          .parse::<i32>()
+          .expect("Invalid ID");
+
+      let connection = &mut establish_connection();
+      let post: Post = posts
+          .find(id)
+          .first(connection)
+          .unwrap_or_else(|_| panic!("unable to find post {}", id));
+
+      diesel::update(posts.find(id))
+          .set(published.eq(true))
+          .execute(connection)
+          .unwrap();
+
+      println!("Published post {}", post.title);
+  }
+#+end_src
+** 删除 src/bin/delete_post.rs
+#+begin_src rust
+  use diesel::prelude::*;
+  use diesel_demo::*;
+  use std::env::args;
+
+  fn main() {
+      use self::schema::posts::dsl::*;
+
+      let target = args().nth(1).expect("Expected a target to match against");
+      let pattern = format!("%{}%", target);
+
+      let connection = &mut establish_connection();
+      let num_deleted = diesel::delete(posts.filter(title.like(pattern)))
+          .execute(connection)
+          .expect("Error deletting posts");
+      println!("Deleted {} posts", num_deleted);
+  }
+#+end_src
+
