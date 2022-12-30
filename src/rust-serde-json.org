@@ -1,0 +1,251 @@
+#+OPTIONS: author:nil ^:{}
+#+HUGO_BASE_DIR: ../../ChiniBlogs
+#+HUGO_SECTION: posts/2022/12
+#+HUGO_CUSTOM_FRONT_MATTER: :toc true
+#+HUGO_AUTO_SET_LASTMOD: t
+#+HUGO_DRAFT: false
+#+DATE: [2022-12-30 Fri 17:59]
+#+TITLE: Serde Json 简单使用
+#+HUGO_TAGS: 序列化
+#+HUGO_CATEGORIES: Rust
+
+* Serde Json
+** 添加依赖
+#+begin_src bash
+  cargo add serde --features derive
+  cargo add serde_json
+  cargo add serde_derive
+#+end_src
+** 结构体的序列化与反序列化
+#+begin_src rust
+  use serde::{Serialize, Deserialize};
+
+  #[derive(Serialize, Deserialize, Debug)]
+  struct Point {
+      x: i32,
+      y: i32,
+  }
+
+  fn main() {
+      let point = Point {x: 1, y: 2};
+      let json: String = serde_json::to_string(&point).unwrap();
+      println!("{}", json);
+
+      let point: Point = serde_json::from_str(&json).unwrap();
+      println!("{:#?}", point);
+  }
+#+end_src
+** 枚举的序列化与反序列化
+*** 第一种枚举类型
+参照结构体的序列化和反序列化，如果对一个枚举进行序列化，我们发现
+#+begin_src rust
+  use serde::{Serialize, Deserialize};
+
+  #[derive(Debug, Serialize, Deserialize)]
+  enum Week {
+      Monday,
+      Tuesday,
+      Wednesday,
+      Thursday,
+      Friday,
+      Saturday,
+      Sunday,
+  }
+
+  fn main() {
+      let json: String = serde_json::to_string(&Week::Friday).unwrap();
+      println!("{}", json);
+
+      let week: Week = serde_json::from_str(&json).unwrap();
+      println!("{:#?}", week);
+  }
+#+end_src
+运行结果如下
+#+begin_src bash
+  "Friday"
+  Friday
+#+end_src
+
+这个不是我们想的JSON格式，我们可以添加一个 *serde(tag)* 宏
+#+begin_src rust
+  use serde::{Serialize, Deserialize};
+
+  #[derive(Debug, Serialize, Deserialize)]
+  #[serde(tag = "WeekDay")]
+  enum Week {
+      Monday,
+      Tuesday,
+      Wednesday,
+      Thursday,
+      Friday,
+      Saturday,
+      Sunday,
+  }
+
+  fn main() {
+      let json: String = serde_json::to_string(&Week::Friday).unwrap();
+      println!("{}", json);
+
+      let week: Week = serde_json::from_str(&json).unwrap();
+      println!("{:#?}", week);
+  }
+#+end_src
+
+运行结果如下
+#+begin_src bash
+  {
+      "WeekDay": "Friday"
+  }
+
+  Friday
+#+end_src
+
+哟系，结果不错
+*** 第二种枚举类型
+#+begin_src rust
+  use serde::{Serialize, Deserialize};
+
+  #[derive(Debug, Serialize, Deserialize)]
+  enum IP {
+      IPv4(String),
+      IPv6(String)
+  }
+
+  fn main() {
+      let json: String = serde_json::to_string(&IP::IPv4("127.0.0.1".to_string())).unwrap();
+      println!("{}", json);
+
+      let ip: IP = serde_json::from_str(&json).unwrap();
+      println!("{:#?}", ip);
+  }
+#+end_src
+
+运行结果如下
+#+begin_src bash
+  {
+      "IPv4": "110.26.73.83"
+  }
+  IPv4(
+      "110.26.73.83",
+  )
+#+end_src
+
+我们可以添加一些操作，让其结构变的更合理一些
+#+begin_src rust
+  use serde::{Serialize, Deserialize};
+
+  #[derive(Debug, Serialize, Deserialize)]
+  #[serde(tag = "type", content = "ip")]
+  enum IP {
+      IPv4(String),
+      IPv6(String)
+  }
+
+  fn main() {
+      let json: String = serde_json::to_string(&IP::IPv4("127.0.0.1".to_string())).unwrap();
+      println!("{}", json);
+
+      let ip: IP = serde_json::from_str(&json).unwrap();
+      println!("{:#?}", ip);
+  }
+#+end_src
+
+运行结果如下
+#+begin_src bash
+  {
+      "type": "IPv6",
+      "ip": "::ffff:110.26.73.83"
+  }
+  IPv6(
+      "::ffff:110.26.73.83",
+  )
+#+end_src
+** Unit Struct 的序列化与反序列化
+#+begin_src rust
+  use serde::{Serialize, Deserialize};
+
+  #[derive(Debug, Serialize, Deserialize)]
+  struct UnitStruct;
+
+  fn main() {
+      let json: String = serde_json::to_string(&UnitStruct).unwrap();
+      println!("{}", json);
+
+      let n: UnitStruct = serde_json::from_str(&json).unwrap();
+      println!("{:#?}", n);
+  }
+#+end_src
+
+运行结果如下
+#+begin_src bash
+  null
+  UnitStruct
+#+end_src
+** 一些选项
+*** 忽略某个字段
+1. *#[serde(skip_serialize)]* 在序列化时忽略该字段
+2. *#[serde(skip_deserialize)]* 在反序列化时忽略该字段
+3. *#[serde(skip)]* 同时忽略这个字段
+
+可是这样以后，结构体在反序列化时会造成运行时错误
+#+begin_src rust
+  #[macro_use]
+  extern crate serde_derive;
+
+  use serde::{Serialize, Deserialize};
+
+  #[derive(Debug, Serialize, Deserialize)]
+  struct Point {
+      x: f64,
+      #[serde(skip_serializing)]
+      y: f64
+  }
+
+  fn main() {
+      let point = Point {
+          x: 1.0,
+          y: 2.0
+      };
+
+      let json: String = serde_json::to_string(&point).unwrap(); // this is ok
+      println!("{}", json);
+
+      let point: Point = serde_json::from_str(&point).unwrap(); // this is not ok
+      println("{:#?}", point);
+  }
+#+end_src
+*** 提供默认值
+在上面的例子中，我们可以通过提供默认值来解决错误
+#+begin_src rust
+  #[derive(Debug, Serialize, Deserialize)]
+  struct Point {
+      x: f64,
+      #[serde(skip_serializing, default)]
+      y: f64
+  }
+#+end_src
+
+也可以手动设置提供值的函数
+#+begin_src rust
+  #[derive(Debug, Serialize, Deserialize)]
+  struct Point {
+      x: f64,
+      #[serde(skip_serializing, default="default_y")]
+      y: f64
+  }
+
+  fn default_y() -> f64 {
+      5.0
+  }
+#+end_src
+*** 重命名字段
+#+begin_src rust
+  #[derive(Debug, Serialize, Deserialize)]
+  struct Point {
+      #[serde(rename = "X")]
+      x: f64,
+      #[serde(rename = "Y")]
+      y: f64,
+  }
+#+end_src
+
