@@ -1,0 +1,15 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>命令行解析 - Tag - My New Hugo Site</title>
+        <link>http://example.org/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C%E8%A7%A3%E6%9E%90/</link>
+        <description>命令行解析 - Tag - My New Hugo Site</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Fri, 23 Dec 2022 16:33:00 &#43;0800</lastBuildDate><atom:link href="http://example.org/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C%E8%A7%A3%E6%9E%90/" rel="self" type="application/rss+xml" /><item>
+    <title>Clap 简单使用</title>
+    <link>http://example.org/posts/2022/12/rust-clap/</link>
+    <pubDate>Fri, 23 Dec 2022 16:33:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/posts/2022/12/rust-clap/</guid>
+    <description><![CDATA[添加参数 Basic 以 myapp run app --release --message hello 为例 这里的参数分为几种 run 子命令 app 固定位置参数 --release flag 参数 --message hello 命名选项参数 子命令 use clap::{Parser, Subcommand}; #[derive(Parser)] #[command(author, version, about, long_about = None)] struct Cli { #[command(subcommand)] command: Commands } #[derive(Subcommand)] enum Commands { Add { name: Option&lt;String&gt; } } fn main() { let cli = Cli::parse(); match &amp;cli.command { Commands::Add {name} =&gt; { println!(&#34;myapp add was used, name is: {:?}&#34;, name) } } } 在结构中使用 #[command(subcommand)] 表示以下结构是一个子命令 用 #[derive(Subcommand)] 来声明一个子命令结构 调用的时候，使用 myapp add hello 即可 固定位置参数 use clap::Parser; #[derive(Debug, Parser)] struct Cli { a: u32, b: u32, c: u32, name: String } fn main() { let cli = Cli::parse(); println!]]></description>
+</item>
+</channel>
+</rss>

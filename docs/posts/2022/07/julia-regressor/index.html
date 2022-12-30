@@ -10,7 +10,6 @@
 <meta property="og:url" content="http://example.org/posts/2022/07/julia-regressor/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-07-02T14:33:00+08:00" />
 <meta property="article:modified_time" content="2022-07-02T14:46:20+08:00" /><meta property="og:site_name" content="My cool site" />
-
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="有监督回归"/>
 <meta name="twitter:description" content="算法介绍 这里简要介绍下各算法和他们之间的关系，详细理解请百度一下 基本算法 最小二乘法是众多机器学习算法中极为重要的一种基础算法 单纯的最小二乘法对于包含噪声的学习过程经常有过拟合的弱点，这往往是由于学习模型对于训练样本而言过于复杂 l2 约束 由此，引入带有约束条件的最小二乘法 &mdash;- Ridge 回归 带有约束条件的最小二乘法和交叉验证法的组合，在实际应用中是非常有效的回归方法 然而，当参数特别多的时候，求解各参数以及学习得到的函数的输出值的过程，都需要耗费大量的时间 l1 约束 由此，引入可以吧大部分参数都置为0的稀疏学习算法 因为大部分参数都变成了0，所以就可以快速地求解各参数以及学习得到的函数的输出值 l1 &#43; l2 约束 虽然 l1 约束的最小二乘学习法是非常有用的学习方法，但是在实际应用中，经常会遇到些许限制 在 Lasso 回归求解路径中，对于 N×P 的设计矩阵来说，最多只能选出 min(N,p) 个变量 当 p&gt;N 的时候，最多只能选出N个预测变量．因此，对于 p∼N 的情况，Lasso方法不能够很好的选出真实的模型． 如果预测变量具有群组效应，则用Lasso回 归时，只能选出其中的一个预测变量 对于通常的 N&gt;P 的情形，如果预测变量中 存在很强的共线性，Lasso的预测表现受控于岭回归 基于以上几点Lasso回归的局限性，Zou和 Hastie在2005年提出了弹性网回归方法，回归系 数表达式为 \(\hat \beta^{ridge} =\mathop{\arg\min}_{\beta} \{\sum \limits _{i=1}^{N}(y_i-\beta_0-\sum\limits_{j=1}^px_{ij}\beta_j)^2&#43;\lambda\sum \limits_{j=1}^{p}|\beta_{j}|&#43;\lambda\sum \limits_{j=1}^{p}\beta_{j}^2\}\) MLJLinearModels 使用 Ridge \(J = \frac{1}{n}\sum_{i = 1}^n (f( x_i) - y_i)^2 &#43; \lambda \|w\|_2^2\tag{1}\) RidgeRegressor RidgeRegression() RidgeRegression(λ; lambda, fit_intercept, penalize_intercept, scale_penalty_with_samples) Lasso \(J = \frac{1}{n}\sum_{i = 1}^n (f( x_i) - y_i)^2 &#43; \lambda \|w\|_1\tag{2}\) LassoRegressor LassoRegression() LassoRegression(λ; lambda, fit_intercept, penalize_intercept, scale_penalty_with_samples) Elastic-Net \(\smash{\min_{w}}\sum_{i=1}^m(y_i-\sum_{j=1}^dx_{ij}w_j)^2 &#43; \lambda\sum_{j=1}^d|w_j|&#43;\lambda \sum_{j=1}^dw_j^2 \tag{3}\) ElasticNetRegression ElasticNetRegression() ElasticNetRegression(λ) ElasticNetRegression(λ, γ; lambda, gamma, fit_intercept, penalize_intercept, scale_penalty_with_samples) 说明 其实可以不用管 fit_intercept penalize_intercept 我也不知道这两个是干什么的，就先别管他们了 总之，只用设置 lambda 就行了 实例 波士顿房价预测 数据准备 竞赛数据来自 https://www."/>
@@ -693,7 +692,7 @@
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.101.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.108.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
                 </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
         </div>
     </footer></div>

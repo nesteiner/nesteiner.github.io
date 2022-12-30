@@ -10,7 +10,6 @@
 <meta property="og:url" content="http://example.org/posts/2022/07/android-communication/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-07-02T14:39:00+08:00" />
 <meta property="article:modified_time" content="2022-07-02T14:48:05+08:00" /><meta property="og:site_name" content="My cool site" />
-
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Android 通信简单应用"/>
 <meta name="twitter:description" content="Activity 之间通信 从一个 Activity 跳转到另一个 Activity 时，可以携带一些数据进去，这个就是 Activity 之间的通信 跳转到 Activity 之后可以响应通信，不过需要发起端调用 startActivityForResult ，接收端调用 setResult 这种通信方法我不能类比到组件之间的通信，组件之间通信都是单向数据流，这个是 双向数据流 原来的通信方法 通信发起端 跳转需要借助 Intent 对象，指定来源的上下文和目标的类，调用 startActivity 即可 Intent intent = new Intent(this, TargetClass.class); startActivity(intent) 如果需要携带数据，创建一个 Bundle 对象绑定到 Intent 即可 Intent intent = new Intent(this, TargetClass.class); Bundle bundle = new Bundle(); bundle.putString(&#34;message&#34;, &#34;Hello World&#34;); intent.putExtras(bundle); startActivity(intent); 其实也可以不用 Bundle ，直接给 Intent 来添加 通信接收端 跳转到接收端后，使用 getIntent 来获取对端的 Intent 对象，并查看绑定的数据 Intent intent = getIntent(); Bundle bundle = intent."/>
@@ -123,7 +122,7 @@
 </span></span><span class="line"><span class="cl"><span class="n">bundle</span><span class="o">.</span><span class="na">putString</span><span class="o">(</span><span class="s">&#34;message&#34;</span><span class="o">,</span> <span class="s">&#34;Hello&#34;</span><span class="o">);</span>
 </span></span><span class="line"><span class="cl"><span class="n">intent</span><span class="o">.</span><span class="na">putExtras</span><span class="o">(</span><span class="n">bundle</span><span class="o">);</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="n">startActivityForResult</span><span class="o">(</span><span class="n">intent</span><span class="o">,</span> <span class="n">2</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">startActivityForResult</span><span class="o">(</span><span class="n">intent</span><span class="o">,</span> <span class="mi">2</span><span class="o">)</span>
 </span></span></code></pre></div><p>注意 <code>startActivityForResult</code> 第二个参数要大于0，才会接收对端的数据，并跳转到 <code>onActivityResult</code> 回调 <!-- raw HTML omitted --></p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onActivityResult</span><span class="o">(</span><span class="kt">int</span> <span class="n">requestCode</span><span class="o">,</span> <span class="kt">int</span> <span class="n">resultCode</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">Intent</span> <span class="n">data</span><span class="o">)</span> <span class="o">{</span>
 </span></span><span class="line"><span class="cl">    <span class="kd">super</span><span class="o">.</span><span class="na">onActivityResult</span><span class="o">(</span><span class="n">requestCode</span><span class="o">,</span> <span class="n">resultCode</span><span class="o">,</span> <span class="n">data</span><span class="o">);</span>
@@ -253,7 +252,7 @@
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.101.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.108.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
                 </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
         </div>
     </footer></div>

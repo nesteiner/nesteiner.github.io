@@ -10,7 +10,6 @@
 <meta property="og:url" content="http://example.org/posts/2022/07/newyork/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-07-28T14:23:00+08:00" />
 <meta property="article:modified_time" content="2022-07-28T14:24:54+08:00" /><meta property="og:site_name" content="My cool site" />
-
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="New York City Airbnb Open Data Analysis"/>
 <meta name="twitter:description" content="New York City Airbnb Open Data Analysis 以下流程参考自 https://www.kaggle.com/code/chirag9073/airbnb-analysis-visualization-and-prediction 导入库 using MLJFlux, Flux, MLJ, DataFrames, CSV, StatsBase using WordCloud 加载数据 origindata = CSV.read(&#34;data/newyork-city-airbnb-open-data/AB_NYC_2019.csv&#34;, DataFrame) 观察数据 你可以像教程那样 也可以，像我一样，用 excel 打开 csv 文件 我写了一个表格，记录我观察到的结果 column missing count type type coerce fill/drop id 0 Int Count =&gt; Continuous None name 16 String? Multiclass Drop host_id 0 Int Count =&gt; Continuous None host_name 21 String? Multiclass Drop neighbourhood_group 0 String15 Multiclass =&gt; Count =&gt; Continuous None neighbourhood 0 String31 Multiclass =&gt; Count =&gt; Continuous None latitude 0 Float64 Continuous None longitude 0 Float64 Continuous =&gt; Multiclass =&gt; Continuous None room_type 0 String15 Multiclass =&gt; Count =&gt; Continuous None price 0 Int Count =&gt; Continuous None minimum_nights 0 Int Count =&gt; Continuous None number_of_reviews 0 Int Count =&gt; Continuous None last_review 10052 Date?"/>
@@ -456,7 +455,7 @@
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.101.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.108.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
                 </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
         </div>
     </footer></div>

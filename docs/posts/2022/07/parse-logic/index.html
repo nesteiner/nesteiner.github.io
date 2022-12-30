@@ -10,7 +10,6 @@
 <meta property="og:url" content="http://example.org/posts/2022/07/parse-logic/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-07-02T14:30:00+08:00" />
 <meta property="article:modified_time" content="2022-07-02T14:45:06+08:00" /><meta property="og:site_name" content="My cool site" />
-
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="计算真值表"/>
 <meta name="twitter:description" content="程序设计说明 本来想用 lisp 程序来写，他的写法是 (function arg1 arg2 ...) S表达式不需要考虑优先级顺序，写起来比较简单 但是在这里有太多运算符，写成 lisp 很不方便 p∧￢(q→p (p ↔ q) → r p → (p ∨ ￢q ∨ r) 还好有 Julia ，他可以自定义运算符 首先将运算符作为一个函数定义(以下例子这样写是因为 &#43; 在程序中是特殊符号，需要加一个 : 前缀来标识， Julia 语言的一个 feature) function Base.:&#43;(arg1::SomeType, arg2::SomeType) return arg1 * arg2 end 解释器就可以把以下语句 arg1 &#43; arg2 解析为 Base:&#43;(arg1, arg2) 如果是调用多次 arg1 &#43; arg2 &#43; arg3 可以看作先对前两个进行求值，得出结果，与第三个参数求值 实现细节 演示说明 这里给出一个演示的例子 print(TruthTable(&#34;(p ↔ q) → r&#34;, [:p, :q, :r], (p, q, r) -&gt; (p ↔ q) → r)) 需要自定义真值表的 标题 参数表 生成真值的逻辑函数 运算符定义 ¬(p::Bool) = !"/>
@@ -193,7 +192,7 @@
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.101.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.108.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
                 </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
         </div>
     </footer></div>

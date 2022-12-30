@@ -10,7 +10,6 @@
 <meta property="og:url" content="http://example.org/posts/2022/07/linear_model/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-07-02T01:54:00+08:00" />
 <meta property="article:modified_time" content="2022-07-02T14:44:18+08:00" /><meta property="og:site_name" content="My cool site" />
-
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="MLJ中 线性模型 在回归预测中的简单使用"/>
 <meta name="twitter:description" content="开始之前 我想向大家介绍一下一些线性模型的用法，以及他们对数据的拟合程度 在我开始学习 MLJ 时，我对他们的拟合能力有所怀疑，经常遇到欠拟合的情况，经过一次简单的测试后，才慢慢了解如何使用模型，处理特征 这里将这个测试介绍给各位 数据准备 我们模拟对函数 f(x) = x^2 &#43; 2x 的拟合，在理想的预测结果 standardy 上加上一点噪音，形成训练用测试结果 coly 接下来依次定义 f(x) standardy coly f(x) = x^2 &#43; 2x colx = DataFrame(x1=-10:10) coly = f.(colx.x1) &#43; rand(-2:2, length(colx.x1)) standardy = f.(colx.x1) 再绘制下图像 plot(colx.x1, standardy, label=&#34;standarty&#34;, color=:blue) plot!(colx.x1, coly, label=&#34;coly&#34;, color=:red) 模型介绍 拟合数据我们使用 Ridge 回归，他在损失函数上添加了 L2 正则化 \begin{array}{cl} {\min \limits_{w, b}} &amp; {\dfrac{1}{n}\sum_{i = 1}^n (w^{\top} x_i &#43; b - y_i)^2} \\ {\text{s.t.}} &amp;{\|w\|_2^2 \le t} \end{array}"/>
@@ -223,7 +222,7 @@
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.101.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.108.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
                 </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
         </div>
     </footer></div>

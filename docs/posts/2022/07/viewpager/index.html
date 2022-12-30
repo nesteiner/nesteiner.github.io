@@ -10,7 +10,6 @@
 <meta property="og:url" content="http://example.org/posts/2022/07/viewpager/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-07-02T14:37:00+08:00" />
 <meta property="article:modified_time" content="2022-07-02T14:47:05+08:00" /><meta property="og:site_name" content="My cool site" />
-
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="ViewPager 简单使用"/>
 <meta name="twitter:description" content="ViewPager ViewPager 简单来说就是一个能滑动切换视图的控件，由一个 Activity 包裹，总体结构是 Activity adapter fragment fragment fragment 其中 Activity 通过 adapter 来操作 fragment 显示 Activity 布局 activity_pageview.xml &lt;RelativeLayout xmlns:android=&#34;http://schemas.android.com/apk/res/android&#34; xmlns:tools=&#34;http://schemas.android.com/tools&#34; android:layout_width=&#34;match_parent&#34; android:layout_height=&#34;match_parent&#34; &gt; &lt;androidx.viewpager.widget.ViewPager android:id=&#34;@&#43;id/viewpager&#34; android:layout_width=&#34;fill_parent&#34; android:layout_height=&#34;fill_parent&#34; /&gt; &lt;/RelativeLayout&gt; PageViewActivity.java public class PageViewActivity extends FragmentActivity { MyPageAdapter pageAdapter; @Override public void onCreate(Bundle savedInstanceState) { super.onCreate(savedInstanceState); setContentView(R.layout.activity_page_view); List&lt;Fragment&gt; fragments = getFragments(); pageAdapter = new MyPageAdapter(getSupportFragmentManager(), fragments); ViewPager pager = (ViewPager) findViewById(R.id.viewpager); pager.setAdapter(pageAdapter); } private List&lt;Fragment&gt; getFragments() { List&lt;Fragment&gt; fList = new ArrayList&lt;Fragment&gt;(); fList."/>
@@ -199,7 +198,7 @@
 </span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">MyFragment</span> <span class="nf">newInstance</span><span class="o">(</span><span class="n">String</span> <span class="n">message</span><span class="o">)</span>
 </span></span><span class="line"><span class="cl">    <span class="o">{</span>
 </span></span><span class="line"><span class="cl">	<span class="n">MyFragment</span> <span class="n">f</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MyFragment</span><span class="o">();</span>
-</span></span><span class="line"><span class="cl">	<span class="n">Bundle</span> <span class="n">bdl</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Bundle</span><span class="o">(</span><span class="n">1</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">	<span class="n">Bundle</span> <span class="n">bdl</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Bundle</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
 </span></span><span class="line"><span class="cl">	<span class="n">bdl</span><span class="o">.</span><span class="na">putString</span><span class="o">(</span><span class="n">EXTRA_MESSAGE</span><span class="o">,</span> <span class="n">message</span><span class="o">);</span>
 </span></span><span class="line"><span class="cl">	<span class="n">f</span><span class="o">.</span><span class="na">setArguments</span><span class="o">(</span><span class="n">bdl</span><span class="o">);</span>
 </span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">f</span><span class="o">;</span>
@@ -243,7 +242,7 @@
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.101.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.108.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
                 </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
         </div>
     </footer></div>

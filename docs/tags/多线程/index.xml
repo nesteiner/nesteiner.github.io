@@ -1,0 +1,15 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>多线程 - Tag - My New Hugo Site</title>
+        <link>http://example.org/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/</link>
+        <description>多线程 - Tag - My New Hugo Site</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Thu, 18 Aug 2022 19:23:00 &#43;0800</lastBuildDate><atom:link href="http://example.org/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="self" type="application/rss+xml" /><item>
+    <title>Rust 多线程程序和异步程序简单编写</title>
+    <link>http://example.org/posts/2022/08/rust-multithread-async/</link>
+    <pubDate>Thu, 18 Aug 2022 19:23:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/posts/2022/08/rust-multithread-async/</guid>
+    <description><![CDATA[程序介绍 这次我打算把一个 select 多路复用的程序改成多线程版本和异步版本的，他的工作流程如下 从 stdin 读取数据，处理数据 从 socket 读取数据，处理数据 而多线程和异步版本的工作流程则是 创建数据通道 channel 创建一个 线程/Future, 从 stdin 读取数据，将数据写入 channel 创建一个 线程/Future, 从 socket 读取数据，将数据写入 channel 创建一个 线程/Future, 从 channel 读取数据，处理数据 我们马上来做一下看吧 多线程程序 从 socket 读取数据的线程 let thread1 = thread::spawn(move || { loop { let (mut stream, _) = server.accept().unwrap(); let mut received = String::new(); if let Err(_) = stream.read_to_string(&amp;mut received) { eprintln!(&#34;recv error occur&#34;); } if let Err(e) = sender1.send(received) { eprintln!]]></description>
+</item>
+</channel>
+</rss>

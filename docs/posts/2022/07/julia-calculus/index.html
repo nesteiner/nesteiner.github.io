@@ -10,7 +10,6 @@
 <meta property="og:url" content="http://example.org/posts/2022/07/julia-calculus/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-07-02T14:32:00+08:00" />
 <meta property="article:modified_time" content="2022-07-02T14:45:51+08:00" /><meta property="og:site_name" content="My cool site" />
-
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Julia 微积分简要介绍"/>
 <meta name="twitter:description" content="介绍 JuliaMath 下有一个微积分包，闲得没事看看文档，给大家简要整理了一下 derivative 求导 second_derivative 求二阶导 然而关于积分，文档里说 The Calculus package no longer provides routines for univariate numerical integration. Use QuadGK.jl instead. 他说单变量的积分在这个包中不再支持，可以去使用 QuadGK.jl 包中 我又尝试了下 Calculus 包中的 integrate 函数 f((x, y)) = sin(x) &#43; cos(y) 我发现，这个错误中的 quadgk 和 QuadGk 中的 quadgk 不是同一个函数，他指的是 Calculus.quadgk 这个函数不存在 另外我去谷歌了一下，发现 Quadgk 不支持多重积分，所以我推荐使用同在 JuliaMath 仓库下的 Cubature.jl 包 既可以做单变量积分，又可以做多变量积分 使用 导数 using Calculus derivative derivative(sin, 0) == cos(0) derivative(sin, 1) == cos(1) derivative(sin, float(pi)) = cos(float(pi)) 多元导数 using Calculus derivative julia&gt; derivative(f, [1, 1]) 2-element Vector{Float64}: 0."/>
@@ -181,7 +180,7 @@
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.101.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.108.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
                 </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
         </div>
     </footer></div>

@@ -10,7 +10,6 @@
 <meta property="og:url" content="http://example.org/posts/2022/07/router/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-07-02T01:43:00+08:00" />
 <meta property="article:modified_time" content="2022-07-02T14:43:30+08:00" /><meta property="og:site_name" content="My cool site" />
-
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Flutter 中的Router"/>
 <meta name="twitter:description" content="用你的应用来演示 路由用法 在这个演示里定义两个界面，HomePage 与 NextPage ，并从 HomePage 传递参数到 NextPage 中 接下来演示匿名路由和命名路由的情况 这是 HomePage 点击文字按钮后，跳转到 NextPage 1. 匿名路由跳转 首先是 HomePage class HomePage extends StatelessWidget { Widget buildBody(BuildContext context) { var fnpress = (String message) { return () { Navigator.push(context, MaterialPageRoute(builder: (builder) =&gt; NextPage(message: message))); }; }; return Center( child: Column( mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [ TextButton(onPressed: fnpress(&#39;Hello World&#39;), child: Text(&#39;goto the next page with status 1&#39;)), TextButton(onPressed: fnpress(&#39;Fuck You&#39;), child: Text(&#39;goto the next page with status 2&#39;)) ], ), ); } @override Widget build(BuildContext context) { // TODO: implement build return Scaffold( appBar: AppBar(title: Text(&#39;Home Page&#39;),), body: buildBody(context), ); } } 在跳转时通过构造函数来传递参数，其中 NextPage 为 class NextPage extends StatelessWidget { String message; NextPage({required this."/>
@@ -226,7 +225,7 @@ flutter 则有两种情况，在非命名的路由中，只需修改 MaterialPag
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.101.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.108.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
                 </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
         </div>
     </footer></div>

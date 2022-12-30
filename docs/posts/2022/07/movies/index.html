@@ -10,7 +10,6 @@
 <meta property="og:url" content="http://example.org/posts/2022/07/movies/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-07-28T14:23:00+08:00" />
 <meta property="article:modified_time" content="2022-07-28T14:24:44+08:00" /><meta property="og:site_name" content="My cool site" />
-
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="数据可视化 电影数据分析"/>
 <meta name="twitter:description" content="数据可视化 电影数据分析 说明 这次的文章参考自 https://zhuanlan.zhihu.com/p/35453189 提出问题 简单分析制作一部电影时，应考虑哪些客观因素才能使电影成功? 为客户提供有效的数据一句，以便作出更准确 的决策 本次数据分析报告主要围绕一下几点进行分析 问题一：电影类型如何随时间发生变化？ 电影数量上的对比 电影收入的对比 问题二：影响电影收入的客观因素有哪些？ 这个不会，先放一放 问题三：两家电影公司Universal Pictures 和 Paramount Pictures之间的对比。 电影发行数量上的对比 电影产生的利润对比 问题四：改编电影和原创电影之间的对比。 电影发行数量上的对比 电影产生的利润对比 理解数据 重点关注的变量有： imdb_id IMDB 标识号 popularity 在 Movie Database 上的相对页面查看次数 budget 预算（美元） revenue 收入（美元） original_title 电影名称 cast 演员列表，按 | 分隔，最多 5 名演员 homepage 电影首页的 URL director 导演列表，按 | 分隔，最多 5 名导演 tagline 电影的标语 keywords 与电影相关的关键字，按 | 分隔，最多 5 个关键字 overview 剧情摘要 runtime 电影时长 genres 风格列表，按 | 分隔，最多 5 种风格 production_companies 制作公司列表，按 | 分隔，最多 5 家公司 release_date 首次上映日期 vote_count 评分次数 vote_average 平均评分 release_year 发行年份 budget_adj 根据通货膨胀调整的预算（2010 年，美元） revenue_adj 根据通货膨胀调整的收入（2010 年，美元） 导入数据 using MLJFlux, Flux, MLJ, DataFrames, CSV, StatsBase, Dates import JSON creditsdata = CSV."/>
@@ -564,7 +563,7 @@
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.101.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.108.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
                 </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
         </div>
     </footer></div>

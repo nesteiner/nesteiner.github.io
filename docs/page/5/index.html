@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
     <head>
-	<meta name="generator" content="Hugo 0.101.0" />
+	<meta name="generator" content="Hugo 0.108.0">
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="robots" content="noodp" />
@@ -9,7 +9,6 @@
 <meta property="og:description" content="This is my cool site" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="http://example.org/" /><meta property="og:site_name" content="My cool site" />
-
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="My New Hugo Site"/>
 <meta name="twitter:description" content="This is my cool site"/>
@@ -57,6 +56,21 @@
 </header><main class="main">
                 <div class="container"><div class="page home" data-home="posts"><div class="home-profile"><div class="home-subtitle"><div id="id-1" class="typeit"></div></div><div class="links"></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/posts/2022/07/linear_model/">MLJ中 线性模型 在回归预测中的简单使用</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Author</a></span>&nbsp;<span class="post-publish">published on <time datetime="2022-07-02">2022-07-02</time></span>&nbsp;<span class="post-category">included in <a href="/categories/julia/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Julia</a></span></div><div class="content">开始之前 我想向大家介绍一下一些线性模型的用法，以及他们对数据的拟合程度 在我开始学习 MLJ 时，我对他们的拟合能力有所怀疑，经常遇到欠拟合的情况，经过一次简单的测试后，才慢慢了解如何使用模型，处理特征 这里将这个测试介绍给各位 数据准备 我们模拟对函数 f(x) = x^2 + 2x 的拟合，在理想的预测结果 standardy 上加上一点噪音，形成训练用测试结果 coly 接下来依次定义 f(x) standardy coly f(x) = x^2 + 2x colx = DataFrame(x1=-10:10) coly = f.(colx.x1) + rand(-2:2, length(colx.x1)) standardy = f.(colx.x1) 再绘制下图像 plot(colx.x1, standardy, label=&#34;standarty&#34;, color=:blue) plot!(colx.x1, coly, label=&#34;coly&#34;, color=:red) 模型介绍 拟合数据我们使用 Ridge 回归，他在损失函数上添加了 L2 正则化 \begin{array}{cl} {\min \limits_{w, b}} &amp; {\dfrac{1}{n}\sum_{i = 1}^n (w^{\top} x_i + b - y_i)^2} \\ {\text{s.t.}} &amp;{\|w\|_2^2 \le t} \end{array}</div><div class="post-footer">
+        <a href="/posts/2022/07/linear_model/">Read More</a><div class="post-tags">
+                <i class="fas fa-tags fa-fw" aria-hidden="true"></i>&nbsp;<a href="/tags/julia/">Julia</a>,&nbsp;<a href="/tags/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/">数据分析</a></div></div>
+</article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/posts/2022/07/titanic/">Titanic 生存预测，使用Logistic分类</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Author</a></span>&nbsp;<span class="post-publish">published on <time datetime="2022-07-02">2022-07-02</time></span>&nbsp;<span class="post-category">included in <a href="/categories/julia/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Julia</a></span></div><div class="content">项目介绍 最近终于去学习 Julia 了，重温了下没做完的 Titanic 项目，打算做完 那就先导入必要的库吧 using MLJ, DataFrames, StableRNGs, CSV, Plots plotly() 还要从 Kaggle 上下载好数据集 train.csv 与 test.csv ， 并用 CSV 模块加载 origin_data = CSV.read(&#34;data/train.csv&#34;, DataFrame) 到提交的时候，数据表中的字段 PassengerId(Integer) 与 Survived(Integer) 数据探索 字段含义 我从网上查到这些字段的含义，有些字段的类型虽然是 Float ，但也是 1.0, 2.0之类的，比如 Age 字段名称 字段含义 字段类型 PassengerId 乘客ID Int Survived 是否存活 Int Pclass 乘客等级(1/2/3等舱位) Int Name 乘客姓名 String Sex 性别 String Age 年龄 Float SibSp 堂兄弟/妹个数 Float Parch 父母与小孩个数 Float Ticket 船票信息 String Fare 票价 Float Cabin 客舱 String Embarked 登船港口 String 字段科学类型 这个数据集使用分类预测，先要统一好各个字段的科学类型，不然一些 model 对字段不起作用 这里需要每个输入的数据类型是 Continuous, 而输出类型为 Multiclass 使用 schema 查看情况 schema(origin_data) 描述数据 看看这个数据有多少缺斤少两的 describe(origin_data) 数据处理 探索完数据后，接下来可以 填充缺失的数据 扔掉不用的数据 生成新的字段，或者优化数据 对 train.</div><div class="post-footer">
+        <a href="/posts/2022/07/titanic/">Read More</a><div class="post-tags">
+                <i class="fas fa-tags fa-fw" aria-hidden="true"></i>&nbsp;<a href="/tags/julia/">Julia</a>,&nbsp;<a href="/tags/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/">数据分析</a></div></div>
+</article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/posts/2022/07/flutter_database/">在 Flutter 中使用数据库</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Author</a></span>&nbsp;<span class="post-publish">published on <time datetime="2022-07-02">2022-07-02</time></span>&nbsp;<span class="post-category">included in <a href="/categories/flutter/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Flutter</a></span></div><div class="content">在 Flutter 中使用数据库 介绍 以 sqlite 为例，flutter 在使用数据库时需要引入 sqflite 依赖 dependencies: flutter: sdk: flutter sqflite: 导入 package:sqflite/sqflite.dart 与 package:sqflite/sql.dart 后，可以在 openDatabase 中的 onCreate 参数中设置初始化 openDatabase( &#39;file:///home/steiner/workspace/playground/todolist/todolist.db&#39;, onCreate: (database, version) async { await database.execute( &#39;create table if not exists TaskList(&#39; &#39;id integer primary key autoincrement,&#39; &#39;name text not null&#39; &#39;);&#39; ); }, version: 1 ); 其余数据库操作参考 中文文档 组件中使用数据库 由于在 Dart 中数据库的操作是异步的，返回值是 Future 类型，对 Future 使用 await 需要在异步函数中进行， 各个组件的 build 方法又是同步的，无法使用 Future 不过 flutter 提供了 FutureBuilder 组件，为其提供 futurue 选项来构造组件 FutureBuilder({ this.</div><div class="post-footer">
+        <a href="/posts/2022/07/flutter_database/">Read More</a><div class="post-tags">
+                <i class="fas fa-tags fa-fw" aria-hidden="true"></i>&nbsp;<a href="/tags/flutter%E6%95%B0%E6%8D%AE%E5%BA%93/">Flutter数据库</a></div></div>
+</article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/posts/2022/07/provider/">Flutter 中 provider 的使用</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Author</a></span>&nbsp;<span class="post-publish">published on <time datetime="2022-07-02">2022-07-02</time></span>&nbsp;<span class="post-category">included in <a href="/categories/flutter/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Flutter</a></span></div><div class="content">Provider 的引入 Provider 解决的是组件之间传递数据的问题 在 Vue 中，父组件通过 props 传递数据给子组件，子组件通过 $emit 通知父组件，然后 Vue 重新渲染 DOM 在 Vue 中，也可以使用 provider 和 inject 传递数据，不过不能很好的处理响应性 与 Vue 相同的是，Flutter 的 Provider 的引入解决了数据传递中嵌套组件过多的问题，若在当前节点没有找到 Provider 组件， 则会通过上下文寻找 Provider ，直至找到 不过想使用 Provider，父组件得暴露出一个对象用以交互， 而这个对象得继承自 ChangeNotifier 以 ChangeNotifierProvider为例 ChangeNotifierProvider( builder: (context) =&gt; ExposedObject, child: ... ) 子组件想使用其中的值，得通过 Consumer 组件或者 context.read&lt;ExposedType&gt; Consumer( create: (context, ExposedType expose, child) { // call expose } ) var expose = context.read&lt;ExposedType&gt;(); 注意 除了 context.read 外，还有 context.</div><div class="post-footer">
         <a href="/posts/2022/07/provider/">Read More</a><div class="post-tags">
@@ -91,7 +105,7 @@
                     </span>
                 </li></ul></div></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.101.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.108.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
                 </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
         </div>
     </footer></div>

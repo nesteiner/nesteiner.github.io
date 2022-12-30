@@ -10,7 +10,6 @@
 <meta property="og:url" content="http://example.org/posts/2022/07/android-theme/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-07-02T14:37:00+08:00" />
 <meta property="article:modified_time" content="2022-07-02T14:47:20+08:00" /><meta property="og:site_name" content="My cool site" />
-
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Android 样式与主题"/>
 <meta name="twitter:description" content="Android 样式与主题 设置样式 假设我们给一个按钮设置样式，在 res/values/style.xml 中 &lt;style name=&#34;BeatBoxButton&#34;&gt; &lt;item name=&#34;android:background&#34;&gt;@color/dark_blue&lt;/item&gt; &lt;/style&gt; 在需要设置的按钮布局中 &lt;Button style=&#34;@style/BeatBoxButton&#34;/&gt; 这样就完成了样式的设置 继承样式 样式支持继承，我们来继承上面的样式，创建一个新的样式 &lt;style name=&#34;BeatBoxButton.Strong&#34;&gt; &lt;item name=&#34;android:textStyle&#34;&gt;bold&lt;/item&gt; &lt;/style&gt; 也可以使用 &lt;style name=&#34;StrongBeatBoxButton&#34; parent=&#34;@style/BeatBoxButton&#34;&gt; &lt;item name=&#34;android:textStyle&#34;&gt;bold&lt;/item&gt; &lt;/style&gt; 使用主题 主题也是一种样式，他必须继承自 Theme 下的主题，这里定义一个 style &lt;style name=&#34;BoxButtonTheme&#34; parent=&#34;Theme.MaterialComponents.DayNight.DarkActionBar&#34;&gt; &lt;item name=&#34;android:background&#34;&gt;@color/black&lt;/item&gt; &lt;item name=&#34;android:textColor&#34;&gt;@color/white&lt;/item&gt; &lt;item name=&#34;android:textStyle&#34;&gt;bold&lt;/item&gt; &lt;/style&gt; 在 AndroidManifest.xml 中，在 activity 标签添加 &lt;activity android:name=&#34;.MainActivity&#34; android:theme=&#34;@style/BoxButtonTheme&#34;&gt; 这样以后，在 .MainActivity 下的所有控件都会使用 BoxButtontheme 主题中定义的样式 同理，在 application 标签添加主题，旗下的 activity 都会使用该主题 "/>
@@ -145,7 +144,7 @@
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.101.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.108.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
                 </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
         </div>
     </footer></div>

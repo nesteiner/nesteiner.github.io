@@ -10,7 +10,6 @@
 <meta property="og:url" content="http://example.org/posts/2022/07/android-work/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-07-02T14:29:00+08:00" />
 <meta property="article:modified_time" content="2022-07-02T14:44:50+08:00" /><meta property="og:site_name" content="My cool site" />
-
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Android 大作业报告"/>
 <meta name="twitter:description" content="项目介绍 这次的大作业用的 Flutter 框架，虽然构建 UI 界面很容易，难的是各个组件之间的通信，以及对 async/await 的异步操作 这个应用由于时间原因选择了 Flutter 来开发，只实现了登录界面，笔记界面，通知界面 由于还没有对应用进行优化，解耦，数据库的操作只有应用开启时的读取数据，删除，添加，修改操作都没有实现 功能结构 登录界面 这里只提供了登录界面，没有提供登录的相关操作，不过表单还是有的 笔记界面 笔记界面的每一项由一个 NoteCard 组件构成，只提供了编辑功能，路由切换后会重置 需要编辑时点击右边的三点按钮，扩展的编辑面板显示 编辑完成后，点击 Save 保存之后 消息界面 消息界面完全仿照 原来的应用，没有什么稀奇的 设计类 这里介绍下这个项目的结构，重点不是代码，从入口讲起 入口类 void main() =&gt; runApp(App()); class App extends StatelessWidget { final title = &#39;HomeApp&#39;; @override Widget build(BuildContext context) { // TODO: implement build return MaterialApp( title: title, home: Home(), ); } } 主页的设计 主页中由三个页面，需要引入一个 TabView 组件来进行路由切换 其中主页为 class Home extends StatefulWidget { @override HomeState createState() =&gt; HomeState(); } 主页的构建由另一个类 HomeState 来实现，在其中使用 TabView class HomeState extends State&lt;Home&gt; with SingleTickerProviderStateMixin{ late final TabController controller = TabController(length: 3, vsync: this); @override void dispose() { // TODO: implement dispose controller."/>
@@ -349,7 +348,7 @@
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.101.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.108.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
                 </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
         </div>
     </footer></div>

@@ -10,7 +10,6 @@
 <meta property="og:url" content="http://example.org/posts/2022/07/counter/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-07-02T01:42:00+08:00" />
 <meta property="article:modified_time" content="2022-07-02T14:43:02+08:00" /><meta property="og:site_name" content="My cool site" />
-
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Flutter Counter"/>
 <meta name="twitter:description" content="如何写一个 Flutter 应用 我们从一个计数器讲起， 首先建立 Counter 类 class Counter extends StatelessWidget { Counter(): super(); @override Widget build(BuildContext context) { // TODO: implement build return MaterialApp( title: &#39;Flutter Counter&#39;, theme: ThemeData(primarySwatch: Colors.blue), home: CounterHomePage(title: &#39;Flutter Counter Home Page&#39;), ); } } 在内部定义了构造方法，并且重构了 build 方法 其中 build 方法返回了一个 MaterialApp ，这就是 Flutter 提供的根组件，接下来只需提供一个 Widget ，将其赋值给 home 作为主页程序即可 再来看看赋值 home 的组件 CounterHomePage 是怎么写的 class CounterHomePage extends StatefulWidget { CounterHomePage({this.title = &#39;Hello World&#39;}): super(); String title; @override CounterHomePageState createState() =&gt; CounterHomePageState(); } 这个类继承自 StatefulWidget ，与 Counter 类继承的 StatelessWidget 成对比， Counter 是无状态的组件， CounterHomePage 是有状态的组件 其中重写了 StatefulWidget 的 createState 方法，返回值是用来管理其状态的 CounterHomePageState class CounterHomePageState extends State&lt;CounterHomePage&gt; { int count = 0; void incrementCount() { setState(() { count &#43;= 1; }); } @override Widget build(BuildContext context) { // TODO: implement build return Scaffold( appBar: AppBar(title: Text(widget."/>
@@ -234,7 +233,7 @@
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.101.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.108.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
                 </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
         </div>
     </footer></div>

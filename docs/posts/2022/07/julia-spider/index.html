@@ -10,7 +10,6 @@
 <meta property="og:url" content="http://example.org/posts/2022/07/julia-spider/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-07-23T17:58:00+08:00" />
 <meta property="article:modified_time" content="2022-07-23T18:04:18+08:00" /><meta property="og:site_name" content="My cool site" />
-
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Julia 简单爬虫编写"/>
 <meta name="twitter:description" content="项目介绍 我想试试 do everything in Julia，所以这里我简单写了一个爬虫，来爬取涩图 https://github.com/nesteiner/WebCrawl.jl 安装包 以下的包先安装好 HTTP 用于获取 HTTP Gumbo 用于解析 HTTP Cascadia 使用 CSS Selector 解析 HTTP URIs 用于uri 的解析 我们要爬取的 url 在这里 未成年人请在父母陪同下点击 工具函数 Julia 原有的 joinpath 不能满足我们的需求，比如我们要合并这两个 url https://example.com/hello /hello/1 合并后的结果应该是 https://example.com/hello/1 ，可 joinpath 合并后的结果是 /hello/1 这里我们使用 URIs 中的 resolvereference 来简单写一个 urljoin function urljoin(base::AbstractString, ref::AbstractString) return string( resolvereference(base, ref) ) end 整体流程 首先我们定义一个全局的 CONFIG 对象，来设置一些参数，比如 代理地址 请求头 Cookie User-Agent 我们再定义解析函数 parse ，由于处理方式与 scrapy 不太一样，没有必要将接口设计成一样 parse(startpage::String, dict::Dict{String, T}) where T &lt;: Any 由于出现分页，我们需要开始递归解析页面，我们从 startpage 开始解析， dict 存储一些额外参数，如 存储的文件夹位置 图片的名称 调用解析函数时，我们还会处理图片下载请求 pipeline(image::String, path::String) 他将从 image 下载资源，存储到 path 中 详细代码 参考 test/runtests."/>
@@ -219,7 +218,7 @@
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.101.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.108.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
                 </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
         </div>
     </footer></div>

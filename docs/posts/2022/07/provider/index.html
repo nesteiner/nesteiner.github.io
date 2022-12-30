@@ -10,7 +10,6 @@
 <meta property="og:url" content="http://example.org/posts/2022/07/provider/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-07-02T01:43:00+08:00" />
 <meta property="article:modified_time" content="2022-07-02T14:43:18+08:00" /><meta property="og:site_name" content="My cool site" />
-
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Flutter 中 provider 的使用"/>
 <meta name="twitter:description" content="Provider 的引入 Provider 解决的是组件之间传递数据的问题 在 Vue 中，父组件通过 props 传递数据给子组件，子组件通过 $emit 通知父组件，然后 Vue 重新渲染 DOM 在 Vue 中，也可以使用 provider 和 inject 传递数据，不过不能很好的处理响应性 与 Vue 相同的是，Flutter 的 Provider 的引入解决了数据传递中嵌套组件过多的问题，若在当前节点没有找到 Provider 组件， 则会通过上下文寻找 Provider ，直至找到 不过想使用 Provider，父组件得暴露出一个对象用以交互， 而这个对象得继承自 ChangeNotifier 以 ChangeNotifierProvider为例 ChangeNotifierProvider( builder: (context) =&gt; ExposedObject, child: ... ) 子组件想使用其中的值，得通过 Consumer 组件或者 context.read&lt;ExposedType&gt; Consumer( create: (context, ExposedType expose, child) { // call expose } ) var expose = context.read&lt;ExposedType&gt;(); 注意 除了 context.read 外，还有 context."/>
@@ -215,7 +214,7 @@ DOM <!-- raw HTML omitted -->
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.101.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.108.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
                 </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
         </div>
     </footer></div>
