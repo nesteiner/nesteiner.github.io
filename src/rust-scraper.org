@@ -1,0 +1,147 @@
+#+OPTIONS: author:nil ^:{}
+#+HUGO_BASE_DIR: ../../ChiniBlogs
+#+HUGO_SECTION: posts/2022/12
+#+HUGO_CUSTOM_FRONT_MATTER: :toc true
+#+HUGO_AUTO_SET_LASTMOD: t
+#+HUGO_DRAFT: false
+#+DATE: [2022-12-30 Fri 23:34]
+#+TITLE: Rust Scraper 简单使用
+#+HUGO_TAGS: 爬虫
+#+HUGO_CATEGORIES: Rust
+
+* Rust Scraper
+** 从一段代码开始看起
+#+begin_src rust
+  fn main() {
+      let response = reqwest::blocking::get(
+          "https://meitulu.me/item/4756.html"
+      )
+          .unwrap()
+          .text()
+          .unwrap();
+
+      let document = scraper::Html::parse_document(&response);
+
+      let image_selector = scraper::Selector::parse("div.mb-4.container-inner-fix-m img").unwrap();
+      let images = document.select(&image_selector);
+      images.for_each(|x| println!("{:?}", x.value().attr("src")));
+  }
+
+#+end_src
+
+1. 取得 *html* 文本
+2. 获取 *document* 对象
+3. 设置 *selector*
+4. 使用 *document* 解析 *selector* , 得到 *ElementRef* 结构体
+5. 对 *ElementRef* 进行操作
+
+其中
+=document.select= 返回一个数组
+
+** ElementRef
+*ElementRef* 又一个 =value= 方法
+#+begin_src rust
+  pub fn value(&self) -> &'a Element
+#+end_src
+而 *Element* 又是
+#+begin_src rust
+  pub struct Element {
+      pub name: QualName,
+      pub id: Option<LocalName>,
+      pub classes: HashSet<LocalName>,
+      pub attrs: Attributes,
+  }
+#+end_src
+他有方法
+#+begin_src rust
+  pub fn attr(&self, attr: &str) -> Option<&str>
+#+end_src
+可以获取节点的属性值
+当然，你如果想获取节点内部的文字信息，可以对 *ElementRef* 使用
+#+begin_src rust
+  pub fn inner_html(&self) -> String
+#+end_src
+
+** 美女爬虫例子
+#+begin_src rust
+  use std::{fs::File, io::Write};
+  use std::path::{Path, PathBuf};
+  use url::Url;
+
+  const BASE_IMAGE_URL: &str = "https://meitulu.me";
+  const BASE_ITEM_URL: &str = "https://meitulu.me/item/";
+
+  fn main() {
+      parse("https://meitulu.me/item/5651.html".to_string());
+  }
+
+
+  fn parse(start_url: String) {
+      let allpages = eachpage(start_url.clone());
+      // let path = "/home/steiner/Downloads/evelyn/[MFStar模范学院] VOL.033 Evelyn艾莉 - 三亚旅拍写真套图/";
+      let path = Path::new("/home/steiner/Downloads/evelyn/[MFStar模范学院] VOL.033 Evelyn艾莉 - 三亚旅拍写真套图/");
+      if !Path::new(path).exists() {
+          std::fs::create_dir_all(path).unwrap();
+      }
+
+      let mut count = 1;
+      for page in allpages {
+          let images = parse_part(page);
+          for src in images {
+              // download(src.clone(), format!("{}{}.jpg", path, count));
+              download(src.clone(), &path.join(count.to_string()));
+              count += 1;
+          }
+      }
+  }
+
+  fn parse_part(start_url: String) -> Vec<String> {
+      let response = reqwest::blocking::get(
+          start_url
+      ).unwrap().text().unwrap();
+
+      let document = scraper::Html::parse_document(&response);
+      let image_selector = scraper::Selector::parse("div.mb-4.container-inner-fix-m img").unwrap();
+      let images = document.select(&image_selector);
+      let url = Url::parse(BASE_IMAGE_URL).unwrap();
+      images.map(|x| url.join(x.value().attr("src").unwrap()).unwrap().as_str().to_string()).collect()
+  }
+
+  fn download(url: String, path: &PathBuf) {
+      println!("downloading {} to {}", url, path.display());
+      let bytes = reqwest::blocking::get(url).unwrap().bytes().unwrap();
+
+      match File::create(path) {
+          Ok(mut file) => {
+              if let Err(e) = file.write_all(&bytes[..]) {
+                  panic!("error writing for {}", e);
+              }
+          },
+          Err(e) => {
+              panic!("cannot open file for {}", e);
+          }
+      }
+  }
+
+  fn eachpage(start_url: String) -> Vec<String> {
+      let mut result = vec![start_url.clone()];
+      _eachpage(start_url.clone(), &mut result);
+      return result;
+  }
+
+  fn _eachpage(start_url: String, result: &mut Vec<String>) {
+      let response = reqwest::blocking::get(start_url).unwrap().text().unwrap();
+      let document = scraper::Html::parse_document(&response);
+      let selector = scraper::Selector::parse("a.page-link").unwrap();
+      let nextpage = document.select(&selector).last().unwrap();
+      let url = Url::parse(BASE_ITEM_URL).unwrap();
+
+      if let Some(href) = nextpage.value().attr("href") {
+          let nextpage = url.join(href).unwrap().as_str().to_string();
+          result.push(nextpage.clone());
+          _eachpage(nextpage.clone(), result);
+      } else {
+          return;
+      }
+  }
+#+end_src
