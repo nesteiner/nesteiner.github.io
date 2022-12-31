@@ -3,9 +3,17 @@
         <title>My New Hugo Site</title>
         <link>http://example.org/</link>
         <description>This is my cool site</description>
-        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Fri, 30 Dec 2022 17:59:00 &#43;0800</lastBuildDate>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Fri, 30 Dec 2022 23:34:00 &#43;0800</lastBuildDate>
             <atom:link href="http://example.org/index.xml" rel="self" type="application/rss+xml" />
         <item>
+    <title>Rust Scraper 简单使用</title>
+    <link>http://example.org/posts/2022/12/rust-scraper/</link>
+    <pubDate>Fri, 30 Dec 2022 23:34:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/posts/2022/12/rust-scraper/</guid>
+    <description><![CDATA[Rust Scraper 从一段代码开始看起 fn main() { let response = reqwest::blocking::get( &#34;https://meitulu.me/item/4756.html&#34; ) .unwrap() .text() .unwrap(); let document = scraper::Html::parse_document(&amp;response); let image_selector = scraper::Selector::parse(&#34;div.mb-4.container-inner-fix-m img&#34;).unwrap(); let images = document.select(&amp;image_selector); images.for_each(|x| println!(&#34;{:?}&#34;, x.value().attr(&#34;src&#34;))); } 取得 html 文本 获取 document 对象 设置 selector 使用 document 解析 selector , 得到 ElementRef 结构体 对 ElementRef 进行操作 其中 document.select 返回一个数组 ElementRef ElementRef 又一个 value 方法 pub fn value(&amp;self) -&gt; &amp;&#39;a Element 而 Element 又是 pub struct Element { pub name: QualName, pub id: Option&lt;LocalName&gt;, pub classes: HashSet&lt;LocalName&gt;, pub attrs: Attributes, } 他有方法 pub fn attr(&amp;self, attr: &amp;str) -&gt; Option&lt;&amp;str&gt; 可以获取节点的属性值 当然，你如果想获取节点内部的文字信息，可以对 ElementRef 使用 pub fn inner_html(&amp;self) -&gt; String 美女爬虫例子 use std::{fs::File, io::Write}; use std::path::{Path, PathBuf}; use url::Url; const BASE_IMAGE_URL: &amp;str = &#34;https://meitulu.]]></description>
+</item>
+<item>
     <title>Serde Json 简单使用</title>
     <link>http://example.org/posts/2022/12/rust-serde-json/</link>
     <pubDate>Fri, 30 Dec 2022 17:59:00 &#43;0800</pubDate>
@@ -76,14 +84,6 @@
     <author>Author</author>
     <guid>http://example.org/posts/2022/07/android-databinding/</guid>
     <description><![CDATA[Android 数据绑定简单使用 这次我们要替代获取控件的方法，以前是使用 findViewById 一个一个拿到控件 现在我们需要直接在 layout 中注入数据对象，我们还要直接通过 id 访问到控件 数据绑定 启用数据绑定 在 build.gradle 中添加如下代码 android { dataBinding { enable = true } } 即可开启数据绑定 修改布局文件 先看 Vue 中的数据绑定是怎样操作的 &lt;template&gt; &lt;div class=&#34;container&#34;&gt; &lt;span&gt; {{data}} &lt;/span&gt; &lt;/div&gt; &lt;/template&gt; &lt;script lang=&#34;ts&#34; setup&gt; const data = &#39;hello&#39; &lt;/script&gt; 在 XML 中 layout 类似 template 使用 data 标签声明数据 假设有数据类型 User public class User { public String name; public String password; public User(String name, String password) { this.]]></description>
-</item>
-<item>
-    <title>Android 通信简单应用</title>
-    <link>http://example.org/posts/2022/07/android-communication/</link>
-    <pubDate>Sat, 02 Jul 2022 14:39:00 &#43;0800</pubDate>
-    <author>Author</author>
-    <guid>http://example.org/posts/2022/07/android-communication/</guid>
-    <description><![CDATA[Activity 之间通信 从一个 Activity 跳转到另一个 Activity 时，可以携带一些数据进去，这个就是 Activity 之间的通信 跳转到 Activity 之后可以响应通信，不过需要发起端调用 startActivityForResult ，接收端调用 setResult 这种通信方法我不能类比到组件之间的通信，组件之间通信都是单向数据流，这个是 双向数据流 原来的通信方法 通信发起端 跳转需要借助 Intent 对象，指定来源的上下文和目标的类，调用 startActivity 即可 Intent intent = new Intent(this, TargetClass.class); startActivity(intent) 如果需要携带数据，创建一个 Bundle 对象绑定到 Intent 即可 Intent intent = new Intent(this, TargetClass.class); Bundle bundle = new Bundle(); bundle.putString(&#34;message&#34;, &#34;Hello World&#34;); intent.putExtras(bundle); startActivity(intent); 其实也可以不用 Bundle ，直接给 Intent 来添加 通信接收端 跳转到接收端后，使用 getIntent 来获取对端的 Intent 对象，并查看绑定的数据 Intent intent = getIntent(); Bundle bundle = intent.]]></description>
 </item>
 </channel>
 </rss>

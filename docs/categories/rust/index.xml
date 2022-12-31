@@ -3,7 +3,15 @@
         <title>Rust - Category - My New Hugo Site</title>
         <link>http://example.org/categories/rust/</link>
         <description>Rust - Category - My New Hugo Site</description>
-        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Fri, 30 Dec 2022 17:59:00 &#43;0800</lastBuildDate><atom:link href="http://example.org/categories/rust/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Fri, 30 Dec 2022 23:34:00 &#43;0800</lastBuildDate><atom:link href="http://example.org/categories/rust/" rel="self" type="application/rss+xml" /><item>
+    <title>Rust Scraper 简单使用</title>
+    <link>http://example.org/posts/2022/12/rust-scraper/</link>
+    <pubDate>Fri, 30 Dec 2022 23:34:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/posts/2022/12/rust-scraper/</guid>
+    <description><![CDATA[Rust Scraper 从一段代码开始看起 fn main() { let response = reqwest::blocking::get( &#34;https://meitulu.me/item/4756.html&#34; ) .unwrap() .text() .unwrap(); let document = scraper::Html::parse_document(&amp;response); let image_selector = scraper::Selector::parse(&#34;div.mb-4.container-inner-fix-m img&#34;).unwrap(); let images = document.select(&amp;image_selector); images.for_each(|x| println!(&#34;{:?}&#34;, x.value().attr(&#34;src&#34;))); } 取得 html 文本 获取 document 对象 设置 selector 使用 document 解析 selector , 得到 ElementRef 结构体 对 ElementRef 进行操作 其中 document.select 返回一个数组 ElementRef ElementRef 又一个 value 方法 pub fn value(&amp;self) -&gt; &amp;&#39;a Element 而 Element 又是 pub struct Element { pub name: QualName, pub id: Option&lt;LocalName&gt;, pub classes: HashSet&lt;LocalName&gt;, pub attrs: Attributes, } 他有方法 pub fn attr(&amp;self, attr: &amp;str) -&gt; Option&lt;&amp;str&gt; 可以获取节点的属性值 当然，你如果想获取节点内部的文字信息，可以对 ElementRef 使用 pub fn inner_html(&amp;self) -&gt; String 美女爬虫例子 use std::{fs::File, io::Write}; use std::path::{Path, PathBuf}; use url::Url; const BASE_IMAGE_URL: &amp;str = &#34;https://meitulu.]]></description>
+</item>
+<item>
     <title>Serde Json 简单使用</title>
     <link>http://example.org/posts/2022/12/rust-serde-json/</link>
     <pubDate>Fri, 30 Dec 2022 17:59:00 &#43;0800</pubDate>
