@@ -3,7 +3,15 @@
         <title>Tags - Tag - My New Hugo Site</title>
         <link>http://example.org/tags/</link>
         <description>Tags - Tag - My New Hugo Site</description>
-        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Fri, 30 Dec 2022 23:34:00 &#43;0800</lastBuildDate><atom:link href="http://example.org/tags/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sun, 01 Jan 2023 12:28:00 &#43;0800</lastBuildDate><atom:link href="http://example.org/tags/" rel="self" type="application/rss+xml" /><item>
+    <title>Mongodb</title>
+    <link>http://example.org/tags/mongodb/</link>
+    <pubDate>Sun, 01 Jan 2023 12:28:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/tags/mongodb/</guid>
+    <description><![CDATA[]]></description>
+</item>
+<item>
     <title>爬虫</title>
     <link>http://example.org/tags/%E7%88%AC%E8%99%AB/</link>
     <pubDate>Fri, 30 Dec 2022 23:34:00 &#43;0800</pubDate>
@@ -73,14 +81,6 @@
     <pubDate>Sat, 02 Jul 2022 14:38:00 &#43;0800</pubDate>
     <author>Author</author>
     <guid>http://example.org/tags/room/</guid>
-    <description><![CDATA[]]></description>
-</item>
-<item>
-    <title>Toolbar</title>
-    <link>http://example.org/tags/toolbar/</link>
-    <pubDate>Sat, 02 Jul 2022 14:38:00 &#43;0800</pubDate>
-    <author>Author</author>
-    <guid>http://example.org/tags/toolbar/</guid>
     <description><![CDATA[]]></description>
 </item>
 </channel>

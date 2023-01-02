@@ -3,10 +3,10 @@
         <title>Categories - Category - My New Hugo Site</title>
         <link>http://example.org/categories/</link>
         <description>Categories - Category - My New Hugo Site</description>
-        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Fri, 30 Dec 2022 23:34:00 &#43;0800</lastBuildDate><atom:link href="http://example.org/categories/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sun, 01 Jan 2023 12:28:00 &#43;0800</lastBuildDate><atom:link href="http://example.org/categories/" rel="self" type="application/rss+xml" /><item>
     <title>Rust</title>
     <link>http://example.org/categories/rust/</link>
-    <pubDate>Fri, 30 Dec 2022 23:34:00 &#43;0800</pubDate>
+    <pubDate>Sun, 01 Jan 2023 12:28:00 &#43;0800</pubDate>
     <author>Author</author>
     <guid>http://example.org/categories/rust/</guid>
     <description><![CDATA[]]></description>

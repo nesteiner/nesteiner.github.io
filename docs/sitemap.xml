@@ -2,12 +2,14 @@
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
     ><url>
-            <loc>http://example.org/categories/</loc><lastmod>2022-12-31T18:15:21&#43;08:00</lastmod></url><url>
-            <loc>http://example.org/</loc><lastmod>2022-12-31T18:15:21&#43;08:00</lastmod></url><url>
-            <loc>http://example.org/posts/</loc><lastmod>2022-12-31T18:15:21&#43;08:00</lastmod></url><url>
-            <loc>http://example.org/categories/rust/</loc><lastmod>2022-12-31T18:15:21&#43;08:00</lastmod></url><url>
+            <loc>http://example.org/categories/</loc><lastmod>2023-01-02T15:00:10&#43;08:00</lastmod></url><url>
+            <loc>http://example.org/tags/mongodb/</loc><lastmod>2023-01-02T15:00:10&#43;08:00</lastmod></url><url>
+            <loc>http://example.org/</loc><lastmod>2023-01-02T15:00:10&#43;08:00</lastmod></url><url>
+            <loc>http://example.org/posts/</loc><lastmod>2023-01-02T15:00:10&#43;08:00</lastmod></url><url>
+            <loc>http://example.org/categories/rust/</loc><lastmod>2023-01-02T15:00:10&#43;08:00</lastmod></url><url>
+            <loc>http://example.org/posts/2023/01/rust-mongodb/</loc><lastmod>2023-01-02T15:00:10&#43;08:00</lastmod></url><url>
+            <loc>http://example.org/tags/</loc><lastmod>2023-01-02T15:00:10&#43;08:00</lastmod></url><url>
             <loc>http://example.org/posts/2022/12/rust-scraper/</loc><lastmod>2022-12-31T18:15:21&#43;08:00</lastmod></url><url>
-            <loc>http://example.org/tags/</loc><lastmod>2022-12-31T18:15:21&#43;08:00</lastmod></url><url>
             <loc>http://example.org/tags/%E7%88%AC%E8%99%AB/</loc><lastmod>2022-12-31T18:15:21&#43;08:00</lastmod></url><url>
             <loc>http://example.org/posts/2022/12/rust-serde-json/</loc><lastmod>2022-12-30T19:36:07&#43;08:00</lastmod></url><url>
             <loc>http://example.org/tags/%E5%BA%8F%E5%88%97%E5%8C%96/</loc><lastmod>2022-12-30T19:36:07&#43;08:00</lastmod></url><url>

@@ -3,7 +3,15 @@
         <title>Rust - Category - My New Hugo Site</title>
         <link>http://example.org/categories/rust/</link>
         <description>Rust - Category - My New Hugo Site</description>
-        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Fri, 30 Dec 2022 23:34:00 &#43;0800</lastBuildDate><atom:link href="http://example.org/categories/rust/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sun, 01 Jan 2023 12:28:00 &#43;0800</lastBuildDate><atom:link href="http://example.org/categories/rust/" rel="self" type="application/rss+xml" /><item>
+    <title>Rust Mongodb 简单使用</title>
+    <link>http://example.org/posts/2023/01/rust-mongodb/</link>
+    <pubDate>Sun, 01 Jan 2023 12:28:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/posts/2023/01/rust-mongodb/</guid>
+    <description><![CDATA[Rust Mongodb 开启同步和异步 同步 mongodb = {version = &#34;2.3.1&#34;, features = [&#34;tokio-sync&#34;]} use mongodb::sync::{Client, Collection}; 异步 mongodb = {version = &#34;2.3.1&#34;} use mongodb::{Client, Collection}; 连接 Mongodb impl Client { pub fn with_uri_str(url: impl AsRef&lt;str&gt;) -&gt; Result&lt;Self&gt; } impl Client { pub async fn with_uri_str(url: impl AsRef&lt;str&gt;) -&gt; Result&lt;Self&gt; } 连接到 database impl Client { pub fn database(&amp;self, name: &amp;str) -&gt; Database } 连接到 collection impl Database { pub fn collection&lt;T&gt;(&amp;self, name: &amp;str) -&gt; Collection&lt;T&gt; } collection 操作 异步和同步代码就差一个 await 操作，这里以同步代码为例 find 方法定义]]></description>
+</item>
+<item>
     <title>Rust Scraper 简单使用</title>
     <link>http://example.org/posts/2022/12/rust-scraper/</link>
     <pubDate>Fri, 30 Dec 2022 23:34:00 &#43;0800</pubDate>
