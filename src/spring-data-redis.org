@@ -1,0 +1,63 @@
+#+OPTIONS: author:nil ^:{}
+#+HUGO_BASE_DIR: ../../ChiniBlogs
+#+HUGO_SECTION: posts/2023/01
+#+HUGO_CUSTOM_FRONT_MATTER: :toc true
+#+HUGO_AUTO_SET_LASTMOD: t
+#+HUGO_DRAFT: false
+#+DATE: [2023-01-05 Thu 17:28]
+#+TITLE: SprintBoot with Redis 简单使用
+#+HUGO_TAGS: Redis
+#+HUGO_CATEGORIES: SpringBoot
+
+
+* SprintBoot with Redis 简单使用
+** 定义 redisTemplate
+#+begin_src kotlin
+  @Configuration
+  class RedisConfigure {
+      @Bean
+      fun redisTemplate(connectionFactory: LettuceConnectionFactory): RedisTemplate<String, User> {
+          val redisTemplate = RedisTemplate<String, User>();
+          redisTemplate.keySerializer = StringRedisSerializer()
+          redisTemplate.valueSerializer = GenericJackson2JsonRedisSerializer()
+          redisTemplate.setConnectionFactory(connectionFactory)
+          return redisTemplate
+      }
+  }
+#+end_src
+** 定义数据类型
+#+begin_src kotlin
+  class User(
+      val id: Long,
+      val name: String,
+      val sex: String,
+  ) {
+      constructor() : this(0L, "", "man")
+  }
+#+end_src
+** 操作
+#+begin_src kotlin
+  @SpringBootTest
+  class SpringbootRedisApplicationTests {
+      @Autowired
+      lateinit var redisTemplate: RedisTemplate<String, User>
+
+      @Test
+      fun testSerializable() {
+          val user = User(1L, "hello", "man")
+          val ops = redisTemplate.opsForValue()
+          val commands = redisTemplate.connectionFactory?.connection?.serverCommands()
+          commands?.flushDb()
+          ops.set("user", user)
+          val otherUser = ops.get("user")
+          println(otherUser)
+      }
+
+      @Test
+      fun testOtherOperations() {
+          val ops = redisTemplate.opsForList();
+          ops.leftPush("users", User(1L, "hello", "man"))
+          ops.leftPush("users", User(2L, "world", "female"))
+      }
+  }
+#+end_src

@@ -1,0 +1,93 @@
+#+OPTIONS: author:nil ^:{}
+#+HUGO_BASE_DIR: ../../ChiniBlogs
+#+HUGO_SECTION: posts/2023/02
+#+HUGO_CUSTOM_FRONT_MATTER: :toc true
+#+HUGO_AUTO_SET_LASTMOD: t
+#+HUGO_DRAFT: false
+#+DATE: [2023-02-02 Thu 12:56]
+#+TITLE: 如何创建一个Vue组件库
+#+HUGO_TAGS: Vue
+#+HUGO_CATEGORIES: Vue
+
+
+* 创建项目
+#+begin_src bash
+  yarn create vite scratch-components --template vue-ts
+#+end_src
+* 引入插件 和 一些必要依赖
+这个插件的具体功能可以看看[[https://github.com/qmhc/vite-plugin-dts/blob/main/README.zh-CN.md][文档]]
+#+begin_src bash
+  yarn add vite-plugin-dts --dev
+#+end_src
+
+依赖
+#+begin_src bash
+  yarn add path --dev
+  yarn add @types/node --dev
+#+end_src
+* 配置 vite.config.ts
+#+begin_src typescript
+  import { defineConfig } from 'vite'
+  import vue from '@vitejs/plugin-vue'
+  import dts from "vite-plugin-dts"
+  import {resolve} from "path"
+
+  // https://vitejs.dev/config/
+  export default defineConfig({
+    plugins: [vue(), dts()],
+
+    resolve: {
+      alias: {
+        "@": resolve(__dirname, "src")
+      }
+    },
+
+    build: {
+      lib: {
+        entry: "src/main.ts",
+        name: "scratch-components"
+      },
+
+      rollupOptions: {
+        external: ["vue"],
+        output: {
+          globals: {
+            vue: "Vue"
+          }
+        }
+      },
+
+      outDir: "lib"
+    }
+  })
+
+#+end_src
+
+这里
+- =plugins= 安装插件
+- =build.lib= 指定编译入口和输出文件名
+- =rollupOptions= 制定不打包 =vue=
+- =outDir= 指定输出文件夹
+* 配置 package.json
+#+begin_src json
+  "main": "lib/scratch-components.js",
+  "types": "lib/main.d.ts"
+#+end_src
+
+在 =package.json= 中配置包的入口和类型声明
+* build 项目
+#+begin_src bash
+  yarn build
+#+end_src
+* 导入组件库
+创建一个项目导入这个库，不过在导入之前，为了防止出现组件库和这个项目同时有 =vue= 包的情况，在这个项目的 =vite.config.ts= 中，
+需要配置
+#+begin_src typescript
+  export default defineConfig({
+    resolve: {
+      dedupe: ["vue"]
+    }
+  })
+#+end_src
+
+接下来就可以正常使用这个库了

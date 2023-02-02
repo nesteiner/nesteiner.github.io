@@ -1,0 +1,74 @@
+#+OPTIONS: author:nil ^:{}
+#+HUGO_BASE_DIR: ../../ChiniBlogs
+#+HUGO_SECTION: posts/2023/01
+#+HUGO_CUSTOM_FRONT_MATTER: :toc true
+#+HUGO_AUTO_SET_LASTMOD: t
+#+HUGO_DRAFT: false
+#+DATE: [2023-01-05 Thu 00:19]
+#+TITLE: SpringBoot with MongodbRepository
+#+HUGO_TAGS: Mongodb
+#+HUGO_CATEGORIES: SpringBoot
+* Spring with MongodbRepository 简单使用
+这篇笔记参考自 [[https://chikuwa-tech-study.blogspot.com/2021/05/spring-boot-mongorepository.html][这篇文章]]
+** 定义数据类型
+#+begin_src kotlin
+  class Product(
+      val id: String,
+      val name: String,
+      val price: Int
+  )
+#+end_src
+
+
+#+DOWNLOADED: screenshot @ 2023-01-05 16:41:37
+[[file:images/Spring_with_MongodbRepository_简单使用/2023-01-05_16-41-37_screenshot.png]]
+
+我们可以
+1. 手动定义对象存储的集合位置
+   #+begin_src kotlin
+     @Document(collection = "products")
+     class Product(
+    
+     )
+   #+end_src
+2. 手动定义对象的主键
+   #+begin_src kotlin
+     class Product(
+         @MongoId
+         val id: String
+     )
+   #+end_src
+** 定义 Repository
+#+begin_src kotlin
+  @Repository
+  interface ProductRepository: MongoRepository<Product, String> {
+      fun findAllByNameLike(name: String): List<Product>
+      fun findById(id: String): Product?
+      fun existsByName(name: String): Bool
+  }
+#+end_src
+
+继承自 =MongoRepository= 的接口类与 =JPA= 相似，定义好方法即可， CRUD 方法也与之类似
+** 排序
+#+begin_src kotlin
+  @Repository
+  interface ProductRepository: MongoRepository<Product, String> {
+      fun findAllByNameLike(name: String, sort: Sort): List<Product>
+  }
+#+end_src
+
+#+begin_src kotlin
+  val sort = Sort.by(Sort.Direction.ASC, "price")
+  val sort = Sort.by(
+      Sort.Order.asc("price"),
+      Sort.Order.desc("name")
+  )
+#+end_src
+** 原生查询语法
+#+begin_src kotlin
+  @Query("{'name': {'$eq': '?0'}}")
+  fun f1(name: String): Product?
+
+  @Query("{'name': {\$regex: '?0'}}")
+  fun f2(name: String): Product?
+#+end_src
