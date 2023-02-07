@@ -1,0 +1,23 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>笔记 - Tag - My New Hugo Site</title>
+        <link>http://example.org/tags/%E7%AC%94%E8%AE%B0/</link>
+        <description>笔记 - Tag - My New Hugo Site</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Mon, 06 Feb 2023 20:05:00 &#43;0800</lastBuildDate><atom:link href="http://example.org/tags/%E7%AC%94%E8%AE%B0/" rel="self" type="application/rss+xml" /><item>
+    <title>创建一个时钟组件</title>
+    <link>http://example.org/posts/2023/02/flutter-clock/</link>
+    <pubDate>Mon, 06 Feb 2023 20:05:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/posts/2023/02/flutter-clock/</guid>
+    <description><![CDATA[指针绘制 给定时，分，秒，绘制出指针在表盘上的位置 时针 给定 时，分 class HourHand extends CustomPainter { int hours; int minutes; final Paint painter; // 1 HourHand({ required this.hours, required this.minutes }): painter = Paint() ..color = Colors.black ..strokeWidth = 20 ..style = PaintingStyle.stroke; @override void paint(Canvas canvas, Size size) { final radius = size.width / 2; // 2 canvas.save(); // 3 canvas.translate(radius, radius); // 4 canvas.rotate(hours &gt;= 12 ? 2 * pi * ((hours - 12) / 12 + minutes / 720) : 2 * pi * (hours / 12 + minutes / 720)); // 5 Path path = Path(); path.]]></description>
+</item>
+<item>
+    <title>[Note] Spring Data JPA 笔记</title>
+    <link>http://example.org/posts/2023/01/note-spring-data-jpa/</link>
+    <pubDate>Mon, 23 Jan 2023 19:30:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/posts/2023/01/note-spring-data-jpa/</guid>
+    <description><![CDATA[引入依赖 简单查询 预生成方法 自定义简单查询 属性查询 组合查询 自定义SQL查询 HQL SQL 修改和删除 @Modifying @Transactional CANCEL 已命名查询 定义命名查询 调用命名查询 运行验证 复杂查询 分页查询 pageable 排序和限制 动态条件查询 @Test fun testSpecification() { userRepository.deleteAll() val users = listOf&lt;User&gt;( User(null, &#34;hello&#34;, 1), User(null, &#34;world&#34;, 2), User(null, &#34;holy&#34;, 3), User(null, &#34;shit&#34;, 4) ) userRepository.saveAll(users) val matchUsers = userRepository.findAll { root, query, criteriaBuilder -&gt; val p1 = criteriaBuilder.like(root.get(&#34;name&#34;), &#34;w%&#34;) val p2 = criteriaBuilder.greaterThan(root.get(&#34;age&#34;), 0) criteriaBuilder.and(p1, p2) } matchUsers.forEach { println(it.]]></description>
+</item>
+</channel>
+</rss>

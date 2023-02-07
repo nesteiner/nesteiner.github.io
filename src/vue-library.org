@@ -90,4 +90,8 @@
   })
 #+end_src
 
-接下来就可以正常使用这个库了
+还有一点，需要引入这个库的 css 文件
+在 =main.ts= 中
+#+begin_src typescript
+  import "scratch-components/lib/style.css"
+#+end_src

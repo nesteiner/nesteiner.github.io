@@ -3,7 +3,15 @@
         <title>Mongodb - Tag - My New Hugo Site</title>
         <link>http://example.org/tags/mongodb/</link>
         <description>Mongodb - Tag - My New Hugo Site</description>
-        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sun, 01 Jan 2023 12:28:00 &#43;0800</lastBuildDate><atom:link href="http://example.org/tags/mongodb/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Thu, 05 Jan 2023 00:19:00 &#43;0800</lastBuildDate><atom:link href="http://example.org/tags/mongodb/" rel="self" type="application/rss+xml" /><item>
+    <title>SpringBoot with MongodbRepository</title>
+    <link>http://example.org/posts/2023/01/spring-data-mongodb/</link>
+    <pubDate>Thu, 05 Jan 2023 00:19:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/posts/2023/01/spring-data-mongodb/</guid>
+    <description><![CDATA[Spring with MongodbRepository 简单使用 这篇笔记参考自 这篇文章 定义数据类型 class Product( val id: String, val name: String, val price: Int ) 我们可以 手动定义对象存储的集合位置 @Document(collection = &#34;products&#34;) class Product( ) 手动定义对象的主键 class Product( @MongoId val id: String ) 定义 Repository @Repository interface ProductRepository: MongoRepository&lt;Product, String&gt; { fun findAllByNameLike(name: String): List&lt;Product&gt; fun findById(id: String): Product? fun existsByName(name: String): Bool } 继承自 MongoRepository 的接口类与 JPA 相似，定义好方法即可， CRUD 方法也与之类似 排序 @Repository interface ProductRepository: MongoRepository&lt;Product, String&gt; { fun findAllByNameLike(name: String, sort: Sort): List&lt;Product&gt; } val sort = Sort.]]></description>
+</item>
+<item>
     <title>Rust Mongodb 简单使用</title>
     <link>http://example.org/posts/2023/01/rust-mongodb/</link>
     <pubDate>Sun, 01 Jan 2023 12:28:00 &#43;0800</pubDate>

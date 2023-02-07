@@ -1,0 +1,15 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Spring - Category - My New Hugo Site</title>
+        <link>http://example.org/categories/spring/</link>
+        <description>Spring - Category - My New Hugo Site</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Mon, 23 Jan 2023 19:30:00 &#43;0800</lastBuildDate><atom:link href="http://example.org/categories/spring/" rel="self" type="application/rss+xml" /><item>
+    <title>[Note] Spring Data JPA 笔记</title>
+    <link>http://example.org/posts/2023/01/note-spring-data-jpa/</link>
+    <pubDate>Mon, 23 Jan 2023 19:30:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/posts/2023/01/note-spring-data-jpa/</guid>
+    <description><![CDATA[引入依赖 简单查询 预生成方法 自定义简单查询 属性查询 组合查询 自定义SQL查询 HQL SQL 修改和删除 @Modifying @Transactional CANCEL 已命名查询 定义命名查询 调用命名查询 运行验证 复杂查询 分页查询 pageable 排序和限制 动态条件查询 @Test fun testSpecification() { userRepository.deleteAll() val users = listOf&lt;User&gt;( User(null, &#34;hello&#34;, 1), User(null, &#34;world&#34;, 2), User(null, &#34;holy&#34;, 3), User(null, &#34;shit&#34;, 4) ) userRepository.saveAll(users) val matchUsers = userRepository.findAll { root, query, criteriaBuilder -&gt; val p1 = criteriaBuilder.like(root.get(&#34;name&#34;), &#34;w%&#34;) val p2 = criteriaBuilder.greaterThan(root.get(&#34;age&#34;), 0) criteriaBuilder.and(p1, p2) } matchUsers.forEach { println(it.]]></description>
+</item>
+</channel>
+</rss>

@@ -3,7 +3,15 @@
         <title>Flutter - Tag - My New Hugo Site</title>
         <link>http://example.org/tags/flutter/</link>
         <description>Flutter - Tag - My New Hugo Site</description>
-        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sat, 02 Jul 2022 14:29:00 &#43;0800</lastBuildDate><atom:link href="http://example.org/tags/flutter/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sun, 08 Jan 2023 15:09:00 &#43;0800</lastBuildDate><atom:link href="http://example.org/tags/flutter/" rel="self" type="application/rss+xml" /><item>
+    <title>Flutter 局部更新</title>
+    <link>http://example.org/posts/2023/01/flutter-partial-update/</link>
+    <pubDate>Sun, 08 Jan 2023 15:09:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/posts/2023/01/flutter-partial-update/</guid>
+    <description><![CDATA[Flutter 局部更新 StatefulBuilder Widget build(BuildContext context) { return Column( children: [ buildCheapUpdateWidget(context), buildExpensiveUpdateWidget(context) ] ) } 在上述代码中，如果调用了 setState 更新状态，整个组件会重新 build 一遍，届时 buildExpensiveUpdateWidget 会 重新调用一遍，这是我们引入局部更新组建 StatefulBuilder( builder: (context, setState) =&gt; Widget ) 更新时用 builder 中的 setState 即可 正是有了局部更新，我们可以解决在 Dialog 中 setState 不起作用的问题，详情看 这篇文章 Selector Selector 是另一种状态管理方式 Provider 的局部更新方法 在使用 Consumer 的时候，如果 ChangeNotifier 调用了 notifyListeners ，所有监听的 Consumer 都会更新， 但是没那个必要，所以我们引入局部更新来避免不必要的更新 Selector&lt;State, T&gt;( selector: (context, state) =&gt; state.value, builder: (context, value, child) =&gt; Widget ) 注意 目前的理解，需要搭配 context.]]></description>
+</item>
+<item>
     <title>Android 大作业报告</title>
     <link>http://example.org/posts/2022/07/android-work/</link>
     <pubDate>Sat, 02 Jul 2022 14:29:00 &#43;0800</pubDate>

@@ -1,0 +1,23 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>SpringBoot - Category - My New Hugo Site</title>
+        <link>http://example.org/categories/springboot/</link>
+        <description>SpringBoot - Category - My New Hugo Site</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Thu, 05 Jan 2023 17:28:00 &#43;0800</lastBuildDate><atom:link href="http://example.org/categories/springboot/" rel="self" type="application/rss+xml" /><item>
+    <title>SprintBoot with Redis 简单使用</title>
+    <link>http://example.org/posts/2023/01/spring-data-redis/</link>
+    <pubDate>Thu, 05 Jan 2023 17:28:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/posts/2023/01/spring-data-redis/</guid>
+    <description><![CDATA[SprintBoot with Redis 简单使用 定义 redisTemplate @Configuration class RedisConfigure { @Bean fun redisTemplate(connectionFactory: LettuceConnectionFactory): RedisTemplate&lt;String, User&gt; { val redisTemplate = RedisTemplate&lt;String, User&gt;(); redisTemplate.keySerializer = StringRedisSerializer() redisTemplate.valueSerializer = GenericJackson2JsonRedisSerializer() redisTemplate.setConnectionFactory(connectionFactory) return redisTemplate } } 定义数据类型 class User( val id: Long, val name: String, val sex: String, ) { constructor() : this(0L, &#34;&#34;, &#34;man&#34;) } 操作 @SpringBootTest class SpringbootRedisApplicationTests { @Autowired lateinit var redisTemplate: RedisTemplate&lt;String, User&gt; @Test fun testSerializable() { val user = User(1L, &#34;hello&#34;, &#34;man&#34;) val ops = redisTemplate.]]></description>
+</item>
+<item>
+    <title>SpringBoot with MongodbRepository</title>
+    <link>http://example.org/posts/2023/01/spring-data-mongodb/</link>
+    <pubDate>Thu, 05 Jan 2023 00:19:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/posts/2023/01/spring-data-mongodb/</guid>
+    <description><![CDATA[Spring with MongodbRepository 简单使用 这篇笔记参考自 这篇文章 定义数据类型 class Product( val id: String, val name: String, val price: Int ) 我们可以 手动定义对象存储的集合位置 @Document(collection = &#34;products&#34;) class Product( ) 手动定义对象的主键 class Product( @MongoId val id: String ) 定义 Repository @Repository interface ProductRepository: MongoRepository&lt;Product, String&gt; { fun findAllByNameLike(name: String): List&lt;Product&gt; fun findById(id: String): Product? fun existsByName(name: String): Bool } 继承自 MongoRepository 的接口类与 JPA 相似，定义好方法即可， CRUD 方法也与之类似 排序 @Repository interface ProductRepository: MongoRepository&lt;Product, String&gt; { fun findAllByNameLike(name: String, sort: Sort): List&lt;Product&gt; } val sort = Sort.]]></description>
+</item>
+</channel>
+</rss>

@@ -3,7 +3,31 @@
         <title>Categories - Category - My New Hugo Site</title>
         <link>http://example.org/categories/</link>
         <description>Categories - Category - My New Hugo Site</description>
-        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sun, 01 Jan 2023 12:28:00 &#43;0800</lastBuildDate><atom:link href="http://example.org/categories/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Mon, 06 Feb 2023 20:05:00 &#43;0800</lastBuildDate><atom:link href="http://example.org/categories/" rel="self" type="application/rss+xml" /><item>
+    <title>Flutter</title>
+    <link>http://example.org/categories/flutter/</link>
+    <pubDate>Mon, 06 Feb 2023 20:05:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/categories/flutter/</guid>
+    <description><![CDATA[]]></description>
+</item>
+<item>
+    <title>Spring</title>
+    <link>http://example.org/categories/spring/</link>
+    <pubDate>Mon, 23 Jan 2023 19:30:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/categories/spring/</guid>
+    <description><![CDATA[]]></description>
+</item>
+<item>
+    <title>SpringBoot</title>
+    <link>http://example.org/categories/springboot/</link>
+    <pubDate>Thu, 05 Jan 2023 17:28:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/categories/springboot/</guid>
+    <description><![CDATA[]]></description>
+</item>
+<item>
     <title>Rust</title>
     <link>http://example.org/categories/rust/</link>
     <pubDate>Sun, 01 Jan 2023 12:28:00 &#43;0800</pubDate>
@@ -41,14 +65,6 @@
     <pubDate>Sat, 02 Jul 2022 14:30:00 &#43;0800</pubDate>
     <author>Author</author>
     <guid>http://example.org/categories/%E7%A6%BB%E6%95%A3%E6%95%B0%E5%AD%A6/</guid>
-    <description><![CDATA[]]></description>
-</item>
-<item>
-    <title>Flutter</title>
-    <link>http://example.org/categories/flutter/</link>
-    <pubDate>Sat, 02 Jul 2022 14:29:00 &#43;0800</pubDate>
-    <author>Author</author>
-    <guid>http://example.org/categories/flutter/</guid>
     <description><![CDATA[]]></description>
 </item>
 <item>

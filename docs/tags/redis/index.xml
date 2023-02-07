@@ -1,0 +1,15 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Redis - Tag - My New Hugo Site</title>
+        <link>http://example.org/tags/redis/</link>
+        <description>Redis - Tag - My New Hugo Site</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Thu, 05 Jan 2023 17:28:00 &#43;0800</lastBuildDate><atom:link href="http://example.org/tags/redis/" rel="self" type="application/rss+xml" /><item>
+    <title>SprintBoot with Redis 简单使用</title>
+    <link>http://example.org/posts/2023/01/spring-data-redis/</link>
+    <pubDate>Thu, 05 Jan 2023 17:28:00 &#43;0800</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/posts/2023/01/spring-data-redis/</guid>
+    <description><![CDATA[SprintBoot with Redis 简单使用 定义 redisTemplate @Configuration class RedisConfigure { @Bean fun redisTemplate(connectionFactory: LettuceConnectionFactory): RedisTemplate&lt;String, User&gt; { val redisTemplate = RedisTemplate&lt;String, User&gt;(); redisTemplate.keySerializer = StringRedisSerializer() redisTemplate.valueSerializer = GenericJackson2JsonRedisSerializer() redisTemplate.setConnectionFactory(connectionFactory) return redisTemplate } } 定义数据类型 class User( val id: Long, val name: String, val sex: String, ) { constructor() : this(0L, &#34;&#34;, &#34;man&#34;) } 操作 @SpringBootTest class SpringbootRedisApplicationTests { @Autowired lateinit var redisTemplate: RedisTemplate&lt;String, User&gt; @Test fun testSerializable() { val user = User(1L, &#34;hello&#34;, &#34;man&#34;) val ops = redisTemplate.]]></description>
+</item>
+</channel>
+</rss>
